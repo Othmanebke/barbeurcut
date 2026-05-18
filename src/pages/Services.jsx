@@ -143,7 +143,7 @@ export default function Services() {
       <Marquee gold speed={24} />
 
       {/* ═══════════ NOS ENGAGEMENTS ════════════════════════ */}
-      <section className="bg-cream py-20">
+      <section className="bg-cream py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section>
             <motion.div variants={fadeUp} className="mb-12 flex items-end justify-between">
@@ -166,7 +166,7 @@ export default function Services() {
                   variants={fadeUp}
                   whileHover={{ y: -4 }}
                   transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-                  className="group bg-cream p-8 flex flex-col gap-5 hover:bg-dark transition-colors duration-400"
+                  className="group bg-cream p-6 sm:p-8 flex flex-col gap-4 sm:gap-5 hover:bg-dark transition-colors duration-400"
                 >
                   <e.Icon className="w-6 h-5 text-brand/50 group-hover:text-brand transition-colors duration-400" />
                   <div>

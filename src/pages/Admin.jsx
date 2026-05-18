@@ -359,14 +359,14 @@ function Dashboard() {
                               <p className="text-xs text-muted font-medium">{a.service_title} · {a.service_price_label}</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 shrink-0">
+                          <div className="flex flex-wrap items-center gap-2 shrink-0">
                             <a href={`tel:${a.client_phone}`}
-                              className="text-[9px] font-bold text-brand/60 hover:text-brand transition-colors border border-brand/20 px-3 py-1.5 hover:border-brand">
-                              {a.client_phone}
+                              className="text-[9px] font-bold text-brand/60 hover:text-brand transition-colors border border-brand/20 px-2.5 sm:px-3 py-1.5 hover:border-brand whitespace-nowrap">
+                              📞 <span className="hidden sm:inline">{a.client_phone}</span><span className="sm:hidden">Appeler</span>
                             </a>
                             <button
                               onClick={() => handleCancel(a)}
-                              className="text-[9px] font-bold text-red-400/50 hover:text-red-500 transition-colors border border-red-200/30 px-3 py-1.5 hover:border-red-300"
+                              className="text-[9px] font-bold text-red-400/50 hover:text-red-500 transition-colors border border-red-200/30 px-2.5 sm:px-3 py-1.5 hover:border-red-300 whitespace-nowrap"
                             >
                               Annuler
                             </button>

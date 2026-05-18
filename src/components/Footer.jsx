@@ -1,121 +1,90 @@
 import { Link } from 'react-router-dom';
-import { ScissorsIcon, CombIcon, DiamondDivider } from './BarberIcons';
+import { ScissorsIcon, DiamondDivider } from './BarberIcons';
 
-const MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=Brie-Comte-Robert+77170';
+const MAPS_URL =
+  'https://www.google.com/maps/search/?api=1&query=1+Rue+de+la+Madeleine+77170+Brie-Comte-Robert';
 
 export default function Footer() {
   return (
-    <footer className="bg-dark text-cream border-t border-cream/8">
-      <div className="mx-auto max-w-7xl px-6 sm:px-10 pt-16 pb-10">
+    <footer className="bg-dark text-cream">
 
-        {/* ── Top: brand + links ── */}
-        <div className="grid gap-14 lg:grid-cols-[1fr_auto] lg:items-start mb-14">
+      {/* ── Infos essentielles ── */}
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 pt-14 sm:pt-16 pb-10">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-10">
 
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <span className="inline-flex h-8 w-8 items-center justify-center bg-brand text-dark text-[9px] font-black">WC</span>
-              <span className="text-[10px] font-black uppercase tracking-[0.4em]">Wonder Cut</span>
-              <ScissorsIcon className="w-3.5 h-3.5 text-brand/40 ml-1" />
+          {/* Gauche — logo + adresse + horaires */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-7 w-7 items-center justify-center bg-brand text-dark text-[9px] font-black">WC</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream">Wonder Cut</span>
+              <ScissorsIcon className="w-3 h-3 text-brand/40" />
             </div>
-            <p className="max-w-xs text-sm leading-7 text-cream/45 font-medium">
-              Un barbershop premium pour les hommes qui se soucient de leur style.
-            </p>
-            <p className="mt-3 text-[9px] uppercase tracking-[0.5em] text-brand font-bold">
-              L'art de la coupe sans compromis.
-            </p>
 
-            {/* Address + Maps */}
             <a
               href={MAPS_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 flex items-start gap-3 group"
+              className="block text-sm text-cream/55 font-medium hover:text-brand transition-colors leading-6"
             >
-              <span className="text-brand mt-0.5 shrink-0">📍</span>
-              <div>
-                <p className="text-sm font-bold text-cream group-hover:text-brand transition-colors duration-200">
-                  Brie-Comte-Robert, 77170
-                </p>
-                <p className="text-[9px] uppercase tracking-[0.4em] text-cream/35 font-medium mt-0.5 group-hover:text-brand/70 transition-colors duration-200">
-                  Voir sur Google Maps →
-                </p>
-              </div>
+              1 Rue de la Madeleine<br />
+              77170 Brie-Comte-Robert
             </a>
 
-            <div className="mt-2 pl-7">
-              <p className="text-sm text-cream/45 font-medium">Lun — Sam · 9h – 19h</p>
+            <div className="text-sm text-cream/35 font-medium space-y-1">
+              <p>Mer — Sam · 9h–12h / 13h–19h</p>
+              <p className="text-cream/22 text-xs">Lun, Mar, Dim : fermé</p>
             </div>
 
-            <Link
-              to="/prestations"
-              className="mt-7 inline-flex items-center gap-2 border border-brand px-6 py-3 text-[10px] font-black uppercase tracking-[0.35em] text-brand transition-all duration-300 hover:bg-brand hover:text-dark"
-            >
-              <ScissorsIcon className="w-3.5 h-3.5" />
-              Réserver
-            </Link>
+            <p className="text-[9px] uppercase tracking-[0.4em] text-brand/70 font-bold pt-1">
+              CAP Coiffure · Depuis 2018
+            </p>
           </div>
 
-          {/* Links */}
-          <div className="grid grid-cols-3 gap-10 sm:gap-14">
-            <div>
-              <h3 className="text-[9px] font-bold uppercase tracking-[0.45em] text-cream/22 mb-6">Pages</h3>
-              <ul className="space-y-3 text-sm font-medium">
-                <li><Link to="/concept"     className="text-cream/50 hover:text-brand transition-colors">Concept</Link></li>
-                <li><Link to="/prestations" className="text-cream/50 hover:text-brand transition-colors">Services</Link></li>
-                <li><Link to="/reservation" className="text-cream/50 hover:text-brand transition-colors">Réserver</Link></li>
-              </ul>
+          {/* Droite — nav + socials */}
+          <div className="flex flex-wrap gap-x-10 gap-y-6 sm:gap-x-14">
+            <div className="flex flex-col gap-2.5">
+              <p className="text-[8px] uppercase tracking-[0.5em] text-cream/22 font-bold mb-1">Navigation</p>
+              {[
+                { to: '/concept',     label: 'Concept'  },
+                { to: '/prestations', label: 'Services' },
+                { to: '/reservation', label: 'Réserver' },
+              ].map((l) => (
+                <Link key={l.to} to={l.to} className="text-sm text-cream/50 font-medium hover:text-brand transition-colors">
+                  {l.label}
+                </Link>
+              ))}
             </div>
-
-            <div>
-              <h3 className="text-[9px] font-bold uppercase tracking-[0.45em] text-cream/22 mb-6">Social</h3>
-              <ul className="space-y-3 text-sm font-medium">
-                <li>
-                  <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"
-                     className="text-cream/50 hover:text-brand transition-colors">Instagram</a>
-                </li>
-                <li>
-                  <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer"
-                     className="text-cream/50 hover:text-brand transition-colors">Facebook</a>
-                </li>
-                <li>
-                  <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer"
-                     className="text-cream/50 hover:text-brand transition-colors">TikTok</a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-[9px] font-bold uppercase tracking-[0.45em] text-cream/22 mb-6">Horaires</h3>
-              <ul className="space-y-2 text-sm font-medium text-cream/50">
-                <li>Lundi — Vendredi</li>
-                <li className="text-cream/30 text-xs">9h00 – 19h00</li>
-                <li className="mt-2">Samedi</li>
-                <li className="text-cream/30 text-xs">9h00 – 18h00</li>
-                <li className="mt-2 text-cream/25">Dimanche fermé</li>
-              </ul>
+            <div className="flex flex-col gap-2.5">
+              <p className="text-[8px] uppercase tracking-[0.5em] text-cream/22 font-bold mb-1">Réseaux</p>
+              <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"
+                className="text-sm text-cream/50 font-medium hover:text-brand transition-colors">Instagram</a>
+              <a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer"
+                className="text-sm text-cream/50 font-medium hover:text-brand transition-colors">TikTok</a>
             </div>
           </div>
-        </div>
-
-        {/* Scissors divider */}
-        <DiamondDivider className="text-cream mb-8" />
-
-        {/* Icon row */}
-        <div className="flex items-center justify-center gap-8 mb-8 opacity-12">
-          <ScissorsIcon className="w-6 h-6 text-cream" />
-          <CombIcon     className="w-7 h-6 text-cream" />
-          <ScissorsIcon className="w-6 h-6 text-cream rotate-180" />
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-cream/5 px-6 sm:px-10 py-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-[10px] text-cream/22 font-medium">
-          © {new Date().getFullYear()} Wonder Cut — Brie-Comte-Robert, 77170. Tous droits réservés.
+      {/* ── Divider ── */}
+      <div className="mx-auto max-w-7xl px-6 sm:px-10">
+        <DiamondDivider className="text-cream/20" />
+      </div>
+
+      {/* ── WONDER — grande typo centrale ── */}
+      <div className="relative overflow-hidden select-none py-4 sm:py-6">
+        <p
+          className="text-center font-black uppercase text-cream/8 leading-none tracking-[-0.04em] pointer-events-none"
+          style={{ fontSize: 'clamp(5rem, 20vw, 14rem)' }}
+          aria-hidden
+        >
+          WONDER
         </p>
-        <p className="text-[10px] text-cream/15 uppercase tracking-[0.4em] font-medium hidden sm:block">
-          Barbershop premium · Seine-et-Marne
+      </div>
+
+      {/* ── Copyright ── */}
+      <div className="border-t border-cream/5 px-6 sm:px-10 py-4">
+        <p className="text-[9px] text-cream/20 font-medium text-center tracking-[0.2em]">
+          © {new Date().getFullYear()} Wonder Cut · Barbier certifié CAP · Brie-Comte-Robert, 77170
         </p>
       </div>
     </footer>

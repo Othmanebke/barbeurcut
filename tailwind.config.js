@@ -12,7 +12,7 @@ export default {
         beige:     '#D2C0A5',   // warm beige — moodboard
         cream:     '#FFF8E7',   // off-white cream — moodboard
         creamMid:  '#F0E9D6',   // slightly deeper cream
-        muted:     '#8C7A6B',   // warm grey
+        muted:     '#6B5748',   // warm grey foncé — contraste 6.3:1 sur cream
       },
       borderRadius: {
         none:    '0',

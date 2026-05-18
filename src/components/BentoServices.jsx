@@ -53,17 +53,17 @@ function ServiceRow({ service, index, onBook, delay }) {
       animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay }}
       whileHover={{ backgroundColor: 'rgba(198,142,23,0.04)' }}
-      className="group w-full grid grid-cols-[44px_1fr_auto] items-center gap-4 sm:gap-8 px-6 sm:px-10 py-5 text-left border-b border-beige/50 last:border-0 transition-colors duration-200"
+      className="group w-full grid grid-cols-[28px_1fr_auto] sm:grid-cols-[44px_1fr_auto] items-center gap-3 sm:gap-6 lg:gap-8 px-4 sm:px-8 lg:px-10 py-4 sm:py-5 text-left border-b border-beige/50 last:border-0 transition-colors duration-200"
     >
       {/* Index */}
-      <span className="text-[10px] font-black text-brand/40 group-hover:text-brand transition-colors duration-200 tracking-widest">
+      <span className="text-[8px] sm:text-[10px] font-black text-brand/40 group-hover:text-brand transition-colors duration-200 tracking-widest">
         {String(index + 1).padStart(2, '0')}
       </span>
 
       {/* Name + desc */}
       <div className="min-w-0">
         <div className="flex items-center gap-3 flex-wrap">
-          <p className="text-base sm:text-lg font-black uppercase tracking-[-0.01em] text-dark group-hover:text-brand transition-colors duration-200">
+          <p className="text-sm sm:text-base lg:text-lg font-black uppercase tracking-[-0.01em] text-dark group-hover:text-brand transition-colors duration-200 leading-tight">
             {service.title}
           </p>
           {service.popular && (
@@ -109,7 +109,7 @@ export default function BentoServices() {
       {CATEGORIES.map((cat, ci) => (
         <div key={cat.id}>
           {/* Category header */}
-          <div className={`flex items-center justify-between px-6 sm:px-10 py-4 ${cat.dark ? 'bg-dark' : 'bg-creamMid border-t border-beige/60'}`}>
+          <div className={`flex items-center justify-between px-4 sm:px-8 lg:px-10 py-4 ${cat.dark ? 'bg-dark' : 'bg-creamMid border-t border-beige/60'}`}>
             <div className="flex items-center gap-3">
               <cat.Icon className={`w-4 h-4 shrink-0 ${cat.dark ? 'text-brand' : 'text-brand/70'}`} />
               <h3 className={`text-[9px] font-black uppercase tracking-[0.55em] ${cat.dark ? 'text-cream' : 'text-dark/60'}`}>

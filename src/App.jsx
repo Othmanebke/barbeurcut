@@ -2,38 +2,29 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import Layout from './components/Layout';
 import CustomCursor from './components/CustomCursor';
+import SplashLoader from './components/SplashLoader';
 import { BookingProvider } from './context/BookingContext';
 
-const Home         = lazy(() => import('./pages/Home'));
-const Concept      = lazy(() => import('./pages/Concept'));
-const Services     = lazy(() => import('./pages/Services'));
-const Booking      = lazy(() => import('./pages/Booking'));
-const Confirmation = lazy(() => import('./pages/Confirmation'));
-const NotFound     = lazy(() => import('./pages/NotFound'));
-const Admin        = lazy(() => import('./pages/Admin'));
-const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'));
+/* Garantit que l'animation du splash (~2.4s) a le temps de se terminer */
+const MIN_SPLASH = 2600;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const lazyMin = (fn) => lazy(() => Promise.all([fn(), sleep(MIN_SPLASH)]).then(([mod]) => mod));
 
-function PageLoader() {
-  return (
-    <div className="min-h-screen bg-cream flex items-center justify-center">
-      <svg className="w-8 h-8 text-brand animate-spin" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="6" cy="6" r="2.5" />
-        <circle cx="6" cy="18" r="2.5" />
-        <line x1="20" y1="4" x2="8.5" y2="15.5" />
-        <line x1="14.5" y1="14.5" x2="20" y2="20" />
-        <line x1="8.5" y1="8.5" x2="12" y2="12" />
-      </svg>
-    </div>
-  );
-}
+const Home           = lazyMin(() => import('./pages/Home'));
+const Concept        = lazyMin(() => import('./pages/Concept'));
+const Services       = lazyMin(() => import('./pages/Services'));
+const Booking        = lazyMin(() => import('./pages/Booking'));
+const Confirmation   = lazyMin(() => import('./pages/Confirmation'));
+const NotFound       = lazyMin(() => import('./pages/NotFound'));
+const Admin          = lazyMin(() => import('./pages/Admin'));
+const ProtectedRoute = lazyMin(() => import('./components/ProtectedRoute'));
 
 export default function App() {
   return (
     <BrowserRouter>
       <BookingProvider>
         <CustomCursor />
-        <Suspense fallback={<PageLoader />}>
+        <Suspense fallback={<SplashLoader />}>
           <Routes>
             {/* ── Site public ── */}
             <Route path="/" element={<Layout />}>

@@ -66,7 +66,7 @@ export default function Confirmation() {
 
       <div className="grid gap-5 md:grid-cols-2">
         {/* Résumé */}
-        <motion.div variants={fadeUp} className="border border-beige bg-creamMid p-8">
+        <motion.div variants={fadeUp} className="border border-beige bg-creamMid p-5 sm:p-8">
           <div className="flex items-center gap-2 mb-6">
             <ScissorsIcon className="w-3.5 h-3.5 text-brand/60" />
             <p className="text-[9px] uppercase tracking-[0.45em] text-muted font-bold">Résumé de la réservation</p>
@@ -84,7 +84,7 @@ export default function Confirmation() {
         </motion.div>
 
         {/* Info + actions */}
-        <motion.div variants={fadeUp} className="border border-beige bg-cream p-8 flex flex-col justify-between">
+        <motion.div variants={fadeUp} className="border border-beige bg-cream p-5 sm:p-8 flex flex-col justify-between">
           <div>
             <p className="text-[9px] uppercase tracking-[0.45em] text-muted font-bold mb-6">Information importante</p>
             <div className="border-l-2 border-brand pl-5 mb-6">

@@ -32,8 +32,8 @@ const PILLARS = [
 
 const CHECKLIST = [
   'Réservation en 3 clics',
-  'Adresse par SMS avant le créneau',
-  'Barbiers certifiés et sélectionnés',
+  'Adresse exacte envoyée par SMS la veille',
+  'Barbier certifié CAP Coiffure',
   'Tarifs transparents, sans surprise',
 ];
 
@@ -72,7 +72,7 @@ export default function Concept() {
               </div>
             </div>
             <motion.div variants={fadeUp} className="border-l-2 border-brand pl-8">
-              <p className="text-base leading-8 text-cream/68 font-medium">
+              <p className="text-base leading-8 text-cream font-medium">
                 Wonder Cut propose une expérience agile, urbaine et élégante. Nous combinons savoir-faire traditionnel et style contemporain pour des prestations sur mesure qui correspondent à ta personnalité.
               </p>
             </motion.div>
@@ -84,10 +84,10 @@ export default function Concept() {
       <section className="bg-brand">
         <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-4 divide-x divide-dark/12">
           {[
-            { val: '1 200+', label: 'Créneaux réservés' },
-            { val: '100%',   label: 'Satisfaction client' },
-            { val: '3',      label: 'Barbiers experts' },
-            { val: '5+',     label: "Années d'expertise" },
+            { val: '2018',  label: 'En activité depuis' },
+            { val: '100%',  label: 'Clients satisfaits'  },
+            { val: 'CAP',   label: 'Coiffure diplômé'   },
+            { val: 'Mer–Sam', label: '9h–12h / 13h–19h' },
           ].map((v) => (
             <div key={v.label} className="py-7 px-6 text-center">
               <p className="text-2xl font-black text-dark">{v.val}</p>
@@ -101,15 +101,15 @@ export default function Concept() {
       <Marquee />
 
       {/* ═══════════════════ PILLARS ════════════════════════ */}
-      <section className="bg-cream py-28">
+      <section className="bg-cream py-14 sm:py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section>
-            <motion.div variants={fadeUp} className="mb-14">
+            <motion.div variants={fadeUp} className="mb-10 sm:mb-14">
               <div className="flex items-center gap-3 mb-4">
                 <ScissorsIcon className="w-4 h-4 text-brand" />
                 <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">Nos piliers</span>
               </div>
-              <RevealText tag="h2" className="text-4xl font-black uppercase tracking-[-0.04em] text-dark sm:text-5xl leading-tight">
+              <RevealText tag="h2" className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[-0.04em] text-dark leading-tight">
                 Ce qui nous définit
               </RevealText>
             </motion.div>
@@ -119,16 +119,16 @@ export default function Concept() {
                 <motion.div
                   key={p.id}
                   variants={fadeUp}
-                  className="grid grid-cols-[52px_1fr_auto] gap-8 py-10 group items-center"
+                  className="grid grid-cols-[36px_1fr_auto] sm:grid-cols-[52px_1fr_auto] gap-4 sm:gap-8 py-7 sm:py-10 group items-center"
                 >
-                  <span className="text-[9px] uppercase tracking-[0.55em] text-brand/65 font-bold">{p.id}</span>
+                  <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.4em] sm:tracking-[0.55em] text-brand/65 font-bold">{p.id}</span>
                   <div>
-                    <h2 className="text-2xl font-black uppercase tracking-[-0.02em] text-dark group-hover:text-brand transition-colors duration-300">
+                    <h2 className="text-base sm:text-xl lg:text-2xl font-black uppercase tracking-[-0.02em] text-dark group-hover:text-brand transition-colors duration-300">
                       {p.title}
                     </h2>
-                    <p className="mt-2 text-sm leading-7 text-dark/60 font-medium max-w-lg">{p.desc}</p>
+                    <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm leading-6 sm:leading-7 text-dark/60 font-medium max-w-lg">{p.desc}</p>
                   </div>
-                  <p.Icon className="w-6 h-5 text-beige group-hover:text-brand transition-colors duration-300 shrink-0" />
+                  <p.Icon className="w-5 h-4 sm:w-6 sm:h-5 text-beige group-hover:text-brand transition-colors duration-300 shrink-0" />
                 </motion.div>
               ))}
             </motion.div>
@@ -154,7 +154,7 @@ export default function Concept() {
             <div className="absolute inset-0 bg-dark/25" />
           </div>
 
-          <Section className="flex flex-col justify-center px-10 py-16 lg:py-20">
+          <Section className="flex flex-col justify-center px-6 sm:px-10 py-10 sm:py-14 lg:py-20">
             <motion.div variants={fadeUp}>
               <div className="flex items-center gap-3 mb-5">
                 <RazorIcon className="w-8 h-5 text-brand" />
@@ -202,7 +202,7 @@ export default function Concept() {
       </section>
 
       {/* ═══════════════════ ADRESSE & MAPS ═════════════════ */}
-      <section className="bg-cream py-20">
+      <section className="bg-cream py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <motion.div variants={fadeUp}>
@@ -211,14 +211,15 @@ export default function Concept() {
                 <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">Nous trouver</span>
               </div>
               <h2 className="text-3xl font-black uppercase tracking-[-0.04em] text-dark sm:text-4xl leading-tight mb-6">
-                Brie-Comte-Robert<br />
-                <span className="text-muted text-2xl font-bold">Seine-et-Marne, 77170</span>
+                1 Rue de la Madeleine<br />
+                <span className="text-muted text-2xl font-bold">77170 Brie-Comte-Robert</span>
               </h2>
               <ul className="space-y-3 text-sm font-medium text-dark/65 mb-8">
                 {[
-                  { icon: '🕐', text: 'Lundi — Vendredi : 9h00 – 19h00' },
-                  { icon: '🕐', text: 'Samedi : 9h00 – 18h00' },
-                  { icon: '🚫', text: 'Dimanche : fermé' },
+                  { icon: '✂️', text: 'Mercredi — Samedi · Ouvert' },
+                  { icon: '🕐', text: '9h00 – 12h00  /  13h00 – 19h00' },
+                  { icon: '☕', text: 'Pause déjeuner : 12h – 13h' },
+                  { icon: '🚫', text: 'Lun, Mar, Dim : fermé' },
                 ].map((h) => (
                   <li key={h.text} className="flex items-center gap-3">
                     <span>{h.icon}</span>
@@ -230,7 +231,7 @@ export default function Concept() {
               <div className="flex flex-wrap gap-4">
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
                   <a
-                    href="https://www.google.com/maps/search/?api=1&query=Brie-Comte-Robert+77170"
+                    href="https://www.google.com/maps/search/?api=1&query=1+Rue+de+la+Madeleine+77170+Brie-Comte-Robert"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-3 bg-dark px-8 py-4 text-[10px] font-black uppercase tracking-[0.35em] text-cream transition-colors duration-300 hover:bg-brand hover:text-dark"
