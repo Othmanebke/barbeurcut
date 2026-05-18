@@ -2,28 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Lenis smooth scroll ── */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+  --navbar-h: 72px;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: auto; }
 
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #050816;
+  font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  background: #FFF8E7;
+  color: #4A2F1A;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-#root {
-  min-height: 100vh;
+a   { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; }
+
+::selection {
+  background: rgba(198, 142, 23, 0.30);
+  color: #4A2F1A;
 }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
+#root { min-height: 100vh; }
+
+/* ── Custom cursor — desktop only ── */
+@media (pointer: fine) {
+  *, *::before, *::after { cursor: none !important; }
+}
+
+.cursor-dot {
+  position: fixed;
+  top: -5px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  background: #C68E17;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: -20px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid #C68E17;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.55;
+  will-change: transform;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: #FFF8E7; }
+::-webkit-scrollbar-thumb { background: #C68E17; border-radius: 0; }
+
+/* ── Gold shimmer on hero accent word ── */
+@keyframes gold-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.shimmer-gold {
+  background: linear-gradient(
+    90deg,
+    #C68E17 0%,
+    #F0DFA0 30%,
+    #9A6B10 50%,
+    #F0DFA0 70%,
+    #C68E17 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gold-shimmer 4s linear infinite;
+}
+
+/* ── Scramble text ── */
+.scramble-mono { font-variant-numeric: tabular-nums; letter-spacing: inherit; }
+
+/* ── Barber pole keyframe ── */
+@keyframes barberpole {
+  from { background-position: 0 0; }
+  to   { background-position: 34px 34px; }
+}
+
+/* ── Image placeholder shimmer ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.media-placeholder {
+  background: linear-gradient(90deg, #F0E9D6 25%, #E5DACC 50%, #F0E9D6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+/* ── Grain texture overlay ── */
+.grain { position: relative; }
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,248,231,0.12) 1px, transparent 0);
+  background-size: 4px 4px;
+  pointer-events: none;
+  z-index: 2;
+  mix-blend-mode: overlay;
+}
+
+/* ── Overflow mask for text reveals ── */
+.overflow-mask { overflow: hidden; }
+
+/* ── Scrollbar invisible (day picker) ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Focus ring ── */
+:focus-visible {
+  outline: 2px solid #C68E17;
+  outline-offset: 3px;
 }

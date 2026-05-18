@@ -1,40 +1,65 @@
-import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ScissorsIcon } from './BarberIcons';
 
 const links = [
-  { to: '/', label: 'Accueil' },
-  { to: '/concept', label: 'Concept' },
-  { to: '/prestations', label: 'Prestations' },
-  { to: '/reservation', label: 'Réservation' },
+  { to: '/', label: 'Accueil', end: true },
+  { to: '/concept', label: 'Concept', end: false },
+  { to: '/prestations', label: 'Services', end: false },
 ];
 
-function Navbar() {
+export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+
+  useEffect(() => { setOpen(false); }, [location]);
+
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 50);
+    fn();
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  const transparent = isHome && !scrolled && !open;
 
   return (
-    <header className="border-b border-slate-700 bg-slate-950/90 backdrop-blur-md sticky top-0 z-40">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link to="/" className="text-xl font-semibold tracking-wide text-white">
-          Wonder Cut
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        transparent
+          ? 'bg-dark/38 backdrop-blur-md border-b border-cream/10'
+          : 'bg-darkMid border-b border-cream/10'
+      }`}
+      style={{ height: 'var(--navbar-h, 72px)' }}
+    >
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 sm:px-10">
+
+        {/* ── Logo ── */}
+        <Link to="/" className="flex items-center gap-3 group">
+          <span className="inline-flex h-8 w-8 items-center justify-center bg-brand text-dark text-[9px] font-black uppercase tracking-widest shrink-0 transition-colors duration-300 group-hover:bg-brandDark">
+            WC
+          </span>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream group-hover:text-brand transition-colors duration-300">
+            Wonder Cut
+          </span>
+          <ScissorsIcon className="w-3.5 h-3.5 text-cream/20 group-hover:text-brand/60 transition-colors duration-300 hidden lg:block" />
         </Link>
 
-        <button
-          className="inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-slate-200 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 lg:hidden"
-          onClick={() => setOpen((prev) => !prev)}
-          aria-label="Menu mobile"
-          aria-expanded={open}
-        >
-          <span className="text-lg">☰</span>
-        </button>
-
-        <nav className="hidden gap-6 lg:flex">
+        {/* ── Desktop nav ── */}
+        <nav className="hidden items-center gap-10 lg:flex">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
+              end={link.end}
               className={({ isActive }) =>
-                `text-sm font-medium transition ${
-                  isActive ? 'text-white' : 'text-slate-400 hover:text-white'
+                `relative text-[10px] uppercase tracking-[0.32em] font-semibold transition-colors duration-200 after:absolute after:-bottom-1 after:left-0 after:h-px after:bg-brand after:transition-all after:duration-300 ${
+                  isActive
+                    ? 'text-brand after:w-full'
+                    : 'text-cream/60 hover:text-cream after:w-0 hover:after:w-full'
                 }`
               }
             >
@@ -42,30 +67,71 @@ function Navbar() {
             </NavLink>
           ))}
         </nav>
+
+        {/* ── CTA + hamburger ── */}
+        <div className="flex items-center gap-5">
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="hidden lg:block">
+            <Link
+              to="/prestations"
+              className="inline-flex items-center gap-2 bg-brand px-6 py-2.5 text-[10px] font-black uppercase tracking-[0.32em] text-dark transition-colors duration-200 hover:bg-brandDark"
+            >
+              <ScissorsIcon className="w-3 h-3" />
+              Réserver
+            </Link>
+          </motion.div>
+
+          <button
+            onClick={() => setOpen((p) => !p)}
+            className="lg:hidden flex flex-col gap-[5px] p-2"
+            aria-label={open ? 'Fermer' : 'Menu'}
+          >
+            <span className={`block h-[1.5px] w-6 bg-cream origin-center transition-all duration-300 ${open ? 'translate-y-[5.5px] rotate-45' : ''}`} />
+            <span className={`block h-[1.5px] bg-cream transition-all duration-300 ${open ? 'opacity-0 w-6' : 'w-4'}`} />
+            <span className={`block h-[1.5px] w-6 bg-cream origin-center transition-all duration-300 ${open ? '-translate-y-[5.5px] -rotate-45' : ''}`} />
+          </button>
+        </div>
       </div>
 
-      {open && (
-        <nav className="border-t border-slate-800 bg-slate-950/95 px-4 py-4 lg:hidden">
-          <div className="flex flex-col gap-3">
-            {links.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                className={({ isActive }) =>
-                  `block rounded-lg px-4 py-3 text-sm font-medium transition ${
-                    isActive ? 'bg-slate-900 text-white' : 'text-slate-300 hover:bg-slate-900 hover:text-white'
-                  }`
-                }
+      {/* ── Mobile menu ── */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden border-t border-cream/10 bg-darkMid lg:hidden"
+          >
+            <div className="flex flex-col gap-1 px-6 py-6">
+              {links.map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  end={link.end}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) =>
+                    `px-4 py-3.5 text-[10px] uppercase tracking-[0.32em] font-semibold transition-colors border-l-2 ${
+                      isActive
+                        ? 'border-brand text-brand'
+                        : 'border-transparent text-cream/55 hover:text-cream hover:border-cream/30'
+                    }`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              ))}
+              <Link
+                to="/prestations"
                 onClick={() => setOpen(false)}
+                className="mt-4 inline-flex items-center justify-center gap-2 bg-brand px-6 py-3.5 text-[10px] font-black uppercase tracking-[0.32em] text-dark"
               >
-                {link.label}
-              </NavLink>
-            ))}
-          </div>
-        </nav>
-      )}
+                <ScissorsIcon className="w-3.5 h-3.5" />
+                Réserver maintenant
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
-
-export default Navbar;
