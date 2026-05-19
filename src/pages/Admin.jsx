@@ -1,75 +1,21 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ScissorsIcon, CombIcon, RazorIcon, DiamondDivider } from '../components/BarberIcons';
+import { ScissorsIcon, DiamondDivider } from '../components/BarberIcons';
 import { fetchAppointments, cancelBooking, blockSlot, unblockSlot, fetchBlocks } from '../api/booking';
 import { SUPABASE_READY } from '../lib/supabase';
 
-/* ─── PIN Auth ──────────────────────────────────────────────── */
 const ADMIN_PWD = import.meta.env.VITE_ADMIN_PASSWORD ?? 'wonder2024!';
 const AUTH_KEY  = 'wc_admin_auth';
 
-function PinScreen({ onSuccess }) {
-  const [val, setVal]   = useState('');
-  const [err, setErr]   = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (val === ADMIN_PWD) {
-      sessionStorage.setItem(AUTH_KEY, '1');
-      onSuccess();
-    } else {
-      setErr(true);
-      setVal('');
-      setTimeout(() => setErr(false), 1500);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-dark flex items-center justify-center grain px-6"
-         style={{ paddingTop: 'var(--navbar-h, 72px)' }}>
-      <ScissorsIcon className="absolute top-24 right-16 w-40 h-40 text-brand/5 pointer-events-none hidden lg:block" />
-
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm"
-      >
-        <div className="flex items-center gap-3 mb-8">
-          <span className="inline-flex h-9 w-9 items-center justify-center bg-brand text-dark text-[9px] font-black">WC</span>
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream">Dashboard Barbier</span>
-        </div>
-
-        <h1 className="text-3xl font-black uppercase tracking-[-0.03em] text-cream mb-2">Accès sécurisé</h1>
-        <p className="text-sm text-cream/40 font-medium mb-8">Entre ton mot de passe pour accéder à ton calendrier.</p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <motion.input
-            type="password"
-            value={val}
-            onChange={e => setVal(e.target.value)}
-            placeholder="Mot de passe"
-            autoFocus
-            animate={err ? { x: [0, -8, 8, -8, 0] } : {}}
-            transition={{ duration: 0.3 }}
-            className={`w-full border-2 px-5 py-4 text-cream bg-white/5 placeholder:text-cream/20 outline-none text-sm font-medium transition-colors ${
-              err ? 'border-red-500 bg-red-500/5' : 'border-cream/15 focus:border-brand'
-            }`}
-          />
-          {err && <p className="text-xs text-red-400 font-medium">Mot de passe incorrect.</p>}
-          <motion.button
-            type="submit"
-            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-            className="w-full flex items-center justify-center gap-2 bg-brand py-4 text-[10px] font-black uppercase tracking-[0.35em] text-dark hover:bg-brandDark transition-colors"
-          >
-            <ScissorsIcon className="w-3.5 h-3.5" /> Connexion
-          </motion.button>
-        </form>
-      </motion.div>
-    </div>
-  );
+/* ── Jours ouverts : mer(3) jeu(4) ven(5) sam(6) ── */
+const OPEN = new Set([3, 4, 5, 6]);
+const DAY_SLOTS = [];
+for (let h = 9; h < 19; h++) {
+  if (h === 12) continue;
+  DAY_SLOTS.push(`${String(h).padStart(2,'0')}:00`);
+  DAY_SLOTS.push(`${String(h).padStart(2,'0')}:30`);
 }
 
-/* ─── Helpers date ──────────────────────────────────────────── */
 function dayKey(d) { return d.toISOString().slice(0, 10); }
 function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
 function monday(ref = new Date()) {
@@ -78,342 +24,360 @@ function monday(ref = new Date()) {
   d.setDate(d.getDate() - (dow === 0 ? 6 : dow - 1));
   return d;
 }
-function fmtFR(dateStr, opts) {
+function fmt(dateStr, opts = { weekday:'long', day:'2-digit', month:'long' }) {
   return new Date(dateStr + 'T12:00:00').toLocaleDateString('fr-FR', opts);
 }
 
-const BASE_SLOTS = [];
-for (let h = 9; h < 19; h++) {
-  BASE_SLOTS.push(`${String(h).padStart(2,'0')}:00`);
-  BASE_SLOTS.push(`${String(h).padStart(2,'0')}:30`);
+/* ══════════════ PIN SCREEN ══════════════════════════════════ */
+function PinScreen({ onSuccess }) {
+  const [val, setVal] = useState('');
+  const [err, setErr] = useState(false);
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (val === ADMIN_PWD) {
+      sessionStorage.setItem(AUTH_KEY, '1');
+      onSuccess();
+    } else {
+      setErr(true); setVal('');
+      setTimeout(() => setErr(false), 1400);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+        className="w-full max-w-[380px]">
+
+        {/* Logo */}
+        <div className="flex items-center gap-3 mb-10">
+          <span className="inline-flex h-8 w-8 bg-brand text-dark text-[9px] font-black items-center justify-center">WC</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.45em] text-dark">Wonder Cut</span>
+        </div>
+
+        <h1 className="text-4xl font-black uppercase tracking-[-0.03em] text-dark mb-1">Dashboard</h1>
+        <p className="text-sm text-muted font-medium mb-8">Espace réservé au barbier.</p>
+
+        <form onSubmit={submit} className="space-y-3">
+          <motion.input
+            type="password" value={val}
+            onChange={e => setVal(e.target.value)}
+            placeholder="Mot de passe"
+            autoFocus
+            animate={err ? { x: [0,-8,8,-8,0] } : {}}
+            className={`w-full border-2 bg-creamMid px-5 py-4 text-dark text-sm font-medium outline-none transition-colors placeholder:text-muted/40 ${
+              err ? 'border-red-400' : 'border-beige focus:border-dark'
+            }`}
+          />
+          {err && <p className="text-xs text-red-500 font-medium">Mot de passe incorrect</p>}
+          <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+            className="w-full flex items-center justify-center gap-2 bg-dark py-4 text-[10px] font-black uppercase tracking-[0.4em] text-cream hover:bg-brand hover:text-dark transition-colors">
+            <ScissorsIcon className="w-3.5 h-3.5" /> Connexion
+          </motion.button>
+        </form>
+      </motion.div>
+    </div>
+  );
 }
 
-/* ─── Dashboard ─────────────────────────────────────────────── */
-function Dashboard() {
-  const [weekStart, setWeekStart]       = useState(() => monday());
-  const [appointments, setAppointments] = useState([]);
-  const [blocks, setBlocks]             = useState([]);
-  const [loading, setLoading]           = useState(true);
-  const [view, setView]                 = useState('week');   // 'week' | 'list'
-  const [blockModal, setBlockModal]     = useState(null);     // { date, time }
-  const [detailModal, setDetailModal]   = useState(null);     // appointment
+/* ══════════════ STAT CARD ═══════════════════════════════════ */
+function StatCard({ label, value, sub }) {
+  return (
+    <div className="bg-cream border border-beige p-5 flex flex-col gap-1">
+      <p className="text-[8px] uppercase tracking-[0.5em] text-muted font-bold">{label}</p>
+      <p className="text-3xl font-black text-dark leading-none">{value}</p>
+      {sub && <p className="text-xs text-muted font-medium mt-0.5">{sub}</p>}
+    </div>
+  );
+}
 
-  const weekDays = Array.from({ length: 6 }, (_, i) => addDays(weekStart, i)); // lun–sam
-  const from = dayKey(weekStart);
-  const to   = dayKey(addDays(weekStart, 5));
+/* ══════════════ DASHBOARD ═══════════════════════════════════ */
+function Dashboard() {
+  const [weekStart, setWeekStart] = useState(() => monday());
+  const [appointments, setAppts]  = useState([]);
+  const [blocks, setBlocks]       = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [view, setView]           = useState('list');
+  const [blockModal, setBlockModal]   = useState(null);
+  const [detailModal, setDetailModal] = useState(null);
+
+  /* Only show Wed–Sat (open days) */
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
+    .filter(d => OPEN.has(d.getDay()));
+
+  const from    = dayKey(weekStart);
+  const to      = dayKey(addDays(weekStart, 6));
+  const todayKey = dayKey(new Date());
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [appts, blks] = await Promise.all([
-        fetchAppointments({ from, to }),
-        fetchBlocks({ from, to }),
-      ]);
-      setAppointments(appts);
-      setBlocks(blks);
-    } finally {
-      setLoading(false);
-    }
+      const [a, b] = await Promise.all([fetchAppointments({ from, to }), fetchBlocks({ from, to })]);
+      setAppts(a); setBlocks(b);
+    } finally { setLoading(false); }
   }, [from, to]);
 
   useEffect(() => { load(); }, [load]);
 
-  /* Quick stats */
-  const totalWeek = appointments.length;
-  const todayKey  = dayKey(new Date());
   const todayAppts = appointments.filter(a => a.date === todayKey);
-  const revenue   = appointments.reduce((s, a) => s + (a.service_price ?? 0), 0);
-
-  /* Lookup helpers */
-  const apptAt = (date, time) => appointments.find(a => a.date === date && a.time === time);
-  const isBlocked = (date, time) => blocks.some(b => b.date === date && (b.time === time || !b.time));
-  const isFullDay = (date) => blocks.some(b => b.date === date && !b.time);
-
-  /* Handlers */
-  const handleCellClick = (date, time) => {
-    const appt = apptAt(date, time);
-    if (appt) { setDetailModal(appt); return; }
-    setBlockModal({ date, time });
-  };
+  const revenue    = appointments.reduce((s, a) => s + (a.service_price ?? 0), 0);
+  const apptAt     = (d, t) => appointments.find(a => a.date === d && a.time === t);
+  const isBlocked  = (d, t) => blocks.some(b => b.date === d && (b.time === t || !b.time));
+  const isFullDay  = (d)    => blocks.some(b => b.date === d && !b.time);
 
   const handleBlock = async ({ date, time, fullDay }) => {
     await blockSlot(date, fullDay ? null : time, 'Bloqué');
-    setBlockModal(null);
-    load();
+    setBlockModal(null); load();
   };
-
-  const handleUnblock = async (date, time) => {
-    await unblockSlot(date, time);
-    load();
-  };
-
-  const handleCancel = async (appt) => {
+  const handleUnblock = async (date, time) => { await unblockSlot(date, time); load(); };
+  const handleCancel  = async (appt) => {
     if (!confirm(`Annuler le RDV de ${appt.client_name} ?`)) return;
-    await cancelBooking(appt.id);
-    setDetailModal(null);
-    load();
+    await cancelBooking(appt.id); setDetailModal(null); load();
   };
-
   const handleBlockDay = async (date) => {
-    if (!confirm(`Bloquer toute la journée du ${fmtFR(date, { weekday:'long', day:'2-digit', month:'long' })} ?`)) return;
-    await blockSlot(date, null, 'Journée fermée');
-    load();
+    if (!confirm(`Fermer le ${fmt(date, { weekday:'long', day:'2-digit', month:'long' })} ?`)) return;
+    await blockSlot(date, null, 'Fermé'); load();
   };
 
   return (
-    <div className="min-h-screen bg-cream" style={{ paddingTop: 'var(--navbar-h, 72px)' }}>
+    <div className="min-h-screen bg-creamMid">
 
-      {/* ── Top bar ── */}
-      <div className="bg-dark border-b border-cream/8">
-        <div className="mx-auto max-w-7xl px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4">
+      {/* ── Header ── */}
+      <div className="bg-dark sticky top-0 z-40 border-b border-cream/8">
+        <div className="mx-auto max-w-6xl px-6 sm:px-10 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-8 w-8 items-center justify-center bg-brand text-dark text-[9px] font-black">WC</span>
-            <div>
-              <p className="text-[9px] uppercase tracking-[0.45em] text-cream/30 font-medium">Dashboard</p>
-              <p className="text-sm font-black text-cream">Wonder Cut</p>
-            </div>
+            <span className="inline-flex h-7 w-7 bg-brand text-dark text-[9px] font-black items-center justify-center">WC</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream">Dashboard</span>
           </div>
-          <div className="flex items-center gap-6">
-            {/* Stats */}
-            {[
-              { label: "Aujourd'hui", val: todayAppts.length },
-              { label: 'Cette semaine', val: totalWeek },
-              { label: 'CA estimé', val: `${revenue}€` },
-            ].map(s => (
-              <div key={s.label} className="text-center hidden sm:block">
-                <p className="text-lg font-black text-brand">{s.val}</p>
-                <p className="text-[8px] uppercase tracking-[0.35em] text-cream/30">{s.label}</p>
-              </div>
-            ))}
-            <button
-              onClick={() => { sessionStorage.removeItem(AUTH_KEY); window.location.reload(); }}
-              className="text-[9px] uppercase tracking-[0.35em] text-cream/30 hover:text-cream font-bold transition-colors"
-            >
-              Déconnexion
-            </button>
-          </div>
+          <button onClick={() => { sessionStorage.removeItem(AUTH_KEY); window.location.reload(); }}
+            className="text-[9px] uppercase tracking-[0.4em] text-cream/30 hover:text-cream font-bold transition-colors">
+            Déconnexion
+          </button>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 space-y-5">
 
-        {/* ── Week nav + view toggle ── */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-3">
+        {!SUPABASE_READY && (
+          <div className="border border-amber-200 bg-amber-50 px-5 py-3 text-sm text-amber-700 font-medium">
+            ⚠️ Mode démo — configure Supabase dans .env pour voir les vrais RDV.
+          </div>
+        )}
+
+        {/* ── Stats ── */}
+        <div className="grid grid-cols-3 gap-3">
+          <StatCard label="Aujourd'hui"   value={todayAppts.length} sub={`RDV${todayAppts.length > 1 ? 's' : ''} en cours`} />
+          <StatCard label="Cette semaine" value={appointments.length} sub="RDV confirmés" />
+          <StatCard label="CA semaine"    value={`${revenue}€`} sub="estimé" />
+        </div>
+
+        {/* ── Nav semaine + toggle vue ── */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
             <button onClick={() => setWeekStart(w => addDays(w, -7))}
-              className="border border-beige px-3 py-2 text-sm font-bold text-dark hover:border-dark transition-colors">←</button>
-            <span className="text-sm font-black text-dark">
-              Semaine du {fmtFR(from, { day:'2-digit', month:'short' })} — {fmtFR(to, { day:'2-digit', month:'short', year:'numeric' })}
+              className="h-9 w-9 border border-beige bg-cream text-dark font-bold text-sm hover:border-dark transition-colors flex items-center justify-center">
+              ←
+            </button>
+            <span className="text-sm font-black text-dark px-2">
+              {fmt(from, { day:'2-digit', month:'short' })} — {fmt(to, { day:'2-digit', month:'short', year:'numeric' })}
             </span>
             <button onClick={() => setWeekStart(w => addDays(w, 7))}
-              className="border border-beige px-3 py-2 text-sm font-bold text-dark hover:border-dark transition-colors">→</button>
+              className="h-9 w-9 border border-beige bg-cream text-dark font-bold text-sm hover:border-dark transition-colors flex items-center justify-center">
+              →
+            </button>
             <button onClick={() => setWeekStart(monday())}
-              className="border border-brand px-3 py-2 text-[9px] uppercase tracking-[0.3em] font-black text-brand hover:bg-brand hover:text-dark transition-all">
+              className="h-9 px-3 border border-brand text-brand text-[9px] font-black uppercase tracking-[0.3em] hover:bg-brand hover:text-dark transition-all">
               Auj.
             </button>
           </div>
-          <div className="flex border border-beige overflow-hidden">
-            {['week','list'].map(v => (
+
+          <div className="flex border border-beige overflow-hidden bg-cream">
+            {[['list','Liste'],['week','Calendrier']].map(([v, l]) => (
               <button key={v} onClick={() => setView(v)}
                 className={`px-4 py-2 text-[9px] uppercase tracking-[0.35em] font-black transition-colors ${
                   view === v ? 'bg-dark text-cream' : 'text-muted hover:text-dark'
-                }`}
-              >
-                {v === 'week' ? 'Calendrier' : 'Liste'}
+                }`}>{l}
               </button>
             ))}
           </div>
         </div>
 
-        {!SUPABASE_READY && (
-          <div className="mb-5 border border-amber-200 bg-amber-50 px-5 py-3 flex items-center gap-3">
-            <span className="text-amber-500">⚠️</span>
-            <p className="text-sm text-amber-700 font-medium">
-              Mode démo — Supabase non configuré. Configure <code className="bg-amber-100 px-1">.env</code> pour activer les vraies données.
-            </p>
-          </div>
-        )}
-
+        {/* ── Contenu ── */}
         {loading ? (
-          <div className="flex justify-center py-20">
+          <div className="bg-cream border border-beige p-16 flex justify-center">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
-              <ScissorsIcon className="w-8 h-8 text-brand" />
+              <ScissorsIcon className="w-7 h-7 text-brand" />
             </motion.div>
           </div>
-        ) : view === 'week' ? (
-          /* ══════ VUE CALENDRIER ══════ */
-          <div className="overflow-x-auto">
-            <div className="min-w-[700px]">
-              {/* Day headers */}
-              <div className="grid grid-cols-7 gap-px bg-beige mb-px">
-                {weekDays.map(d => {
-                  const k = dayKey(d);
-                  const isToday = k === todayKey;
-                  const full = isFullDay(k);
-                  const cnt = appointments.filter(a => a.date === k).length;
-                  return (
-                    <div key={k} className={`px-3 py-3 text-center ${isToday ? 'bg-dark' : 'bg-creamMid'}`}>
-                      <p className={`text-[8px] uppercase tracking-[0.4em] font-bold ${isToday ? 'text-brand' : 'text-muted'}`}>
-                        {fmtFR(k, { weekday:'short' })}
+        ) : view === 'list' ? (
+
+          /* ══ VUE LISTE ══ */
+          <div className="space-y-3">
+            {weekDays.map(d => {
+              const k       = dayKey(d);
+              const dayAppts = appointments.filter(a => a.date === k).sort((a,b) => a.time.localeCompare(b.time));
+              const isToday  = k === todayKey;
+              const full     = isFullDay(k);
+
+              return (
+                <div key={k} className="bg-cream border border-beige overflow-hidden">
+                  {/* Day header */}
+                  <div className={`px-6 py-4 flex items-center justify-between ${isToday ? 'bg-dark' : 'bg-creamMid'}`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`h-2 w-2 rounded-full ${dayAppts.length > 0 ? 'bg-brand' : 'bg-beige'}`} />
+                      <p className={`text-sm font-black uppercase tracking-[-0.01em] ${isToday ? 'text-cream' : 'text-dark'}`}>
+                        {fmt(k, { weekday:'long', day:'2-digit', month:'long' })}
                       </p>
-                      <p className={`text-xl font-black ${isToday ? 'text-cream' : 'text-dark'}`}>
-                        {d.getDate()}
-                      </p>
-                      {cnt > 0 && <p className="text-[8px] text-brand font-bold">{cnt} RDV</p>}
-                      {full && <p className="text-[8px] text-red-400 font-bold">Fermé</p>}
-                      <button
-                        onClick={() => handleBlockDay(k)}
-                        className="mt-1 text-[7px] uppercase tracking-wider text-muted/50 hover:text-red-400 transition-colors"
-                      >
-                        {full ? '+ Rouvrir' : '✕ Fermer'}
+                      {isToday && <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-brand">Aujourd'hui</span>}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {dayAppts.length > 0 && (
+                        <span className={`text-[9px] font-bold ${isToday ? 'text-cream/50' : 'text-muted'}`}>
+                          {dayAppts.length} RDV · {dayAppts.reduce((s,a)=>s+(a.service_price??0),0)}€
+                        </span>
+                      )}
+                      <button onClick={() => handleBlockDay(k)}
+                        className={`text-[8px] uppercase tracking-[0.3em] font-bold transition-colors ${
+                          full ? 'text-red-400 hover:text-red-600' : 'text-muted/50 hover:text-red-400'
+                        }`}>
+                        {full ? 'Rouvrir' : 'Fermer'}
                       </button>
                     </div>
-                  );
-                })}
-                <div className="bg-beige/50 px-3 py-3 text-center">
-                  <p className="text-[8px] uppercase tracking-[0.4em] font-bold text-muted/40">DIM</p>
-                  <p className="text-xl font-black text-muted/25">
-                    {addDays(weekStart, 6).getDate()}
-                  </p>
-                  <p className="text-[8px] text-muted/30 font-bold">Fermé</p>
-                </div>
-              </div>
-
-              {/* Time slots rows */}
-              <div className="grid gap-px bg-beige/40">
-                {BASE_SLOTS.map(slot => (
-                  <div key={slot} className="grid grid-cols-7 gap-px bg-beige/40">
-                    {weekDays.map(d => {
-                      const k = dayKey(d);
-                      const appt = apptAt(k, slot);
-                      const blocked = isBlocked(k, slot);
-                      const full = isFullDay(k);
-                      const isToday = k === todayKey;
-
-                      return (
-                        <div
-                          key={k}
-                          onClick={() => !full && handleCellClick(k, slot)}
-                          className={`relative min-h-[52px] flex flex-col justify-center px-2 py-1.5 transition-all duration-150 ${
-                            full     ? 'bg-beige/30 cursor-not-allowed'
-                            : appt   ? 'bg-brand/15 border-l-2 border-brand cursor-pointer hover:bg-brand/25'
-                            : blocked? 'bg-red-50 cursor-pointer'
-                            : isToday? 'bg-cream cursor-pointer hover:bg-brand/8'
-                            :          'bg-cream cursor-pointer hover:bg-creamMid'
-                          }`}
-                        >
-                          <p className={`text-[9px] font-bold ${appt ? 'text-brand' : blocked ? 'text-red-400' : 'text-muted/40'}`}>
-                            {slot}
-                          </p>
-                          {appt && (
-                            <p className="text-[9px] font-black text-dark truncate">
-                              {appt.client_name.split(' ')[0]} · {appt.service_title.split(' ')[0]}
-                            </p>
-                          )}
-                          {blocked && !appt && (
-                            <p className="text-[8px] text-red-400/60 font-bold">Bloqué</p>
-                          )}
-                          {blocked && !appt && (
-                            <button
-                              onClick={e => { e.stopPropagation(); handleUnblock(k, slot); }}
-                              className="absolute top-1 right-1 text-[7px] text-red-300 hover:text-red-500 font-black"
-                            >✕</button>
-                          )}
-                        </div>
-                      );
-                    })}
-                    {/* Sunday — always closed */}
-                    <div className="bg-beige/15 min-h-[52px]" />
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* ══════ VUE LISTE ══════ */
-          <div className="space-y-4">
-            {weekDays.map(d => {
-              const k = dayKey(d);
-              const dayAppts = appointments.filter(a => a.date === k);
-              return (
-                <div key={k} className="border border-beige overflow-hidden">
-                  <div className={`px-6 py-4 flex items-center justify-between ${k === todayKey ? 'bg-dark' : 'bg-creamMid'}`}>
-                    <div className="flex items-center gap-3">
-                      <ScissorsIcon className={`w-4 h-4 ${k === todayKey ? 'text-brand' : 'text-brand/50'}`} />
-                      <p className={`text-sm font-black uppercase ${k === todayKey ? 'text-cream' : 'text-dark'}`}>
-                        {fmtFR(k, { weekday:'long', day:'2-digit', month:'long' })}
-                      </p>
-                    </div>
-                    <span className={`text-[9px] font-bold uppercase tracking-[0.3em] ${dayAppts.length ? 'text-brand' : 'text-muted/40'}`}>
-                      {dayAppts.length ? `${dayAppts.length} RDV` : 'Libre'}
-                    </span>
-                  </div>
+
+                  {/* Appointments */}
                   {dayAppts.length > 0 ? (
-                    <div className="divide-y divide-beige/60 bg-cream">
+                    <div className="divide-y divide-beige/40">
                       {dayAppts.map(a => (
-                        <div key={a.id} className="px-6 py-4 flex items-center justify-between gap-4 group hover:bg-creamMid transition-colors">
+                        <motion.div key={a.id} whileHover={{ backgroundColor: 'rgba(240,233,214,0.6)' }}
+                          className="px-6 py-4 flex items-center justify-between gap-4 cursor-pointer transition-colors"
+                          onClick={() => setDetailModal(a)}>
                           <div className="flex items-center gap-4">
-                            <span className="text-lg font-black text-brand w-14 shrink-0">{a.time}</span>
+                            <span className="text-xl font-black text-brand w-16 shrink-0">{a.time}</span>
                             <div>
                               <p className="text-sm font-black text-dark">{a.client_name}</p>
-                              <p className="text-xs text-muted font-medium">{a.service_title} · {a.service_price_label}</p>
+                              <p className="text-xs text-muted font-medium">{a.service_title}</p>
                             </div>
                           </div>
-                          <div className="flex flex-wrap items-center gap-2 shrink-0">
-                            <a href={`tel:${a.client_phone}`}
-                              className="text-[9px] font-bold text-brand/60 hover:text-brand transition-colors border border-brand/20 px-2.5 sm:px-3 py-1.5 hover:border-brand whitespace-nowrap">
-                              📞 <span className="hidden sm:inline">{a.client_phone}</span><span className="sm:hidden">Appeler</span>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <span className="text-sm font-black text-brand">{a.service_price_label}</span>
+                            <a href={`tel:${a.client_phone}`} onClick={e => e.stopPropagation()}
+                              className="text-[9px] border border-beige px-3 py-1.5 text-muted hover:border-dark hover:text-dark transition-colors font-bold">
+                              Appeler
                             </a>
-                            <button
-                              onClick={() => handleCancel(a)}
-                              className="text-[9px] font-bold text-red-400/50 hover:text-red-500 transition-colors border border-red-200/30 px-2.5 sm:px-3 py-1.5 hover:border-red-300 whitespace-nowrap"
-                            >
-                              Annuler
-                            </button>
                           </div>
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-cream px-6 py-3 text-sm text-muted/40 font-medium">Aucun rendez-vous</div>
+                    <div className="px-6 py-5 text-sm text-muted/40 font-medium italic">
+                      {full ? 'Journée fermée' : 'Aucun rendez-vous'}
+                    </div>
                   )}
                 </div>
               );
             })}
           </div>
+
+        ) : (
+
+          /* ══ VUE CALENDRIER ══ */
+          <div className="bg-cream border border-beige overflow-hidden">
+            <div className="overflow-x-auto">
+              <div className="min-w-[600px]">
+
+                {/* Day headers */}
+                <div className={`grid gap-px bg-beige`} style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}>
+                  <div className="bg-creamMid py-3" />
+                  {weekDays.map(d => {
+                    const k = dayKey(d);
+                    const isToday = k === todayKey;
+                    const cnt = appointments.filter(a => a.date === k).length;
+                    return (
+                      <div key={k} className={`px-3 py-3 text-center ${isToday ? 'bg-dark' : 'bg-creamMid'}`}>
+                        <p className={`text-[8px] uppercase tracking-[0.4em] font-bold ${isToday ? 'text-brand' : 'text-muted'}`}>
+                          {fmt(k, { weekday:'short' })}
+                        </p>
+                        <p className={`text-xl font-black ${isToday ? 'text-cream' : 'text-dark'}`}>{d.getDate()}</p>
+                        {cnt > 0 && <p className="text-[7px] text-brand font-black mt-0.5">{cnt} RDV</p>}
+                        <button onClick={() => handleBlockDay(k)}
+                          className="mt-1 text-[7px] text-muted/40 hover:text-red-400 transition-colors">
+                          {isFullDay(k) ? '+ Ouvrir' : '✕ Fermer'}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Time rows */}
+                <div className="divide-y divide-beige/40">
+                  {DAY_SLOTS.map(slot => (
+                    <div key={slot} className={`grid gap-px bg-beige/30`} style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}>
+                      <div className="bg-cream py-3 px-3 flex items-center">
+                        <span className="text-[9px] font-bold text-muted/50">{slot}</span>
+                      </div>
+                      {weekDays.map(d => {
+                        const k = dayKey(d);
+                        const appt    = apptAt(k, slot);
+                        const blocked = isBlocked(k, slot);
+                        const full    = isFullDay(k);
+                        return (
+                          <div key={k} onClick={() => !full && !appt && setBlockModal({ date: k, time: slot })}
+                            className={`relative min-h-[44px] px-2 py-1.5 flex flex-col justify-center transition-colors ${
+                              full     ? 'bg-beige/20 cursor-not-allowed'
+                              : appt   ? 'bg-brand/12 border-l-2 border-brand cursor-pointer hover:bg-brand/20'
+                              : blocked? 'bg-red-50 cursor-pointer'
+                              :          'bg-cream cursor-pointer hover:bg-creamMid'
+                            }`}>
+                            {appt && (
+                              <div onClick={e => { e.stopPropagation(); setDetailModal(appt); }}>
+                                <p className="text-[9px] font-black text-dark truncate">{appt.client_name.split(' ')[0]}</p>
+                                <p className="text-[7px] text-muted truncate">{appt.service_title.split(' ')[0]}</p>
+                              </div>
+                            )}
+                            {blocked && !appt && (
+                              <div className="flex items-center justify-between">
+                                <span className="text-[8px] text-red-400 font-bold">Bloqué</span>
+                                <button onClick={e => { e.stopPropagation(); handleUnblock(k, slot); }}
+                                  className="text-[8px] text-red-300 hover:text-red-500">✕</button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 
-      {/* ══════ MODAL — Bloquer un créneau ══════ */}
+      {/* ══ MODAL — Bloquer ══ */}
       <AnimatePresence>
         {blockModal && (
-          <motion.div
-            className="fixed inset-0 bg-dark/80 backdrop-blur-sm z-50 flex items-center justify-center px-6"
+          <motion.div className="fixed inset-0 bg-dark/60 backdrop-blur-sm z-50 flex items-center justify-center px-6"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={() => setBlockModal(null)}
-          >
-            <motion.div
-              className="bg-cream w-full max-w-sm p-8"
-              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={e => e.stopPropagation()}
-            >
-              <p className="text-[9px] uppercase tracking-[0.5em] text-brand font-bold mb-2">Bloquer</p>
-              <h3 className="text-xl font-black text-dark mb-1">
-                {fmtFR(blockModal.date, { weekday:'long', day:'2-digit', month:'long' })}
-              </h3>
-              <p className="text-2xl font-black text-brand mb-6">{blockModal.time}</p>
-              <div className="space-y-3">
-                <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                  onClick={() => handleBlock({ date: blockModal.date, time: blockModal.time, fullDay: false })}
+            onClick={() => setBlockModal(null)}>
+            <motion.div className="bg-cream w-full max-w-sm p-8 space-y-4"
+              initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }}
+              onClick={e => e.stopPropagation()}>
+              <div>
+                <p className="text-[8px] uppercase tracking-[0.5em] text-brand font-bold mb-1">Bloquer</p>
+                <p className="text-lg font-black text-dark">{fmt(blockModal.date)}</p>
+                <p className="text-2xl font-black text-brand">{blockModal.time}</p>
+              </div>
+              <DiamondDivider className="text-dark" />
+              <div className="space-y-2">
+                <button onClick={() => handleBlock({ date: blockModal.date, time: blockModal.time, fullDay: false })}
                   className="w-full bg-dark text-cream py-3.5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-brand hover:text-dark transition-colors">
-                  Bloquer ce créneau ({blockModal.time})
-                </motion.button>
-                <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                  onClick={() => handleBlock({ date: blockModal.date, time: null, fullDay: true })}
+                  Bloquer {blockModal.time}
+                </button>
+                <button onClick={() => handleBlock({ date: blockModal.date, fullDay: true })}
                   className="w-full border border-dark text-dark py-3.5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-dark hover:text-cream transition-colors">
                   Bloquer toute la journée
-                </motion.button>
+                </button>
                 <button onClick={() => setBlockModal(null)}
                   className="w-full text-muted text-[9px] uppercase tracking-[0.35em] font-bold py-2 hover:text-dark transition-colors">
                   Annuler
@@ -424,43 +388,39 @@ function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* ══════ MODAL — Détail RDV ══════ */}
+      {/* ══ MODAL — Détail RDV ══ */}
       <AnimatePresence>
         {detailModal && (
-          <motion.div
-            className="fixed inset-0 bg-dark/80 backdrop-blur-sm z-50 flex items-center justify-center px-6"
+          <motion.div className="fixed inset-0 bg-dark/60 backdrop-blur-sm z-50 flex items-center justify-center px-6"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={() => setDetailModal(null)}
-          >
-            <motion.div
-              className="bg-cream w-full max-w-sm p-8"
-              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={e => e.stopPropagation()}
-            >
-              <p className="text-[9px] uppercase tracking-[0.5em] text-brand font-bold mb-4">Rendez-vous</p>
-              <DiamondDivider className="text-dark mb-5" />
-              {[
-                { label: 'Client',      val: detailModal.client_name },
-                { label: 'Téléphone',   val: detailModal.client_phone },
-                { label: 'Prestation',  val: detailModal.service_title },
-                { label: 'Tarif',       val: detailModal.service_price_label },
-                { label: 'Date',        val: fmtFR(detailModal.date, { weekday:'long', day:'2-digit', month:'long' }) },
-                { label: 'Horaire',     val: detailModal.time },
-                { label: 'N°',          val: detailModal.confirmation_number },
-              ].map(r => (
-                <div key={r.label} className="flex justify-between gap-3 py-2 border-b border-beige/50 last:border-0">
-                  <span className="text-[9px] uppercase tracking-[0.35em] text-muted font-bold">{r.label}</span>
-                  <span className="text-sm font-bold text-dark text-right capitalize">{r.val}</span>
-                </div>
-              ))}
-              <div className="mt-6 grid grid-cols-2 gap-3">
+            onClick={() => setDetailModal(null)}>
+            <motion.div className="bg-cream w-full max-w-sm p-8"
+              initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }}
+              onClick={e => e.stopPropagation()}>
+              <p className="text-[8px] uppercase tracking-[0.5em] text-brand font-bold mb-5">Rendez-vous</p>
+              <div className="space-y-3 mb-6">
+                {[
+                  { l: 'Client',      v: detailModal.client_name },
+                  { l: 'Téléphone',   v: detailModal.client_phone },
+                  { l: 'Prestation',  v: detailModal.service_title },
+                  { l: 'Tarif',       v: detailModal.service_price_label },
+                  { l: 'Date',        v: fmt(detailModal.date) },
+                  { l: 'Horaire',     v: detailModal.time },
+                  { l: 'Réf.',        v: detailModal.confirmation_number },
+                ].map(r => (
+                  <div key={r.l} className="flex justify-between gap-4 border-b border-beige/50 pb-3 last:border-0 last:pb-0">
+                    <span className="text-[8px] uppercase tracking-[0.4em] text-muted font-bold shrink-0">{r.l}</span>
+                    <span className="text-sm font-bold text-dark text-right capitalize">{r.v}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-2">
                 <a href={`tel:${detailModal.client_phone}`}
-                  className="flex items-center justify-center border border-brand px-4 py-3 text-[10px] font-black uppercase tracking-[0.3em] text-brand hover:bg-brand hover:text-dark transition-all">
+                  className="flex items-center justify-center border border-brand text-brand py-3 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-brand hover:text-dark transition-all">
                   Appeler
                 </a>
                 <button onClick={() => handleCancel(detailModal)}
-                  className="border border-red-300 px-4 py-3 text-[10px] font-black uppercase tracking-[0.3em] text-red-500 hover:bg-red-500 hover:text-white transition-all">
+                  className="border border-red-300 text-red-500 py-3 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-red-500 hover:text-white transition-all">
                   Annuler RDV
                 </button>
               </div>
@@ -476,12 +436,9 @@ function Dashboard() {
   );
 }
 
-/* ─── Page Admin (auth guard) ───────────────────────────────── */
+/* ══════════════ EXPORT ══════════════════════════════════════ */
 export default function Admin() {
-  const [authed, setAuthed] = useState(
-    () => sessionStorage.getItem(AUTH_KEY) === '1'
-  );
-
+  const [authed, setAuthed] = useState(() => sessionStorage.getItem(AUTH_KEY) === '1');
   if (!authed) return <PinScreen onSuccess={() => setAuthed(true)} />;
   return <Dashboard />;
 }
