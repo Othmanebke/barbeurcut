@@ -45,20 +45,20 @@ export async function createBooking({ service, date, time, clientName, clientPho
 
   if (insertError) throw new Error(insertError.message);
 
-  /* 3. Déclencher l'Edge Function SMS (non-bloquant) */
-  supabase.functions
-    .invoke('send-booking-sms', {
-      body: {
-        clientPhone,
-        clientName,
-        serviceTitle:      service.title,
-        servicePriceLabel: service.priceLabel,
-        date,
-        time,
-        confirmationNumber,
-      },
-    })
-    .catch(err => console.warn('SMS edge function error (non-critical):', err));
+  /* 3. Envoyer les SMS via Vercel API route (non-bloquant) */
+  fetch('/api/send-sms', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      clientPhone,
+      clientName,
+      serviceTitle:      service.title,
+      servicePriceLabel: service.priceLabel,
+      date,
+      time,
+      confirmationNumber,
+    }),
+  }).catch(err => console.warn('SMS non-critical:', err));
 
   return confirmationNumber;
 }
