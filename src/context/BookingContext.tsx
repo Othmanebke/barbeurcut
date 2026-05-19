@@ -3,11 +3,20 @@ import type { ServiceItem } from '../data/services';
 import { z } from 'zod';
 import { createBooking } from '../api/booking';
 
+/* Normalise le numéro avant validation : +336... → 06..., espaces supprimés */
+function normalizePhone(phone: string): string {
+  let n = phone.replace(/[\s.\-]/g, '');
+  if (n.startsWith('+33')) n = '0' + n.slice(3);
+  return n;
+}
+
 export const bookingSchema = z.object({
-  name:  z.string().min(2, { message: 'Le nom doit contenir au moins 2 caractères' }),
-  phone: z.string().regex(/^0[67]\d{8}$/, {
-    message: 'Téléphone invalide — doit commencer par 06 ou 07',
-  }),
+  name: z.string().min(2, { message: 'Le nom doit contenir au moins 2 caractères' }),
+  phone: z.string()
+    .transform(normalizePhone)
+    .refine(n => /^0[67]\d{8}$/.test(n), {
+      message: 'Téléphone invalide — ex : 06 12 34 56 78',
+    }),
 });
 
 export type ClientInfo = z.infer<typeof bookingSchema>;
