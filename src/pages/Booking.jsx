@@ -378,8 +378,9 @@ export default function Booking() {
                   {/* ── Form ── */}
                   <div className="space-y-5">
                     {[
-                      { field: 'name',  type: 'text', label: 'Prénom & Nom',         placeholder: 'Jean Dupont',    val: state.clientInfo.name  },
-                      { field: 'phone', type: 'tel',  label: 'Téléphone (06 ou 07)', placeholder: '06 12 34 56 78', val: state.clientInfo.phone },
+                      { field: 'name',  type: 'text',  label: 'Prénom & Nom',         placeholder: 'Jean Dupont',       val: state.clientInfo.name  },
+                      { field: 'phone', type: 'tel',   label: 'Téléphone (06 ou 07)', placeholder: '06 12 34 56 78',    val: state.clientInfo.phone },
+                      { field: 'email', type: 'email', label: 'Email',                placeholder: 'jean@example.com',  val: state.clientInfo.email },
                     ].map(({ field, type, label, placeholder, val }) => (
                       <label key={field} className="block">
                         <span className="block text-[9px] uppercase tracking-[0.45em] text-dark font-black mb-2">{label}</span>
@@ -389,6 +390,7 @@ export default function Booking() {
                           onChange={(e) => setClientInfo({
                             name:  field === 'name'  ? e.target.value : state.clientInfo.name,
                             phone: field === 'phone' ? e.target.value : state.clientInfo.phone,
+                            email: field === 'email' ? e.target.value : state.clientInfo.email,
                           })}
                           placeholder={placeholder}
                           className="w-full border-2 border-beige bg-creamMid px-5 py-4 text-dark text-sm font-medium placeholder:text-muted/40 outline-none transition-colors focus:border-brand"

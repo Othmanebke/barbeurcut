@@ -17,6 +17,7 @@ export const bookingSchema = z.object({
     .refine(n => /^0[67]\d{8}$/.test(n), {
       message: 'Téléphone invalide — ex : 06 12 34 56 78',
     }),
+  email: z.string().email({ message: 'Email invalide' }),
 });
 
 export type ClientInfo = z.infer<typeof bookingSchema>;
@@ -47,7 +48,7 @@ const defaultState: BookingState = {
   location: 'Wonder Cut',
   date: '',
   time: '',
-  clientInfo: { name: '', phone: '' },
+  clientInfo: { name: '', phone: '', email: '' },
   confirmationNumber: '',
 };
 
@@ -73,11 +74,12 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
       const confirmationNumber = await createBooking({
-        service:     state.selectedService,
-        date:        state.date,
-        time:        state.time,
-        clientName:  state.clientInfo.name,
-        clientPhone: state.clientInfo.phone,
+        service:      state.selectedService,
+        date:         state.date,
+        time:         state.time,
+        clientName:   state.clientInfo.name,
+        clientPhone:  state.clientInfo.phone,
+        clientEmail:  state.clientInfo.email,
       });
 
       setState(p => ({ ...p, confirmationNumber }));

@@ -5,7 +5,7 @@ function generateConfirmationNumber() {
 }
 
 /* ── Création d'un RDV (Supabase + SMS) ─────────────────────── */
-export async function createBooking({ service, date, time, clientName, clientPhone }) {
+export async function createBooking({ service, date, time, clientName, clientPhone, clientEmail }) {
   const confirmationNumber = generateConfirmationNumber();
 
   if (!SUPABASE_READY) {
@@ -51,6 +51,7 @@ export async function createBooking({ service, date, time, clientName, clientPho
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       clientPhone,
+      clientEmail,
       clientName,
       serviceTitle:      service.title,
       servicePriceLabel: service.priceLabel,
@@ -58,7 +59,7 @@ export async function createBooking({ service, date, time, clientName, clientPho
       time,
       confirmationNumber,
     }),
-  }).catch(err => console.warn('SMS non-critical:', err));
+  }).catch(err => console.warn('Notification non-critical:', err));
 
   return confirmationNumber;
 }
