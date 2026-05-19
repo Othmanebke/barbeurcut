@@ -32,7 +32,7 @@ const PILLARS = [
 
 const CHECKLIST = [
   'Réservation en 3 clics',
-  'Adresse exacte envoyée par SMS la veille',
+  'Confirmation de réservation par email',
   'Barbier certifié CAP Coiffure',
   'Tarifs transparents, sans surprise',
 ];

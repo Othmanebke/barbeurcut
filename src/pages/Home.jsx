@@ -96,7 +96,7 @@ const SERVICES = [
 const STEPS = [
   { num: '01', title: 'Choisis ta coupe',    desc: 'Parcours nos prestations et sélectionne le service qui te correspond.', Icon: ScissorsIcon },
   { num: '02', title: 'Réserve ton créneau', desc: 'Choisis une date et un horaire en trois clics, sans attente.',          Icon: CombIcon     },
-  { num: '03', title: "Reçois l'adresse",    desc: "Tu reçois l'adresse exacte du drop par SMS avant ton créneau.",         Icon: BrushIcon    },
+  { num: '03', title: 'Reçois la confirmation', desc: "Un email de confirmation avec tous les détails t'est envoyé immédiatement.", Icon: BrushIcon },
 ];
 
 const GALLERY = [
@@ -150,7 +150,7 @@ export default function Home() {
               </div>
 
               <motion.p variants={fadeUp} className="max-w-lg text-sm sm:text-base leading-7 sm:leading-8 text-cream/65 font-medium">
-                L'art de la coupe sans compromis. Réserve ton créneau en trois clics et reçois l'adresse exacte du drop par message.
+                L'art de la coupe sans compromis. Réserve ton créneau en trois clics et reçois ta confirmation par email en quelques secondes.
               </motion.p>
 
               <motion.div variants={fadeUp} className="mt-8 sm:mt-12 flex flex-wrap gap-3 sm:gap-4">
@@ -250,7 +250,7 @@ export default function Home() {
                 Comment ça marche
               </RevealText>
               <motion.p variants={fadeUp} className="mt-4 sm:mt-5 max-w-md mx-auto text-sm leading-7 sm:leading-8 text-muted font-medium">
-                Réserve ton créneau en trois clics et reçois l'adresse exacte du drop par message.
+                Réserve ton créneau en trois clics et reçois ta confirmation par email en quelques secondes.
               </motion.p>
             </motion.div>
 

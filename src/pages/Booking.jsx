@@ -408,7 +408,7 @@ export default function Booking() {
                     )}
 
                     <p className="text-xs text-muted font-medium leading-5">
-                      📍 L'adresse exacte te sera envoyée par SMS la veille de ton rendez-vous.
+                      📧 Un email de confirmation te sera envoyé après la réservation.
                     </p>
                   </div>
 
@@ -454,7 +454,7 @@ export default function Booking() {
                       }
                     </motion.button>
 
-                    <p className="text-[9px] text-cream/25 font-medium text-center">Confirmation instantanée par SMS</p>
+                    <p className="text-[9px] text-cream/25 font-medium text-center">Confirmation par email après réservation</p>
                   </div>
                 </div>
               </div>

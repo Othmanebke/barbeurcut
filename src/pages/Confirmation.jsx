@@ -57,7 +57,7 @@ export default function Confirmation() {
             </h1>
             <p className="mt-4 max-w-xl text-base leading-8 text-dark/62 font-medium">
               {ok
-                ? 'Votre créneau est bien enregistré. Vous recevrez un SMS avec toutes les informations pratiques.'
+                ? 'Votre créneau est bien enregistré. Vous recevrez un email de confirmation avec toutes les informations.'
                 : 'Merci pour votre demande. Le résumé ci-dessous confirme votre réservation.'}
             </p>
           </div>
@@ -89,7 +89,7 @@ export default function Confirmation() {
             <p className="text-[9px] uppercase tracking-[0.45em] text-muted font-bold mb-6">Information importante</p>
             <div className="border-l-2 border-brand pl-5 mb-6">
               <p className="text-sm leading-7 text-dark/68 font-medium">
-                L'adresse exacte du lieu de rendez-vous vous sera envoyée par SMS quelques heures avant votre créneau.
+                Un email de confirmation vient de vous être envoyé avec le récapitulatif de votre réservation.
               </p>
             </div>
             <p className="text-sm leading-7 text-muted font-medium">

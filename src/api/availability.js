@@ -4,7 +4,7 @@ import { supabase, SUPABASE_READY } from '../lib/supabase';
 export const SALON = {
   name:        'Wonder Cut',
   address:     '1 Rue de la Madeleine, 77170 Brie-Comte-Robert',
-  description: 'Barbier certifié CAP Coiffure. Ouvert mer–sam, 9h–12h et 13h–19h. Réservation en ligne, confirmation par SMS.',
+  description: 'Barbier certifié CAP Coiffure. Ouvert mer–sam, 9h–12h et 13h–19h. Réservation en ligne, confirmation par email.',
 };
 
 function dayKey(d) { return d.toISOString().slice(0, 10); }
