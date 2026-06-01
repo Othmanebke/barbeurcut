@@ -120,7 +120,6 @@ function Dashboard() {
   useEffect(() => { load(); }, [load]);
 
   const todayAppts = appointments.filter(a => a.date === todayKey);
-  const revenue    = appointments.reduce((s, a) => s + (a.service_price ?? 0), 0);
   const apptAt     = (d, t) => appointments.find(a => a.date === d && a.time === t);
   const isBlocked  = (d, t) => blocks.some(b => b.date === d && (b.time === t || !b.time));
   const isFullDay  = (d)    => blocks.some(b => b.date === d && !b.time);
@@ -165,10 +164,9 @@ function Dashboard() {
         )}
 
         {/* ── Stats ── */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <StatCard label="Aujourd'hui"   value={todayAppts.length} sub={`RDV${todayAppts.length > 1 ? 's' : ''} en cours`} />
           <StatCard label="Cette semaine" value={appointments.length} sub="RDV confirmés" />
-          <StatCard label="CA semaine"    value={`${revenue}€`} sub="estimé" />
         </div>
 
         {/* ── Nav semaine + toggle vue ── */}
@@ -233,7 +231,7 @@ function Dashboard() {
                     <div className="flex items-center gap-3">
                       {dayAppts.length > 0 && (
                         <span className={`text-[9px] font-bold ${isToday ? 'text-cream/50' : 'text-muted'}`}>
-                          {dayAppts.length} RDV · {dayAppts.reduce((s,a)=>s+(a.service_price??0),0)}€
+                          {dayAppts.length} RDV
                         </span>
                       )}
                       <button onClick={() => handleBlockDay(k)}
