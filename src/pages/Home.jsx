@@ -286,7 +286,7 @@ export default function Home() {
                 Précision. Style. Excellence.
               </RevealText>
               <p className="mt-6 sm:mt-8 text-sm sm:text-base leading-7 sm:leading-8 text-dark/65 max-w-sm font-medium">
-                Wonder Cut combine le savoir-faire traditionnel du barbershop avec une esthétique moderne et urbaine.
+                Barbier indépendant, je loue mon siège au 1 Rue de la Madeleine. Tu réserves directement avec moi — pas avec un salon. Savoir-faire traditionnel, style contemporain.
               </p>
               <Link to="/concept" className="mt-8 sm:mt-10 inline-flex items-center gap-3 sm:gap-4 text-[10px] font-black uppercase tracking-[0.35em] text-dark hover:text-brand transition-colors group">
                 Découvrir le concept

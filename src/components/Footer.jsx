@@ -39,6 +39,9 @@ export default function Footer() {
             <p className="text-[9px] uppercase tracking-[0.4em] text-brand/70 font-bold pt-1">
               CAP Coiffure · Depuis 2018
             </p>
+            <p className="text-[9px] text-cream/30 font-medium">
+              Artisan indépendant · Siège loué au 1 Rue de la Madeleine
+            </p>
           </div>
 
           {/* Droite — nav + socials */}

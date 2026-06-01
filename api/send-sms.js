@@ -120,8 +120,8 @@ export default async function handler(req, res) {
 
                 <p style="margin:0 0 32px;font-size:13px;line-height:1.8;
                            color:rgba(255,248,231,0.65);font-weight:500;">
-                  L'adresse exacte de la boutique te sera envoyée<br>
-                  par SMS la <strong style="color:#C68E17;">veille de ton rendez-vous</strong>.
+                  Présente-toi à l'adresse indiquée ci-dessus à l'heure prévue.<br>
+                  <strong style="color:#C68E17;">Wonder Cut est un barbier indépendant</strong> qui loue son siège au 1 Rue de la Madeleine, 77170 Brie-Comte-Robert.
                 </p>
 
                 <!-- CTA -->
@@ -165,20 +165,38 @@ export default async function handler(req, res) {
     }
   }
 
-  /* ── 2. SMS BARBIER (optionnel — nécessite crédits Brevo) ── */
-  if (BARBER_PHONE) {
-    const barberMsg =
-      `💈 Nouveau RDV Wonder Cut\n` +
-      `${clientName} — ${serviceTitle}\n` +
-      `${formattedDate} à ${time}\n` +
-      `📞 ${clientPhone}`;
+  /* ── 2. SMS CLIENT (confirmation, nécessite crédits Brevo ~0,07€/SMS) ── */
+  if (clientPhone) {
+    const clientMsg =
+      `Wonder Cut - RDV confirme !\n` +
+      `${serviceTitle}\n` +
+      `${formattedDate} a ${time}\n` +
+      `1 Rue de la Madeleine, 77170 Brie-Comte-Robert\n` +
+      `Ref: ${confirmationNumber}`;
 
     try {
-      results.sms = await sendSMS(BREVO_KEY, toE164(BARBER_PHONE), barberMsg, SMS_SENDER);
+      results.smsClient = await sendSMS(BREVO_KEY, toE164(clientPhone), clientMsg, SMS_SENDER);
+      console.log('[send-notification] SMS sent to client');
+    } catch (e) {
+      console.warn('[send-notification] client SMS skipped (no credits?):', e.message);
+      results.errors.push({ type: 'smsClient', error: e.message });
+    }
+  }
+
+  /* ── 3. SMS BARBIER (alerte nouveau RDV, nécessite crédits Brevo) ── */
+  if (BARBER_PHONE) {
+    const barberMsg =
+      `Nouveau RDV Wonder Cut\n` +
+      `${clientName} - ${serviceTitle}\n` +
+      `${formattedDate} a ${time}\n` +
+      `Tel: ${clientPhone}`;
+
+    try {
+      results.smsBarber = await sendSMS(BREVO_KEY, toE164(BARBER_PHONE), barberMsg, SMS_SENDER);
       console.log('[send-notification] SMS sent to barber');
     } catch (e) {
-      console.warn('[send-notification] SMS skipped (no credits?):', e.message);
-      results.errors.push({ type: 'sms', error: e.message });
+      console.warn('[send-notification] barber SMS skipped (no credits?):', e.message);
+      results.errors.push({ type: 'smsBarber', error: e.message });
     }
   }
 

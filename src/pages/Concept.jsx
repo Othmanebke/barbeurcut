@@ -25,9 +25,9 @@ function Section({ children, className = '' }) {
 }
 
 const PILLARS = [
-  { id: '01', title: 'Lieux flexibles',    desc: 'Des emplacements soigneusement choisis pour un service premium, toujours proche de toi.',   Icon: ScissorsIcon },
-  { id: '02', title: 'Expérience premium', desc: 'Une atmosphère élégante et un service rapide pensé pour les clients exigeants.',             Icon: CombIcon     },
-  { id: '03', title: 'Style urbain',       desc: 'Des coupes modernes sur mesure, adaptées à ton mode de vie citadin.',                       Icon: BrushIcon    },
+  { id: '01', title: 'Artisan indépendant', desc: 'Wonder Cut c\'est moi — un barbier indépendant. Je loue mon siège au 1 Rue de la Madeleine. Quand tu réserves ici, tu réserves directement avec moi, pas avec un salon.', Icon: ScissorsIcon },
+  { id: '02', title: 'Expérience premium',  desc: 'Une atmosphère élégante et un service rapide pensé pour les clients exigeants.',                                                                                          Icon: CombIcon     },
+  { id: '03', title: 'Style urbain',        desc: 'Des coupes modernes sur mesure, adaptées à ton mode de vie citadin.',                                                                                                     Icon: BrushIcon    },
 ];
 
 const CHECKLIST = [
@@ -73,7 +73,7 @@ export default function Concept() {
             </div>
             <motion.div variants={fadeUp} className="border-l-2 border-brand pl-8">
               <p className="text-base leading-8 text-cream font-medium">
-                Wonder Cut propose une expérience agile, urbaine et élégante. Nous combinons savoir-faire traditionnel et style contemporain pour des prestations sur mesure qui correspondent à ta personnalité.
+                Wonder Cut, c'est un barbier indépendant qui loue son siège au cœur de Brie-Comte-Robert. Savoir-faire traditionnel, style contemporain — chaque coupe est réalisée par le même artisan, pour toi.
               </p>
             </motion.div>
           </motion.div>
@@ -161,10 +161,10 @@ export default function Concept() {
                 <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">La différence</span>
               </div>
               <RevealText tag="h2" className="text-3xl font-black uppercase tracking-[-0.04em] text-cream sm:text-4xl leading-tight">
-                Un modèle pensé pour toi.
+                Indépendant. Libre. À ton service.
               </RevealText>
               <p className="mt-6 text-sm leading-8 text-cream/60 font-medium max-w-sm">
-                Sans salon fixe contraignant, nous apportons le service là où tu en as besoin — avec la qualité d'un barbershop haut de gamme.
+                Je suis barbier indépendant — je loue mon siège au 1 Rue de la Madeleine à Brie-Comte-Robert. Je ne travaille pas pour le salon : je travaille pour toi, à mon compte, avec mon propre savoir-faire.
               </p>
             </motion.div>
 
