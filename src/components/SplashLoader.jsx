@@ -41,6 +41,7 @@ export default function SplashLoader() {
           width: 'clamp(160px, 28vw, 260px)',
           height: 'clamp(160px, 28vw, 260px)',
           objectFit: 'contain',
+          filter: 'sepia(1) saturate(3) hue-rotate(5deg) brightness(0.85)',
         }}
       />
 
