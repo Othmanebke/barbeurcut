@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ScissorsIcon, DiamondDivider } from '../components/BarberIcons';
 import { fetchAppointments, cancelBooking, blockSlot, unblockSlot, fetchBlocks } from '../api/booking';
 import { SUPABASE_READY } from '../lib/supabase';
+import logo from '../assets/logo.png';
 
 const ADMIN_PWD = import.meta.env.VITE_ADMIN_PASSWORD ?? 'wonder2024!';
 const AUTH_KEY  = 'wc_admin_auth';
@@ -51,7 +52,7 @@ function PinScreen({ onSuccess }) {
 
         {/* Logo */}
         <div className="flex items-center gap-3 mb-10">
-          <span className="inline-flex h-8 w-8 bg-brand text-dark text-[9px] font-black items-center justify-center">WC</span>
+          <img src={logo} alt="Wonder Cut" className="h-10 w-10 object-contain" />
           <span className="text-[10px] font-black uppercase tracking-[0.45em] text-dark">Wonder Cut</span>
         </div>
 
@@ -145,7 +146,7 @@ function Dashboard() {
       <div className="bg-dark sticky top-0 z-40 border-b border-cream/8">
         <div className="mx-auto max-w-6xl px-6 sm:px-10 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-7 w-7 bg-brand text-dark text-[9px] font-black items-center justify-center">WC</span>
+            <img src={logo} alt="Wonder Cut" className="h-7 w-7 object-contain" />
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream">Dashboard</span>
           </div>
           <button onClick={() => { sessionStorage.removeItem(AUTH_KEY); window.location.reload(); }}

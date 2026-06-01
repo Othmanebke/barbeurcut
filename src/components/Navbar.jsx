@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScissorsIcon } from './BarberIcons';
+import logo from '../assets/logo.png';
 
 const links = [
   { to: '/', label: 'Accueil', end: true },
@@ -39,9 +40,7 @@ export default function Navbar() {
 
         {/* ── Logo ── */}
         <Link to="/" className="flex items-center gap-3 group">
-          <span className="inline-flex h-8 w-8 items-center justify-center bg-brand text-dark text-[9px] font-black uppercase tracking-widest shrink-0 transition-colors duration-300 group-hover:bg-brandDark">
-            WC
-          </span>
+          <img src={logo} alt="Wonder Cut" className="h-9 w-9 shrink-0 object-contain" />
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream group-hover:text-brand transition-colors duration-300">
             Wonder Cut
           </span>
