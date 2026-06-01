@@ -21,15 +21,15 @@ export default function Marquee({ dark = false, gold = false, reverse = false, s
     : 'border-y-4 border-brand bg-cream';
 
   const textCls = gold
-    ? 'text-dark/15'
+    ? 'text-white/70'
     : dark
-    ? 'text-cream/10'
-    : 'text-dark/12';
+    ? 'text-white/60'
+    : 'text-dark/20';
 
   const dotCls = gold
-    ? 'text-dark/40'
+    ? 'text-white/50'
     : dark
-    ? 'text-brand/60'
+    ? 'text-white/40'
     : 'text-brand';
 
   return (
