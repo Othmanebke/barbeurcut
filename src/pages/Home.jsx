@@ -93,9 +93,9 @@ const SERVICES = [
 ];
 
 const STEPS = [
-  { num: '01', title: 'Choisis ta coupe',       desc: 'Parcours nos prestations et sélectionne le service qui te correspond.', Icon: ScissorsIcon },
-  { num: '02', title: 'Réserve ton créneau',    desc: 'Choisis une date et un horaire en trois clics, sans attente.',          Icon: CombIcon     },
-  { num: '03', title: 'Reçois la confirmation', desc: "Un email de confirmation avec tous les détails t'est envoyé immédiatement.", Icon: BrushIcon },
+  { num: '01', title: 'Choisis ta coupe',       desc: 'Parcours mes prestations et prends ce qui te correspond.', Icon: ScissorsIcon },
+  { num: '02', title: 'Réserve ton créneau',    desc: 'Prends un horaire en quelques clics depuis ton téléphone.', Icon: CombIcon     },
+  { num: '03', title: 'Reçois la confirmation', desc: "Tu reçois un email avec tous les détails de suite.", Icon: BrushIcon },
 ];
 
 
@@ -142,7 +142,7 @@ export default function Home() {
               </div>
 
               <motion.p variants={fadeUp} className="max-w-lg text-sm sm:text-base leading-7 sm:leading-8 text-cream/65 font-medium">
-                L'art de la coupe sans compromis. Réserve ton créneau en trois clics et reçois ta confirmation par email en quelques secondes.
+                Je coupe et je soigne la barbe depuis 2018. Prends ton créneau en ligne et reçois ta confirmation par email tout de suite.
               </motion.p>
 
               <motion.div variants={fadeUp} className="mt-8 sm:mt-12 flex flex-wrap gap-3 sm:gap-4">
@@ -242,7 +242,7 @@ export default function Home() {
                 Comment ça marche
               </RevealText>
               <motion.p variants={fadeUp} className="mt-4 sm:mt-5 max-w-md mx-auto text-sm leading-7 sm:leading-8 text-muted font-medium">
-                Réserve ton créneau en trois clics et reçois ta confirmation par email en quelques secondes.
+                Prends un créneau en quelques clics et tu reçois ta confirmation par email de suite.
               </motion.p>
             </motion.div>
 
@@ -286,7 +286,7 @@ export default function Home() {
                 Précision. Style. Excellence.
               </RevealText>
               <p className="mt-6 sm:mt-8 text-sm sm:text-base leading-7 sm:leading-8 text-dark/65 max-w-sm font-medium">
-                Barbier indépendant, je loue mon siège au 1 Rue de la Madeleine. Tu réserves directement avec moi — pas avec un salon. Savoir-faire traditionnel, style contemporain.
+                Je suis barbier indépendant et je loue mon siège au 1 Rue de la Madeleine. Quand tu réserves ici tu réserves avec moi directement. Je fais ça avec passion depuis 2018.
               </p>
               <Link to="/concept" className="mt-8 sm:mt-10 inline-flex items-center gap-3 sm:gap-4 text-[10px] font-black uppercase tracking-[0.35em] text-dark hover:text-brand transition-colors group">
                 Découvrir le concept
@@ -349,7 +349,7 @@ export default function Home() {
               Réserve ton créneau maintenant.
             </RevealText>
             <motion.p variants={fadeUp} className="mt-4 sm:mt-6 text-sm sm:text-base text-cream/55 max-w-md mx-auto font-medium">
-              Choisis ta prestation, sélectionne un créneau et confirme en quelques secondes.
+              Choisis ta prestation, prends l'horaire qui t'arrange et confirme en quelques secondes.
             </motion.p>
             <motion.div variants={fadeUp} className="mt-10 sm:mt-14 flex flex-wrap gap-3 sm:gap-4 justify-center">
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>

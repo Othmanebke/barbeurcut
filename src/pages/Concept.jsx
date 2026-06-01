@@ -25,16 +25,16 @@ function Section({ children, className = '' }) {
 }
 
 const PILLARS = [
-  { id: '01', title: 'Artisan indépendant', desc: 'Wonder Cut c\'est moi — un barbier indépendant. Je loue mon siège au 1 Rue de la Madeleine. Quand tu réserves ici, tu réserves directement avec moi, pas avec un salon.', Icon: ScissorsIcon },
-  { id: '02', title: 'Expérience premium',  desc: 'Une atmosphère élégante et un service rapide pensé pour les clients exigeants.',                                                                                          Icon: CombIcon     },
-  { id: '03', title: 'Style urbain',        desc: 'Des coupes modernes sur mesure, adaptées à ton mode de vie citadin.',                                                                                                     Icon: BrushIcon    },
+  { id: '01', title: 'Barbier indépendant', desc: 'Je travaille à mon compte. Je loue mon siège au 1 Rue de la Madeleine et quand tu réserves ici tu réserves avec moi directement, pas avec le salon.', Icon: ScissorsIcon },
+  { id: '02', title: 'À ton écoute',        desc: 'Je prends le temps de comprendre ce que tu veux avant de commencer. Pas de précipitation, juste un travail soigné.',                                    Icon: CombIcon     },
+  { id: '03', title: 'Style sur mesure',    desc: 'Je fais des coupes actuelles adaptées à ta tête et ton style. Pas du copier-coller de tendances.',                                                       Icon: BrushIcon    },
 ];
 
 const CHECKLIST = [
-  'Réservation en 3 clics',
-  'Confirmation de réservation par email',
-  'Barbier certifié CAP Coiffure',
-  'Tarifs transparents, sans surprise',
+  'Réservation en ligne en 3 clics',
+  'Confirmation par email immédiate',
+  'Diplômé CAP Coiffure',
+  'Le prix que tu vois c\'est le prix que tu paies',
 ];
 
 export default function Concept() {
@@ -73,7 +73,7 @@ export default function Concept() {
             </div>
             <motion.div variants={fadeUp} className="border-l-2 border-brand pl-8">
               <p className="text-base leading-8 text-cream font-medium">
-                Wonder Cut, c'est un barbier indépendant qui loue son siège au cœur de Brie-Comte-Robert. Savoir-faire traditionnel, style contemporain — chaque coupe est réalisée par le même artisan, pour toi.
+                Je suis barbier indépendant et je loue mon siège au cœur de Brie-Comte-Robert. Je travaille à mon compte depuis 2018 et chaque coupe je la fais avec le même soin.
               </p>
             </motion.div>
           </motion.div>
@@ -161,10 +161,10 @@ export default function Concept() {
                 <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">La différence</span>
               </div>
               <RevealText tag="h2" className="text-3xl font-black uppercase tracking-[-0.04em] text-cream sm:text-4xl leading-tight">
-                Indépendant. Libre. À ton service.
+                Je travaille pour toi, pas pour un patron.
               </RevealText>
               <p className="mt-6 text-sm leading-8 text-cream/60 font-medium max-w-sm">
-                Je suis barbier indépendant — je loue mon siège au 1 Rue de la Madeleine à Brie-Comte-Robert. Je ne travaille pas pour le salon : je travaille pour toi, à mon compte, avec mon propre savoir-faire.
+                Je suis barbier indépendant. Je loue mon siège au 1 Rue de la Madeleine à Brie-Comte-Robert. Je ne travaille pas pour le salon, je travaille pour toi à mon propre compte depuis 2018.
               </p>
             </motion.div>
 

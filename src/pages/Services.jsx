@@ -23,10 +23,10 @@ function Section({ children, className = '' }) {
 }
 
 const ENGAGEMENTS = [
-  { Icon: ScissorsIcon, title: 'Tarifs fixes',        desc: 'Pas de surprise — le prix affiché est le prix payé, toujours.' },
-  { Icon: CombIcon,     title: 'Paiement sur place',  desc: 'Tu règles directement au salon, en espèces ou par carte.' },
-  { Icon: RazorIcon,    title: 'Barbiers certifiés',  desc: 'Chaque artiste est sélectionné pour son savoir-faire et sa précision.' },
-  { Icon: BrushIcon,    title: 'Satisfaction garantie', desc: 'Si la coupe ne te convient pas, on la rectifie — sans frais.' },
+  { Icon: ScissorsIcon, title: 'Tarifs fixes',          desc: 'Le prix que tu vois c\'est le prix que tu paies. Pas de frais cachés.' },
+  { Icon: CombIcon,     title: 'Paiement sur place',    desc: 'Tu règles directement chez moi en espèces ou par carte.' },
+  { Icon: RazorIcon,    title: 'Diplômé CAP Coiffure',  desc: 'Je suis le seul barbier ici. Tu sais exactement avec qui tu viens.' },
+  { Icon: BrushIcon,    title: 'Satisfaction garantie', desc: 'Si la coupe ne te plaît pas je la retravaille sans te refacturer.' },
 ];
 
 export default function Services() {
@@ -67,7 +67,7 @@ export default function Services() {
             </div>
             <motion.div variants={fadeUp} className="border-l-2 border-brand pl-8 flex flex-col gap-5">
               <p className="text-base leading-8 text-cream/65 font-medium">
-                Sélectionne une prestation et démarre ta réservation. Tarifs transparents, affichés avant confirmation.
+                Choisis ta prestation et réserve ton créneau. Tous les prix sont affichés avant que tu confirmes quoi que ce soit.
               </p>
               <div className="flex flex-wrap gap-3">
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
