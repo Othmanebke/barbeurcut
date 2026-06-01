@@ -52,7 +52,9 @@ function PinScreen({ onSuccess }) {
 
         {/* Logo */}
         <div className="flex items-center gap-3 mb-10">
-          <img src={logo} alt="Wonder Cut" className="h-10 w-10 object-contain" />
+          <div className="h-10 w-10 bg-brand flex items-center justify-center shrink-0">
+            <img src={logo} alt="Wonder Cut" className="h-7 w-7 object-contain" style={{ filter: 'invert(1)' }} />
+          </div>
           <span className="text-[10px] font-black uppercase tracking-[0.45em] text-dark">Wonder Cut</span>
         </div>
 
@@ -146,7 +148,9 @@ function Dashboard() {
       <div className="bg-dark sticky top-0 z-40 border-b border-cream/8">
         <div className="mx-auto max-w-6xl px-6 sm:px-10 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="Wonder Cut" className="h-7 w-7 object-contain" />
+            <div className="h-8 w-8 bg-brand flex items-center justify-center shrink-0">
+              <img src={logo} alt="Wonder Cut" className="h-5 w-5 object-contain" style={{ filter: 'invert(1)' }} />
+            </div>
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream">Dashboard</span>
           </div>
           <button onClick={() => { sessionStorage.removeItem(AUTH_KEY); window.location.reload(); }}

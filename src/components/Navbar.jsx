@@ -40,7 +40,9 @@ export default function Navbar() {
 
         {/* ── Logo ── */}
         <Link to="/" className="flex items-center group">
-          <img src={logo} alt="Wonder Cut" className="h-11 w-11 shrink-0 object-contain" />
+          <div className="h-10 w-10 bg-brand flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-brandDark">
+            <img src={logo} alt="Wonder Cut" className="h-7 w-7 object-contain" style={{ filter: 'invert(1)' }} />
+          </div>
         </Link>
 
         {/* ── Desktop nav ── */}
