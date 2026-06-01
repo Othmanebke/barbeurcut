@@ -32,9 +32,10 @@ export default function SplashLoader() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
         style={{
-          width: 'clamp(100px, 18vw, 160px)',
-          height: 'clamp(100px, 18vw, 160px)',
+          width: 'clamp(160px, 28vw, 260px)',
+          height: 'clamp(160px, 28vw, 260px)',
           objectFit: 'contain',
+          filter: 'invert(1)',
         }}
       />
 
