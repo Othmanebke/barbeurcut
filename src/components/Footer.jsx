@@ -15,10 +15,8 @@ export default function Footer() {
 
           {/* Gauche — logo + adresse + horaires */}
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <img src={logo} alt="Wonder Cut" className="h-8 w-8 shrink-0 object-contain" />
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream">Wonder Cut</span>
-              <ScissorsIcon className="w-3 h-3 text-brand/40" />
+            <div className="flex items-center">
+              <img src={logo} alt="Wonder Cut" className="h-10 w-10 shrink-0 object-contain" />
             </div>
 
             <a

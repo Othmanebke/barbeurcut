@@ -39,12 +39,8 @@ export default function Navbar() {
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 sm:px-10">
 
         {/* ── Logo ── */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <img src={logo} alt="Wonder Cut" className="h-9 w-9 shrink-0 object-contain" />
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream group-hover:text-brand transition-colors duration-300">
-            Wonder Cut
-          </span>
-          <ScissorsIcon className="w-3.5 h-3.5 text-cream/20 group-hover:text-brand/60 transition-colors duration-300 hidden lg:block" />
+        <Link to="/" className="flex items-center group">
+          <img src={logo} alt="Wonder Cut" className="h-10 w-10 shrink-0 object-contain" />
         </Link>
 
         {/* ── Desktop nav ── */}
