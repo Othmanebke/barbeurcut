@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBooking } from '../context/BookingContext';
 import { fetchAvailability, subscribeToAvailability } from '../api/availability';
+import { acquireLock, releaseLock } from '../api/slotLock';
 import { ScissorsIcon, RazorIcon, CombIcon, DiamondDivider } from '../components/BarberIcons';
 
 /* ─── Day window builder ──────────────────────────────────── */
@@ -129,20 +130,23 @@ function DayCard({ day, selected, onClick }) {
 }
 
 /* ─── Time slot ───────────────────────────────────────────── */
-function TimeSlot({ hour, selected, onClick }) {
+function TimeSlot({ hour, selected, pending, onClick }) {
   return (
     <motion.button
       type="button"
-      onClick={onClick}
-      whileHover={{ scale: 1.05, y: -2 }}
-      whileTap={{ scale: 0.95 }}
+      onClick={pending ? undefined : onClick}
+      disabled={pending}
+      whileHover={!pending ? { scale: 1.05, y: -2 } : {}}
+      whileTap={!pending ? { scale: 0.95 } : {}}
       className={`py-3.5 sm:py-4 px-2 text-center font-black text-sm sm:text-base transition-all duration-200 ${
-        selected
+        pending
+          ? 'bg-brand/15 text-brand/50 border-2 border-brand/30 cursor-wait'
+          : selected
           ? 'bg-brand text-dark border-2 border-brand shadow-gold'
           : 'bg-cream text-dark border-2 border-beige hover:border-brand hover:text-brand'
       }`}
     >
-      {hour}
+      {pending ? <span className="animate-pulse">…</span> : hour}
     </motion.button>
   );
 }
@@ -157,6 +161,15 @@ export default function Booking() {
   const [loading, setLoading]           = useState(true);
   const [loadError, setLoadError]       = useState(null);
   const [formError, setFormError]       = useState(null);
+
+  /* ── Slot lock state ── */
+  const sessionId   = useRef(crypto.randomUUID());
+  const activeLock  = useRef({ date: '', time: '' });
+  const [pendingSlot, setPendingSlot] = useState('');
+  const [lockExpiry, setLockExpiry]   = useState(null);
+  const [timeLeft, setTimeLeft]       = useState(0);
+  const [lockError, setLockError]     = useState('');
+
   const navigate = useNavigate();
 
   const loadAvailability = useCallback(async (preserveSelection = false) => {
@@ -186,9 +199,81 @@ export default function Booking() {
   useEffect(() => { if (selectedDate) selectDate(selectedDate); }, [selectedDate]);
   useEffect(() => { if (selectedSlot) selectTime(selectedSlot); }, [selectedSlot]);
 
+  /* ── Countdown tick ─────────────────────────────────────── */
+  useEffect(() => {
+    if (!lockExpiry) return;
+    const tick = () => {
+      const remaining = Math.max(0, Math.round((lockExpiry - Date.now()) / 1000));
+      setTimeLeft(remaining);
+      if (remaining === 0) {
+        setSelectedSlot('');
+        setLockExpiry(null);
+        activeLock.current = { date: '', time: '' };
+        setLockError('Ton créneau a expiré. Choisis à nouveau un horaire.');
+      }
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [lockExpiry]);
+
+  /* ── Libérer le verrou si l'utilisateur quitte la page ── */
+  useEffect(() => {
+    return () => {
+      const { date, time } = activeLock.current;
+      if (date && time) releaseLock(date, time, sessionId.current);
+    };
+  }, []);
+
+  /* ── Acquérir un verrou sur le créneau sélectionné ──────── */
+  const handleSelectSlot = async (slot) => {
+    if (slot === selectedSlot) return;
+    setLockError('');
+    setFormError(null);
+
+    // Libérer l'ancien verrou si différent
+    const prev = activeLock.current;
+    if (prev.date && prev.time && (prev.date !== selectedDate || prev.time !== slot)) {
+      releaseLock(prev.date, prev.time, sessionId.current);
+      activeLock.current = { date: '', time: '' };
+      setLockExpiry(null);
+    }
+
+    setPendingSlot(slot);
+    setSelectedSlot('');
+
+    try {
+      const acquired = await acquireLock(selectedDate, slot, sessionId.current);
+      if (acquired) {
+        activeLock.current = { date: selectedDate, time: slot };
+        setSelectedSlot(slot);
+        setLockExpiry(new Date(Date.now() + 5 * 60 * 1000));
+      } else {
+        setLockError('Ce créneau vient d\'être pris. Choisis un autre horaire.');
+        loadAvailability(true);
+      }
+    } catch {
+      setLockError('Erreur réseau. Réessaie.');
+    } finally {
+      setPendingSlot('');
+    }
+  };
+
   const dayWindow    = useMemo(() => buildDayWindow(availability), [availability]);
   const activeSlots  = useMemo(() => availability[selectedDate] || [], [availability, selectedDate]);
-  const handleSelectDate = (key) => { setSelectedDate(key); setSelectedSlot(''); };
+
+  const handleSelectDate = (key) => {
+    // Libérer le verrou si on change de jour
+    const prev = activeLock.current;
+    if (prev.date && prev.time) {
+      releaseLock(prev.date, prev.time, sessionId.current);
+      activeLock.current = { date: '', time: '' };
+      setLockExpiry(null);
+    }
+    setLockError('');
+    setSelectedDate(key);
+    setSelectedSlot('');
+  };
 
   const handleSubmit = async () => {
     setFormError(null);
@@ -339,7 +424,12 @@ export default function Booking() {
                   >
                     {activeSlots.map((h) => (
                       <motion.div key={h} variants={{ hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1, transition: { duration: 0.3 } } }}>
-                        <TimeSlot hour={h} selected={selectedSlot === h} onClick={() => setSelectedSlot(h)} />
+                        <TimeSlot
+                          hour={h}
+                          selected={selectedSlot === h}
+                          pending={pendingSlot === h}
+                          onClick={() => handleSelectSlot(h)}
+                        />
                       </motion.div>
                     ))}
                   </motion.div>
@@ -349,6 +439,19 @@ export default function Booking() {
                     <p className="text-sm font-bold text-red-700">Aucun créneau disponible — choisis un autre jour.</p>
                   </div>
                 )}
+
+                {/* Erreur de verrou */}
+                <AnimatePresence>
+                  {lockError && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                      className="flex items-start gap-3 border-l-4 border-amber-500 bg-amber-50 px-4 py-3 mt-4"
+                    >
+                      <span className="text-amber-500 font-black shrink-0">!</span>
+                      <p className="text-sm text-amber-800 font-medium">{lockError}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </motion.div>
@@ -434,6 +537,30 @@ export default function Booking() {
                     </div>
 
                     <DiamondDivider className="text-cream/20" />
+
+                    {/* Countdown verrou */}
+                    <AnimatePresence>
+                      {lockExpiry && selectedSlot && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                          className="space-y-1.5"
+                        >
+                          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.35em]">
+                            <span className={timeLeft < 60 ? 'text-red-400' : 'text-brand'}>Créneau réservé</span>
+                            <span className={`font-black tabular-nums text-xs ${timeLeft < 60 ? 'text-red-400' : 'text-cream/70'}`}>
+                              {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                            </span>
+                          </div>
+                          <div className="h-0.5 w-full bg-cream/10 overflow-hidden">
+                            <motion.div
+                              className={`h-full transition-colors duration-1000 ${timeLeft < 60 ? 'bg-red-400' : 'bg-brand'}`}
+                              style={{ width: `${(timeLeft / 300) * 100}%` }}
+                            />
+                          </div>
+                          <p className="text-[8px] text-cream/30">Confirme avant expiration du délai.</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
                     {/* Confirm CTA */}
                     <motion.button

@@ -27,7 +27,7 @@ async function fetchFromSupabase() {
   const startDate = dayKey(days[0]);
   const endDate   = dayKey(days[days.length - 1]);
 
-  const [{ data: booked }, { data: blocks }] = await Promise.all([
+  const [{ data: booked }, { data: blocks }, { data: locks }] = await Promise.all([
     supabase
       .from('appointments')
       .select('date, time')
@@ -39,11 +39,18 @@ async function fetchFromSupabase() {
       .select('date, time')
       .gte('date', startDate)
       .lte('date', endDate),
+    supabase
+      .from('slot_locks')
+      .select('date, time')
+      .gte('locked_until', new Date().toISOString())
+      .gte('date', startDate)
+      .lte('date', endDate),
   ]);
 
-  const bookedSet      = new Set((booked  ?? []).map(b => `${b.date}|${b.time}`));
-  const blockedFullDay = new Set((blocks  ?? []).filter(b => !b.time).map(b => b.date));
-  const blockedSlots   = new Set((blocks  ?? []).filter(b =>  b.time).map(b => `${b.date}|${b.time}`));
+  const bookedSet      = new Set((booked ?? []).map(b => `${b.date}|${b.time}`));
+  const blockedFullDay = new Set((blocks ?? []).filter(b => !b.time).map(b => b.date));
+  const blockedSlots   = new Set((blocks ?? []).filter(b =>  b.time).map(b => `${b.date}|${b.time}`));
+  const lockedSet      = new Set((locks  ?? []).map(l => `${l.date}|${l.time}`));
 
   const availability = {};
   for (const d of days) {
@@ -51,7 +58,9 @@ async function fetchFromSupabase() {
     if (blockedFullDay.has(key)) { availability[key] = []; continue; }
     const allSlots = generateAvailableSlots(d);
     availability[key] = allSlots.filter(
-      slot => !bookedSet.has(`${key}|${slot}`) && !blockedSlots.has(`${key}|${slot}`)
+      slot => !bookedSet.has(`${key}|${slot}`)
+           && !blockedSlots.has(`${key}|${slot}`)
+           && !lockedSet.has(`${key}|${slot}`)
     );
   }
 
@@ -94,6 +103,7 @@ export function subscribeToAvailability(callback) {
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'appointments'        }, callback)
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'appointments'        }, callback)
     .on('postgres_changes', { event: '*',      schema: 'public', table: 'availability_blocks' }, callback)
+    .on('postgres_changes', { event: '*',      schema: 'public', table: 'slot_locks'          }, callback)
     .subscribe();
 
   return () => supabase.removeChannel(channel);
