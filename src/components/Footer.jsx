@@ -16,7 +16,7 @@ export default function Footer() {
           {/* Gauche — logo + adresse + horaires */}
           <div className="space-y-3">
             <div className="flex items-center">
-              <img src={logo} alt="Wonder Cut" className="h-12 w-12 shrink-0 object-contain mix-blend-screen" />
+              <img src={logo} alt="Wonder Cut" className="h-11 w-11 shrink-0 object-contain" />
             </div>
 
             <a
