@@ -40,7 +40,7 @@ export default function Navbar() {
 
         {/* ── Logo ── */}
         <Link to="/" className="flex items-center group">
-          <img src={logo} alt="Wonder Cut" className="h-10 w-10 shrink-0 object-contain" />
+          <img src={logo} alt="Wonder Cut" className="h-12 w-12 shrink-0 object-contain mix-blend-screen" />
         </Link>
 
         {/* ── Desktop nav ── */}
