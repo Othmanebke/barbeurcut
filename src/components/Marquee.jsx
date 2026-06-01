@@ -1,43 +1,50 @@
 import { motion } from 'framer-motion';
-import { ScissorsIcon } from './BarberIcons';
 
 const ITEMS = [
-  'Wonder Cut',
-  'Barbershop Brie-Comte-Robert',
-  "L'art de la coupe",
-  'Réservation en ligne',
-  'Depuis 2019',
-  'Barbiers experts',
-  'Coupe sur mesure',
-  'Rasage traditionnel',
+  'WONDER CUT',
+  'COUPE HOMME',
+  'BARBE & RASAGE',
+  'BRIE-COMTE-ROBERT',
+  'RÉSERVATION EN LIGNE',
+  'RASAGE TRADITIONNEL',
+  'BARBIERS EXPERTS',
+  'COUPE SUR MESURE',
 ];
 
-/* variant: 'dark' | 'light' | 'gold' */
-export default function Marquee({ dark = false, gold = false, reverse = false, speed = 28 }) {
+export default function Marquee({ dark = false, gold = false, reverse = false, speed = 20 }) {
   const items = [...ITEMS, ...ITEMS, ...ITEMS];
 
   const wrapCls = gold
-    ? 'border-y border-brand/0 bg-brand'
+    ? 'border-y-4 border-dark/20 bg-brand'
     : dark
-    ? 'border-y border-cream/8 bg-darkMid'
-    : 'border-y border-beige/50 bg-creamMid';
+    ? 'border-y-4 border-brand/50 bg-dark'
+    : 'border-y-4 border-brand bg-cream';
 
-  const textCls = gold ? 'text-dark/70' : dark ? 'text-cream/22' : 'text-dark/28';
-  const iconCls = gold ? 'text-dark/40'  : dark ? 'text-brand/50'  : 'text-brand/60';
+  const textCls = gold
+    ? 'text-dark/15'
+    : dark
+    ? 'text-cream/10'
+    : 'text-dark/12';
+
+  const dotCls = gold
+    ? 'text-dark/40'
+    : dark
+    ? 'text-brand/60'
+    : 'text-brand';
 
   return (
-    <div className={`overflow-hidden py-4 select-none ${wrapCls}`}>
+    <div className={`overflow-hidden py-4 sm:py-5 select-none ${wrapCls}`}>
       <motion.div
-        className="flex items-center gap-8 whitespace-nowrap w-max"
+        className="flex items-center whitespace-nowrap w-max"
         animate={{ x: reverse ? ['-33.33%', '0%'] : ['0%', '-33.33%'] }}
         transition={{ duration: speed, repeat: Infinity, ease: 'linear' }}
       >
         {items.map((item, i) => (
-          <span key={i} className="flex items-center gap-8">
-            <span className={`text-[10px] uppercase tracking-[0.55em] font-black ${textCls}`}>
+          <span key={i} className="flex items-center">
+            <span className={`text-[clamp(1.1rem,3vw,2.2rem)] font-black uppercase tracking-[0.15em] sm:tracking-[0.18em] px-5 sm:px-8 ${textCls}`}>
               {item}
             </span>
-            <ScissorsIcon className={`w-3.5 h-3.5 shrink-0 ${iconCls}`} />
+            <span className={`text-[clamp(0.9rem,2.5vw,1.8rem)] shrink-0 ${dotCls}`}>✦</span>
           </span>
         ))}
       </motion.div>

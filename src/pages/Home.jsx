@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import RevealText from '../components/RevealText';
 import Marquee from '../components/Marquee';
-import BeforeAfterSlider from '../components/BeforeAfterSlider';
 import { ScissorsIcon, RazorIcon, CombIcon, BrushIcon, DiamondDivider } from '../components/BarberIcons';
 
 /* ── Animation presets ─────────────────────────────────────── */
@@ -77,11 +76,11 @@ function Section({ children, className = '' }) {
 }
 
 /* ── Eyebrow ───────────────────────────────────────────────── */
-function Eyebrow({ children, dark = false, Icon = ScissorsIcon }) {
+function Eyebrow({ children, Icon = ScissorsIcon }) {
   return (
     <motion.div variants={fadeUp} className="flex items-center gap-3 mb-4">
       <Icon className="w-4 h-4 shrink-0 text-brand" />
-      <span className={`text-[9px] uppercase tracking-[0.55em] font-bold text-brand`}>{children}</span>
+      <span className="text-[9px] uppercase tracking-[0.55em] font-bold text-brand">{children}</span>
     </motion.div>
   );
 }
@@ -94,16 +93,9 @@ const SERVICES = [
 ];
 
 const STEPS = [
-  { num: '01', title: 'Choisis ta coupe',    desc: 'Parcours nos prestations et sélectionne le service qui te correspond.', Icon: ScissorsIcon },
-  { num: '02', title: 'Réserve ton créneau', desc: 'Choisis une date et un horaire en trois clics, sans attente.',          Icon: CombIcon     },
+  { num: '01', title: 'Choisis ta coupe',       desc: 'Parcours nos prestations et sélectionne le service qui te correspond.', Icon: ScissorsIcon },
+  { num: '02', title: 'Réserve ton créneau',    desc: 'Choisis une date et un horaire en trois clics, sans attente.',          Icon: CombIcon     },
   { num: '03', title: 'Reçois la confirmation', desc: "Un email de confirmation avec tous les détails t'est envoyé immédiatement.", Icon: BrushIcon },
-];
-
-const GALLERY = [
-  { url: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=900&q=80', alt: 'Barber au travail' },
-  { url: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=700&q=80', alt: 'Coupe homme' },
-  { url: 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=700&q=80', alt: 'Outils de barbier' },
-  { url: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=700&q=80', alt: 'Coupe dégradé' },
 ];
 
 
@@ -282,21 +274,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════════════ GALLERY ═══════════════════════════ */}
-      <section className="bg-dark overflow-hidden">
-        <Section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-dark">
-          {GALLERY.map((img) => (
-            <motion.div key={img.url} variants={fadeUp} className="overflow-hidden">
-              <img src={img.url} alt={img.alt}
-                className="w-full h-[220px] sm:h-[280px] lg:h-[340px] object-cover saturate-[0.82] hover:saturate-105 hover:scale-105 transition-all duration-700"
-                loading="lazy" />
-            </motion.div>
-          ))}
-        </Section>
-      </section>
-
-      {/* Gold band */}
-      <Marquee gold speed={22} />
+      <Marquee dark reverse />
 
       {/* ═══════════════ ABOUT TEASER ══════════════════════════ */}
       <section className="bg-creamMid py-14 sm:py-20 lg:py-28">
@@ -349,62 +327,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════════ AVANT / APRÈS ═══════════════════════ */}
-      <section className="bg-dark">
-        <div className="mx-auto max-w-7xl">
-          {/* Header section */}
-          <div className="px-6 sm:px-10 pt-14 sm:pt-20 pb-8 sm:pb-10">
-            <Section>
-              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                <div>
-                  <Eyebrow dark Icon={ScissorsIcon}>Le résultat parle</Eyebrow>
-                  <RevealText tag="h2" className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[-0.04em] text-cream leading-tight mt-2">
-                    Avant. Après.
-                  </RevealText>
-                </div>
-                <motion.p variants={fadeUp} className="text-sm text-cream/55 font-medium max-w-xs sm:text-right">
-                  Glisse pour révéler la transformation. Chaque coupe est une œuvre.
-                </motion.p>
-              </div>
-            </Section>
-          </div>
-
-          {/* Slider pleine largeur */}
-          <BeforeAfterSlider />
-
-          {/* Caption */}
-          <div className="px-6 sm:px-10 pb-14 sm:pb-20 pt-5 sm:pt-6 flex items-center justify-between gap-4 border-t border-cream/8">
-            <DiamondDivider className="text-cream flex-1 max-w-[200px]" />
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <Link to="/prestations"
-                className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-brand hover:text-cream transition-colors duration-200 group">
-                Réserver ma transformation
-                <span className="block h-px w-10 bg-current transition-all duration-300 group-hover:w-14" />
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Bande large après avis */}
-      <div className="overflow-hidden bg-cream border-y-4 border-brand py-4 sm:py-5 select-none">
-        <motion.div className="flex items-center whitespace-nowrap w-max"
-          animate={{ x: ['0%', '-33.33%'] }} transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}>
-          {[...Array(3)].map((_, gi) =>
-            ['WONDER CUT','COUPE HOMME','BARBE & RASAGE','BRIE-COMTE-ROBERT','RÉSERVATION EN LIGNE','RASAGE TRADITIONNEL','BARBIERS EXPERTS','COUPE SUR MESURE'].map((word, i) => (
-              <span key={`${gi}-${i}`} className="flex items-center">
-                <span className="text-[clamp(1.1rem,3vw,2.2rem)] font-black uppercase tracking-[0.15em] sm:tracking-[0.18em] text-dark/12 px-5 sm:px-8">{word}</span>
-                <span className="text-brand text-[clamp(0.9rem,2.5vw,1.8rem)] shrink-0">✦</span>
-              </span>
-            ))
-          )}
-        </motion.div>
-      </div>
+      <Marquee gold speed={22} />
 
       {/* ═══════════════ CTA BANNER ═════════════════════════════ */}
       <section
@@ -421,7 +344,7 @@ export default function Home() {
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-10 text-center">
           <Section>
-            <Eyebrow dark>Prêt à transformer ton style ?</Eyebrow>
+            <Eyebrow>Prêt à transformer ton style ?</Eyebrow>
             <RevealText tag="h2" className="mt-3 text-[clamp(2rem,5vw,4.5rem)] font-black uppercase tracking-[-0.04em] text-cream leading-tight">
               Réserve ton créneau maintenant.
             </RevealText>
