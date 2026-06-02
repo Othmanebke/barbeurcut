@@ -5,43 +5,15 @@ import RevealText from '../components/RevealText';
 import Marquee from '../components/Marquee';
 import { ScissorsIcon, RazorIcon, CombIcon, BrushIcon } from '../components/BarberIcons';
 
-/* ── Animation presets ─────────────────────────────────────── */
 const fadeUp = {
   hidden: { opacity: 0, y: 44 },
-  show:   { opacity: 1, y: 0,  transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
 };
 const stagger = {
   hidden: {},
   show:   { transition: { staggerChildren: 0.13, delayChildren: 0.05 } },
 };
 
-/* ── ScrambleText ──────────────────────────────────────────── */
-const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@!$&*';
-function useScramble(text, active, duration = 900) {
-  const [display, setDisplay] = useState(text.replace(/[^\s]/g, '_'));
-  const raf = useRef(null);
-  useEffect(() => {
-    if (!active) return;
-    let start = null;
-    const step = (ts) => {
-      if (!start) start = ts;
-      const progress = Math.min((ts - start) / duration, 1);
-      const settled = Math.floor(progress * text.length);
-      setDisplay(text.split('').map((ch, i) => {
-        if (ch === ' ') return ' ';
-        if (i < settled) return ch;
-        return CHARS[Math.floor(Math.random() * CHARS.length)];
-      }).join(''));
-      if (progress < 1) raf.current = requestAnimationFrame(step);
-      else setDisplay(text);
-    };
-    raf.current = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf.current);
-  }, [active, text, duration]);
-  return display;
-}
-
-/* ── AnimatedCounter ───────────────────────────────────────── */
 function AnimatedCounter({ target, suffix = '' }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
@@ -50,11 +22,9 @@ function AnimatedCounter({ target, suffix = '' }) {
     if (!inView) return;
     let frame;
     const start = performance.now();
-    const dur = 1400;
     const animate = (now) => {
-      const t = Math.min((now - start) / dur, 1);
-      const ease = 1 - Math.pow(1 - t, 3);
-      setCount(Math.floor(ease * target));
+      const t = Math.min((now - start) / 1400, 1);
+      setCount(Math.floor((1 - Math.pow(1 - t, 3)) * target));
       if (t < 1) frame = requestAnimationFrame(animate);
       else setCount(target);
     };
@@ -64,7 +34,6 @@ function AnimatedCounter({ target, suffix = '' }) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-/* ── Section scroll reveal ─────────────────────────────────── */
 function Section({ children, className = '' }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '0px 0px -8% 0px' });
@@ -75,7 +44,6 @@ function Section({ children, className = '' }) {
   );
 }
 
-/* ── Eyebrow ───────────────────────────────────────────────── */
 function Eyebrow({ children, Icon = ScissorsIcon }) {
   return (
     <motion.div variants={fadeUp} className="flex items-center gap-3 mb-4">
@@ -85,91 +53,107 @@ function Eyebrow({ children, Icon = ScissorsIcon }) {
   );
 }
 
-/* ── Data ──────────────────────────────────────────────────── */
 const SERVICES = [
-  { id: '01', title: 'Coupe homme',    desc: 'Consultation, lavage, coupe ciseaux ou tondeuse, finition au rasoir.', price: '20€', Icon: ScissorsIcon },
-  { id: '02', title: 'Coupe + Barbe',  desc: 'Coupe homme + taille et mise en forme de la barbe au rasoir.',         price: '30€', Icon: RazorIcon   },
-  { id: '03', title: 'Coupe + Rasage', desc: 'Mousse chaude, rasage au coupe-chou, compresse froide.',               price: '35€', Icon: CombIcon    },
+  { id: '01', title: 'Coupe',        desc: 'Consultation, lavage, coupe ciseaux ou tondeuse, finition au rasoir.', price: '20€', duration: '25 min', Icon: ScissorsIcon },
+  { id: '02', title: 'Coupe + Barbe', desc: 'Coupe + taille et mise en forme de la barbe, contours dessinés au rasoir.', price: '30€', duration: '30 min', Icon: RazorIcon },
+  { id: '03', title: 'Taille barbe', desc: 'Peignage, taille à la longueur voulue, contours définis au rasoir.', price: '13€', duration: '15 min', Icon: CombIcon },
 ];
 
 const STEPS = [
-  { num: '01', title: 'Choisis ta coupe',       desc: 'Parcours mes prestations et prends ce qui te correspond.', Icon: ScissorsIcon },
-  { num: '02', title: 'Réserve ton créneau',    desc: 'Prends un horaire en quelques clics depuis ton téléphone.', Icon: CombIcon     },
-  { num: '03', title: 'Reçois la confirmation', desc: "Tu reçois un email avec tous les détails de suite.", Icon: BrushIcon },
+  { num: '01', title: 'Choisis ta prestation', desc: 'Parcours mes services et sélectionne ce qui te correspond.', Icon: ScissorsIcon },
+  { num: '02', title: 'Réserve ton créneau',   desc: 'Prends un horaire en quelques clics, le calendrier s\'adapte à la durée.', Icon: CombIcon },
+  { num: '03', title: 'Confirmation immédiate', desc: 'Tu reçois une confirmation par email et SMS tout de suite.', Icon: BrushIcon },
 ];
 
-
-/* ══════════════════════════════════════════════════════════ */
 export default function Home() {
-  const [scrambleActive, setScrambleActive] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setScrambleActive(true), 700); return () => clearTimeout(t); }, []);
-  const scrambled = useScramble('COUPE PARFAITE.', scrambleActive, 1100);
-
   return (
     <>
-      {/* ═══════════════════════ HERO ═══════════════════════ */}
+      {/* ══════════════════════ HERO ══════════════════════════ */}
       <section
         className="relative flex flex-col overflow-hidden"
-        style={{ minHeight: 'clamp(520px, 82vh, 900px)', background: '#5C4031' }}
+        style={{ minHeight: 'clamp(520px, 90vh, 980px)', background: '#5C4031' }}
       >
-        <div className="relative z-10 flex flex-1 items-center px-6 sm:px-10" style={{ paddingTop: 'var(--navbar-h, 72px)' }}>
-          <div className="mx-auto w-full max-w-7xl py-8 sm:py-12 lg:py-16">
-            <motion.div initial="hidden" animate="show" variants={stagger} className="max-w-3xl">
+        {/* Watermark WC en fond */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none">
+          <p className="font-black uppercase leading-none tracking-[-0.05em]"
+             style={{ fontSize: 'clamp(12rem, 40vw, 36rem)', color: 'rgba(255,255,255,0.03)' }}>
+            WC
+          </p>
+        </div>
 
-              <motion.div variants={fadeUp} className="flex items-center gap-3 mb-5 sm:mb-7">
-                <ScissorsIcon className="w-4 h-4 text-brand" />
-                <span className="block h-px w-8 bg-brand" />
-                <span className="text-[9px] uppercase tracking-[0.5em] sm:tracking-[0.6em] text-brand font-bold">
-                  Wonderclub — Barbershop
-                </span>
-              </motion.div>
+        {/* Ligne déco gauche */}
+        <div className="absolute left-0 top-0 bottom-0 w-px bg-brand/20 hidden lg:block" />
 
-              <div className="overflow-mask">
-                <motion.p variants={fadeUp} className="text-[clamp(2.2rem,6vw,5.5rem)] font-black uppercase tracking-[-0.03em] text-white leading-[0.9] mb-2">
-                  L'art de la
-                </motion.p>
-              </div>
-              <div className="overflow-mask mb-5 sm:mb-7">
-                <motion.p variants={fadeUp} className="text-[clamp(2.2rem,6vw,5.5rem)] font-black uppercase tracking-[-0.03em] leading-[0.9] scramble-mono shimmer-gold" aria-label="coupe parfaite.">
-                  {scrambled}
-                </motion.p>
-              </div>
+        <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 sm:px-10 text-center"
+             style={{ paddingTop: 'var(--navbar-h, 72px)' }}>
+          <motion.div initial="hidden" animate="show" variants={stagger} className="max-w-5xl mx-auto">
 
-              <motion.p variants={fadeUp} className="max-w-lg text-sm sm:text-base leading-7 sm:leading-8 text-cream/70 font-medium">
-                Je coupe et je soigne la barbe depuis 2018. Prends ton créneau en ligne et reçois ta confirmation par email tout de suite.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="mt-8 sm:mt-12 flex flex-wrap gap-3 sm:gap-4">
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                  <Link to="/prestations" className="inline-flex items-center gap-2 sm:gap-3 bg-brand px-6 sm:px-9 py-3.5 sm:py-4 text-[10px] font-black uppercase tracking-[0.3em] sm:tracking-[0.35em] text-dark hover:bg-brandDark transition-colors">
-                    <ScissorsIcon className="w-3.5 h-3.5" /> Réserver
-                  </Link>
-                </motion.div>
-              </motion.div>
-
-              {/* Diplôme */}
-              <motion.div variants={fadeUp} className="mt-10 flex items-center gap-3">
-                <span className="text-brand text-sm font-black">✦</span>
-                <p className="text-[10px] uppercase tracking-[0.4em] text-white/40 font-bold">Diplôme BP obtenu à la CMA Saint-Maur-des-Fossés</p>
-              </motion.div>
-
+            {/* Badge */}
+            <motion.div variants={fadeUp} className="flex items-center justify-center gap-3 mb-10">
+              <span className="block h-px w-8 bg-brand" />
+              <span className="text-[9px] uppercase tracking-[0.6em] text-brand font-bold">Barbier indépendant · Brie-Comte-Robert</span>
+              <span className="block h-px w-8 bg-brand" />
             </motion.div>
-          </div>
+
+            {/* Titre principal */}
+            <div className="overflow-mask mb-2">
+              <motion.h1 variants={fadeUp}
+                className="font-black uppercase leading-[0.88] tracking-[-0.04em]"
+                style={{ fontSize: 'clamp(4.5rem, 16vw, 14rem)', color: '#FFFFFF' }}>
+                Wonder
+              </motion.h1>
+            </div>
+            <div className="overflow-mask mb-10">
+              <motion.h1 variants={fadeUp}
+                className="font-black uppercase leading-[0.88] tracking-[-0.04em] text-brand"
+                style={{ fontSize: 'clamp(4.5rem, 16vw, 14rem)' }}>
+                club
+              </motion.h1>
+            </div>
+
+            {/* Séparateur */}
+            <motion.div variants={fadeUp} className="flex items-center justify-center gap-4 mb-10">
+              <span className="block h-px w-16 sm:w-24 bg-brand/40" />
+              <span className="text-brand text-xs">✦</span>
+              <span className="block h-px w-16 sm:w-24 bg-brand/40" />
+            </motion.div>
+
+            {/* CTA */}
+            <motion.div variants={fadeUp} className="mb-10">
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
+                <Link to="/prestations"
+                  className="inline-flex items-center gap-3 bg-white px-10 sm:px-14 py-4 sm:py-5 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-cream transition-colors"
+                  style={{ color: '#5C4031' }}>
+                  <ScissorsIcon className="w-3.5 h-3.5" /> Réserver un créneau
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            {/* Diplôme */}
+            <motion.p variants={fadeUp}
+              className="text-[9px] uppercase tracking-[0.45em] font-bold"
+              style={{ color: 'rgba(244,239,234,0.35)' }}>
+              Diplôme BP · CMA Saint-Maur-des-Fossés
+            </motion.p>
+
+          </motion.div>
         </div>
 
         {/* Stats bar */}
-        <div className="relative z-10 border-t border-cream/10 bg-dark/65 backdrop-blur-sm">
-          <div className="mx-auto max-w-7xl grid grid-cols-3 divide-x divide-cream/10 px-4 sm:px-10">
+        <div className="relative z-10 border-t border-white/8" style={{ background: 'rgba(64,85,104,0.6)', backdropFilter: 'blur(8px)' }}>
+          <div className="mx-auto max-w-7xl grid grid-cols-3 divide-x divide-white/10 px-4 sm:px-10">
             {[
               { target: 100, suffix: '%', label: 'Satisfaits' },
-              { target: 8,   suffix: '+', label: "Ans d'exp." },
-              { fixed: 'CAP',             label: 'Coiffure' },
+              { target: 8,   suffix: '+', label: "Ans d'exp."  },
+              { fixed: 'BP',              label: 'Diplôme'     },
             ].map((s) => (
               <div key={s.label} className="py-4 sm:py-5 text-center">
-                <p className="text-lg sm:text-2xl font-black text-cream">
+                <p className="text-lg sm:text-2xl font-black text-white">
                   {s.fixed ?? <AnimatedCounter target={s.target} suffix={s.suffix} />}
                 </p>
-                <p className="mt-0.5 text-[8px] sm:text-[9px] uppercase tracking-[0.3em] sm:tracking-[0.35em] text-cream/45 font-medium">{s.label}</p>
+                <p className="mt-0.5 text-[8px] sm:text-[9px] uppercase tracking-[0.35em] font-medium" style={{ color: 'rgba(244,239,234,0.4)' }}>
+                  {s.label}
+                </p>
               </div>
             ))}
           </div>
@@ -178,42 +162,43 @@ export default function Home() {
 
       <Marquee />
 
-      {/* ═══════════════════ SERVICES PREVIEW ══════════════════ */}
-      <section className="bg-cream py-14 sm:py-20 lg:py-28">
+      {/* ══════════════════ SERVICES PREVIEW ══════════════════ */}
+      <section style={{ background: '#405568' }} className="py-14 sm:py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section>
-            <div className="flex items-end justify-between pb-6 sm:pb-8 border-b border-beige mb-2">
+            <div className="flex items-end justify-between pb-6 sm:pb-8 border-b mb-2" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
               <div>
-                <Eyebrow Icon={RazorIcon}>Nos prestations</Eyebrow>
-                <RevealText tag="h2" className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[-0.04em] text-dark leading-tight mt-2">
+                <Eyebrow Icon={RazorIcon}>Mes prestations</Eyebrow>
+                <RevealText tag="h2" className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[-0.04em] text-white leading-tight mt-2">
                   Services
                 </RevealText>
               </div>
-              <Link to="/prestations" className="hidden lg:inline-flex items-center gap-3 text-[9px] uppercase tracking-[0.35em] text-muted hover:text-brand font-bold transition-colors">
+              <Link to="/prestations" className="hidden lg:inline-flex items-center gap-3 text-[9px] uppercase tracking-[0.35em] text-white/40 hover:text-brand font-bold transition-colors">
                 Voir tout <span className="block h-px w-8 bg-current" />
               </Link>
             </div>
 
-            <motion.div variants={stagger} className="divide-y divide-beige/60">
+            <motion.div variants={stagger} className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
               {SERVICES.map((s) => (
-                <motion.div key={s.id} variants={fadeUp} className="grid grid-cols-[32px_1fr_auto] sm:grid-cols-[48px_1fr_auto] items-center gap-3 sm:gap-8 py-6 sm:py-8 group cursor-default">
-                  <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.4em] sm:tracking-[0.55em] text-brand/70 font-bold">{s.id}</span>
+                <motion.div key={s.id} variants={fadeUp}
+                  className="grid grid-cols-[32px_1fr_auto] sm:grid-cols-[48px_1fr_auto] items-center gap-3 sm:gap-8 py-6 sm:py-8 group cursor-default">
+                  <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.55em] text-brand/70 font-bold">{s.id}</span>
                   <div>
-                    <h3 className="text-base sm:text-xl lg:text-2xl font-black uppercase tracking-[-0.02em] text-dark group-hover:text-brand transition-colors duration-300 leading-tight">
+                    <h3 className="text-base sm:text-xl lg:text-2xl font-black uppercase tracking-[-0.02em] text-white group-hover:text-brand transition-colors duration-300 leading-tight">
                       {s.title}
                     </h3>
-                    <p className="mt-1 text-xs sm:text-sm text-muted font-medium leading-5 sm:leading-7">{s.desc}</p>
+                    <p className="mt-1 text-xs sm:text-sm font-medium leading-6" style={{ color: 'rgba(244,239,234,0.55)' }}>{s.desc}</p>
                   </div>
-                  <div className="flex flex-col items-end gap-1 sm:gap-2">
-                    <span className="text-base sm:text-xl font-black text-dark/20 group-hover:text-brand transition-colors duration-300">{s.price}</span>
-                    <s.Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-dark/15 group-hover:text-brand/60 transition-colors duration-300 shrink-0" />
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="text-base sm:text-xl font-black text-white/20 group-hover:text-brand transition-colors duration-300">{s.price}</span>
+                    <span className="text-[8px] text-brand/50 font-bold">{s.duration}</span>
                   </div>
                 </motion.div>
               ))}
             </motion.div>
 
             <motion.div variants={fadeUp} className="mt-5 lg:hidden">
-              <Link to="/prestations" className="inline-flex items-center gap-3 text-[9px] uppercase tracking-[0.35em] text-muted hover:text-brand font-bold transition-colors">
+              <Link to="/prestations" className="inline-flex items-center gap-3 text-[9px] uppercase tracking-[0.35em] text-white/40 hover:text-brand font-bold transition-colors">
                 Voir tout <span className="block h-px w-8 bg-current" />
               </Link>
             </motion.div>
@@ -223,32 +208,33 @@ export default function Home() {
 
       <Marquee reverse />
 
-      {/* ═══════════════ COMMENT ÇA MARCHE ═════════════════════ */}
-      <section className="bg-cream py-14 sm:py-20 lg:py-28">
+      {/* ══════════════════ COMMENT ÇA MARCHE ══════════════════ */}
+      <section style={{ background: '#5C4031' }} className="py-14 sm:py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section>
             <motion.div variants={fadeUp} className="text-center mb-10 sm:mb-16">
-              <Eyebrow>Simple & rapide</Eyebrow>
-              <RevealText tag="h2" className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[-0.04em] text-dark leading-tight">
+              <Eyebrow>Simple et rapide</Eyebrow>
+              <RevealText tag="h2" className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[-0.04em] text-white leading-tight">
                 Comment ça marche
               </RevealText>
-              <motion.p variants={fadeUp} className="mt-4 sm:mt-5 max-w-md mx-auto text-sm leading-7 sm:leading-8 text-muted font-medium">
-                Prends un créneau en quelques clics et tu reçois ta confirmation par email de suite.
+              <motion.p variants={fadeUp} className="mt-4 sm:mt-5 max-w-md mx-auto text-sm leading-7 sm:leading-8 font-medium" style={{ color: 'rgba(244,239,234,0.55)' }}>
+                Prends un créneau en quelques clics et tu reçois ta confirmation par email et SMS de suite.
               </motion.p>
             </motion.div>
 
-            <motion.div variants={stagger} className="grid gap-px bg-beige/40 sm:grid-cols-3">
+            <motion.div variants={stagger} className="grid gap-px sm:grid-cols-3" style={{ background: 'rgba(255,255,255,0.06)' }}>
               {STEPS.map((step) => (
                 <motion.div key={step.num} variants={fadeUp}
-                  className="bg-cream p-6 sm:p-8 lg:p-10 flex flex-col gap-5 sm:gap-6 group hover:bg-dark transition-colors duration-500">
+                  className="p-6 sm:p-8 lg:p-10 flex flex-col gap-5 sm:gap-6 group hover:bg-brand transition-colors duration-500"
+                  style={{ background: '#5C4031' }}>
                   <div className="flex items-center gap-3 sm:gap-4">
-                    <span className="inline-flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center bg-brand text-dark text-[9px] font-black tracking-widest shrink-0">{step.num}</span>
-                    <step.Icon className="w-4 h-4 sm:w-5 sm:h-5 text-brand/40 group-hover:text-brand/70 transition-colors duration-500" />
-                    <span className="block h-px flex-1 bg-beige group-hover:bg-cream/10 transition-colors duration-500" />
+                    <span className="inline-flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center bg-brand text-dark text-[9px] font-black tracking-widest shrink-0 group-hover:bg-dark group-hover:text-white transition-colors duration-500">{step.num}</span>
+                    <step.Icon className="w-4 h-4 sm:w-5 sm:h-5 text-brand/40 group-hover:text-dark/40 transition-colors duration-500" />
+                    <span className="block h-px flex-1 bg-white/10 group-hover:bg-dark/20 transition-colors duration-500" />
                   </div>
                   <div>
-                    <h3 className="text-sm sm:text-base font-black uppercase tracking-[-0.01em] text-dark group-hover:text-cream transition-colors duration-500">{step.title}</h3>
-                    <p className="mt-2 sm:mt-3 text-xs sm:text-sm leading-6 sm:leading-7 text-muted group-hover:text-cream/55 font-medium transition-colors duration-500">{step.desc}</p>
+                    <h3 className="text-sm sm:text-base font-black uppercase tracking-[-0.01em] text-white group-hover:text-dark transition-colors duration-500">{step.title}</h3>
+                    <p className="mt-2 sm:mt-3 text-xs sm:text-sm leading-6 sm:leading-7 font-medium transition-colors duration-500 group-hover:text-dark/65" style={{ color: 'rgba(244,239,234,0.50)' }}>{step.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -256,7 +242,9 @@ export default function Home() {
 
             <motion.div variants={fadeUp} className="mt-8 sm:mt-10 text-center">
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
-                <Link to="/prestations" className="inline-flex items-center gap-3 bg-dark px-8 sm:px-10 py-3.5 sm:py-4 text-[10px] font-black uppercase tracking-[0.35em] text-cream hover:bg-brand hover:text-dark transition-all duration-300">
+                <Link to="/prestations"
+                  className="inline-flex items-center gap-3 bg-white px-8 sm:px-10 py-3.5 sm:py-4 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-brand hover:text-dark transition-all duration-300"
+                  style={{ color: '#5C4031' }}>
                   <ScissorsIcon className="w-3.5 h-3.5" /> Commencer
                 </Link>
               </motion.div>
@@ -267,19 +255,19 @@ export default function Home() {
 
       <Marquee dark reverse />
 
-      {/* ═══════════════ ABOUT TEASER ══════════════════════════ */}
-      <section className="bg-creamMid py-14 sm:py-20 lg:py-28">
+      {/* ══════════════════ ABOUT TEASER ══════════════════════ */}
+      <section style={{ background: '#405568' }} className="py-14 sm:py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section className="grid gap-10 sm:gap-16 lg:grid-cols-2 lg:items-center">
             <motion.div variants={fadeUp}>
-              <Eyebrow Icon={CombIcon}>Notre approche</Eyebrow>
-              <RevealText tag="h2" className="text-[clamp(2.2rem,5vw,4rem)] font-black uppercase tracking-[-0.04em] text-dark leading-[0.93] mt-2">
-                Précision. Style. Excellence.
+              <Eyebrow Icon={CombIcon}>Mon approche</Eyebrow>
+              <RevealText tag="h2" className="text-[clamp(2.2rem,5vw,4rem)] font-black uppercase tracking-[-0.04em] text-white leading-[0.93] mt-2">
+                Précision. Style. Indépendance.
               </RevealText>
-              <p className="mt-6 sm:mt-8 text-sm sm:text-base leading-7 sm:leading-8 text-dark/65 max-w-sm font-medium">
+              <p className="mt-6 sm:mt-8 text-sm sm:text-base leading-7 sm:leading-8 max-w-sm font-medium" style={{ color: 'rgba(244,239,234,0.60)' }}>
                 Je suis barbier indépendant et je loue mon siège au 1 Rue de la Madeleine. Quand tu réserves ici tu réserves avec moi directement. Je fais ça avec passion depuis 2018.
               </p>
-              <Link to="/concept" className="mt-8 sm:mt-10 inline-flex items-center gap-3 sm:gap-4 text-[10px] font-black uppercase tracking-[0.35em] text-dark hover:text-brand transition-colors group">
+              <Link to="/concept" className="mt-8 sm:mt-10 inline-flex items-center gap-3 sm:gap-4 text-[10px] font-black uppercase tracking-[0.35em] text-white hover:text-brand transition-colors group">
                 Découvrir le concept
                 <span className="block h-px w-10 bg-brand transition-all duration-300 group-hover:w-16" />
               </Link>
@@ -287,23 +275,25 @@ export default function Home() {
 
             <motion.div variants={stagger} className="grid grid-cols-2 gap-3 sm:gap-4">
               {[
-                { bg: 'bg-dark', hover: 'hover:bg-brand', val: '100%', valCls: 'text-cream group-hover:text-dark', label: 'Satisfaits', labelCls: 'text-cream/40 group-hover:text-dark/60', eyebrow: 'text-brand group-hover:text-dark/50', ey: 'Clients' },
-                { bg: 'bg-brand', hover: 'hover:bg-dark', val: '8+',   valCls: 'text-dark group-hover:text-cream', label: "Ans depuis 2018",  labelCls: 'text-dark/55 group-hover:text-cream/50', eyebrow: 'text-dark/50 group-hover:text-brand', ey: 'Expérience' },
+                { bg: '#5C4031', val: '100%', label: 'Clients satisfaits', sub: 'Clients' },
+                { bg: '#C68E17', val: '8+',   label: 'Ans depuis 2018',    sub: 'Expérience', dark: true },
               ].map((c) => (
                 <motion.div key={c.val} variants={fadeUp}
-                  className={`${c.bg} ${c.hover} p-5 sm:p-7 aspect-square flex flex-col justify-between group transition-colors duration-500 cursor-default`}>
-                  <span className={`text-[8px] sm:text-[9px] uppercase tracking-[0.4em] sm:tracking-[0.5em] font-bold ${c.eyebrow} transition-colors duration-500`}>{c.ey}</span>
+                  className="p-5 sm:p-7 aspect-square flex flex-col justify-between cursor-default"
+                  style={{ background: c.bg }}>
+                  <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.5em] font-bold" style={{ color: c.dark ? 'rgba(74,47,26,0.6)' : 'rgba(198,142,23,0.7)' }}>{c.sub}</span>
                   <div>
-                    <p className={`text-4xl sm:text-5xl font-black transition-colors duration-500 ${c.valCls}`}>{c.val}</p>
-                    <p className={`mt-1 sm:mt-2 text-xs sm:text-sm font-medium transition-colors duration-500 ${c.labelCls}`}>{c.label}</p>
+                    <p className="text-4xl sm:text-5xl font-black" style={{ color: c.dark ? '#4A2F1A' : '#FFFFFF' }}>{c.val}</p>
+                    <p className="mt-1 sm:mt-2 text-xs sm:text-sm font-medium" style={{ color: c.dark ? 'rgba(74,47,26,0.55)' : 'rgba(244,239,234,0.45)' }}>{c.label}</p>
                   </div>
                 </motion.div>
               ))}
               <motion.div variants={fadeUp}
-                className="bg-beige border border-beige/60 p-5 sm:p-7 col-span-2 flex items-center justify-between hover:border-brand transition-colors duration-300">
+                className="border col-span-2 p-5 sm:p-7 flex items-center justify-between"
+                style={{ background: '#5C4031', borderColor: 'rgba(255,255,255,0.1)' }}>
                 <div>
-                  <p className="text-base sm:text-xl font-black text-dark">CAP Coiffure · Certifié</p>
-                  <p className="mt-0.5 text-xs sm:text-sm text-muted font-medium">1 Rue de la Madeleine, 77170</p>
+                  <p className="text-base sm:text-xl font-black text-white">Diplôme BP · Certifié</p>
+                  <p className="mt-0.5 text-xs sm:text-sm font-medium" style={{ color: 'rgba(244,239,234,0.45)' }}>1 Rue de la Madeleine, 77170</p>
                 </div>
                 <div className="flex gap-0.5 sm:gap-1">
                   {[1,2,3,4,5].map((i) => (
@@ -320,40 +310,34 @@ export default function Home() {
 
       <Marquee gold speed={22} />
 
-      {/* ═══════════════ CTA BANNER ═════════════════════════════ */}
-      <section
-        className="relative py-20 sm:py-28 lg:py-36 overflow-hidden grain"
-        style={{
-          backgroundImage:
-            'linear-gradient(135deg, rgba(74,47,26,0.95) 0%, rgba(61,39,16,0.88) 100%),' +
-            'url("https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=1920&q=80")',
-          backgroundSize: 'cover', backgroundPosition: 'center',
-        }}
-      >
-        <ScissorsIcon className="absolute top-16 right-16 w-24 h-24 text-brand/6 hidden lg:block pointer-events-none" />
-        <CombIcon     className="absolute bottom-16 left-16 w-28 h-20 text-brand/6 hidden lg:block pointer-events-none" />
+      {/* ══════════════════ CTA BANNER ════════════════════════ */}
+      <section style={{ background: '#5C4031' }} className="relative py-20 sm:py-28 lg:py-36 overflow-hidden">
+        {/* Texture lignes */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(255,255,255,0.02) 60px, rgba(255,255,255,0.02) 61px)',
+        }} />
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-10 text-center">
           <Section>
             <Eyebrow>Prêt à transformer ton style ?</Eyebrow>
-            <RevealText tag="h2" className="mt-3 text-[clamp(2rem,5vw,4.5rem)] font-black uppercase tracking-[-0.04em] text-cream leading-tight">
-              Réserve ton créneau maintenant.
+            <RevealText tag="h2" className="mt-3 text-[clamp(2rem,5vw,4.5rem)] font-black uppercase tracking-[-0.04em] text-white leading-tight">
+              Réserve ton créneau.
             </RevealText>
-            <motion.p variants={fadeUp} className="mt-4 sm:mt-6 text-sm sm:text-base text-cream/55 max-w-md mx-auto font-medium">
+            <motion.p variants={fadeUp} className="mt-4 sm:mt-6 text-sm sm:text-base max-w-md mx-auto font-medium" style={{ color: 'rgba(244,239,234,0.50)' }}>
               Choisis ta prestation, prends l'horaire qui t'arrange et confirme en quelques secondes.
             </motion.p>
             <motion.div variants={fadeUp} className="mt-10 sm:mt-14 flex flex-wrap gap-3 sm:gap-4 justify-center">
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                <Link to="/prestations" className="inline-flex items-center gap-2 sm:gap-3 bg-brand px-8 sm:px-10 py-4 sm:py-5 text-[10px] font-black uppercase tracking-[0.3em] sm:tracking-[0.35em] text-dark hover:bg-brandDark transition-colors">
+                <Link to="/prestations"
+                  className="inline-flex items-center gap-2 sm:gap-3 bg-white px-8 sm:px-10 py-4 sm:py-5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-brand hover:text-dark transition-colors"
+                  style={{ color: '#5C4031' }}>
                   <ScissorsIcon className="w-3.5 h-3.5" /> Voir les services
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                <Link to="/concept" className="inline-flex items-center justify-center border border-cream/22 px-8 sm:px-10 py-4 sm:py-5 text-[10px] font-semibold uppercase tracking-[0.3em] sm:tracking-[0.35em] text-cream hover:border-cream/50 transition-all">
-                  En savoir plus
-                </Link>
-              </motion.div>
             </motion.div>
+            <motion.p variants={fadeUp} className="mt-8 text-[9px] uppercase tracking-[0.45em] font-bold" style={{ color: 'rgba(244,239,234,0.25)' }}>
+              Paiement sur place · Espèces ou chèque uniquement
+            </motion.p>
           </Section>
         </div>
       </section>

@@ -112,7 +112,7 @@ export default function Services() {
       <Marquee />
 
       {/* ═══════════════ SERVICES LIST ══════════════════════ */}
-      <section className="bg-cream py-16">
+      <section className="py-16" style={{background:'#405568'}}>
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           {/* Label hint */}
           <motion.div
@@ -123,7 +123,7 @@ export default function Services() {
             className="flex items-center gap-4 pb-6 mb-8 border-b border-beige/60"
           >
             <ScissorsIcon className="w-4 h-4 text-brand shrink-0" />
-            <p className="text-[9px] uppercase tracking-[0.55em] text-muted font-bold">
+            <p className="text-[9px] uppercase tracking-[0.55em] text-white/40 font-bold">
               Clique sur une prestation pour réserver directement
             </p>
             <span className="h-px flex-1 bg-beige/60 hidden sm:block" />
@@ -143,7 +143,7 @@ export default function Services() {
       <Marquee gold speed={24} />
 
       {/* ═══════════ NOS ENGAGEMENTS ════════════════════════ */}
-      <section className="bg-cream py-14 sm:py-20">
+      <section className="py-14 sm:py-20" style={{background:'#405568'}}>
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section>
             <motion.div variants={fadeUp} className="mb-12 flex items-end justify-between">
@@ -152,28 +152,26 @@ export default function Services() {
                   <ScissorsIcon className="w-4 h-4 text-brand" />
                   <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">La Wonderclub promesse</span>
                 </div>
-                <RevealText tag="h2" className="text-3xl font-black uppercase tracking-[-0.04em] text-dark sm:text-4xl leading-tight">
+                <RevealText tag="h2" className="text-3xl font-black uppercase tracking-[-0.04em] text-white sm:text-4xl leading-tight">
                   Nos engagements
                 </RevealText>
               </div>
-              <DiamondDivider className="text-dark hidden lg:flex max-w-[120px]" />
+              <DiamondDivider className="text-white/30 hidden lg:flex max-w-[120px]" />
             </motion.div>
 
-            <motion.div variants={stagger} className="grid gap-px bg-beige/40 sm:grid-cols-2 lg:grid-cols-4">
+            <motion.div variants={stagger} className="grid gap-px sm:grid-cols-2 lg:grid-cols-4" style={{ background: 'rgba(255,255,255,0.06)' }}>
               {ENGAGEMENTS.map((e) => (
-                <motion.div
-                  key={e.title}
-                  variants={fadeUp}
+                <motion.div key={e.title} variants={fadeUp}
                   whileHover={{ y: -4 }}
                   transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-                  className="group bg-cream p-6 sm:p-8 flex flex-col gap-4 sm:gap-5 hover:bg-dark transition-colors duration-400"
-                >
-                  <e.Icon className="w-6 h-5 text-brand/50 group-hover:text-brand transition-colors duration-400" />
+                  className="group p-6 sm:p-8 flex flex-col gap-4 sm:gap-5 hover:bg-brand transition-colors duration-400"
+                  style={{ background: '#405568' }}>
+                  <e.Icon className="w-6 h-5 text-brand/50 group-hover:text-dark/50 transition-colors duration-400" />
                   <div>
-                    <p className="text-sm font-black uppercase tracking-[-0.01em] text-dark group-hover:text-cream transition-colors duration-400">
+                    <p className="text-sm font-black uppercase tracking-[-0.01em] text-white group-hover:text-dark transition-colors duration-400">
                       {e.title}
                     </p>
-                    <p className="mt-2 text-xs leading-5 text-muted group-hover:text-cream/50 font-medium transition-colors duration-400">
+                    <p className="mt-2 text-xs leading-5 font-medium transition-colors duration-400 group-hover:text-dark/60" style={{ color: 'rgba(244,239,234,0.50)' }}>
                       {e.desc}
                     </p>
                   </div>
@@ -184,10 +182,9 @@ export default function Services() {
             {/* Final CTA */}
             <motion.div variants={fadeUp} className="mt-12 text-center">
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
-                <Link
-                  to="/reservation"
-                  className="inline-flex items-center gap-3 bg-dark px-10 py-5 text-[10px] font-black uppercase tracking-[0.35em] text-cream transition-all duration-300 hover:bg-brand hover:text-dark"
-                >
+                <Link to="/reservation"
+                  className="inline-flex items-center gap-3 bg-white px-10 py-5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-brand transition-all duration-300"
+                  style={{ color: '#5C4031' }}>
                   <ScissorsIcon className="w-3.5 h-3.5" />
                   Réserver maintenant
                 </Link>

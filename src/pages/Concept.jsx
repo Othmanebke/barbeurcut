@@ -101,7 +101,7 @@ export default function Concept() {
       <Marquee />
 
       {/* ═══════════════════ PILLARS ════════════════════════ */}
-      <section className="bg-cream py-14 sm:py-20 lg:py-28">
+      <section className="py-14 sm:py-20 lg:py-28" style={{background:'#405568'}}>
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section>
             <motion.div variants={fadeUp} className="mb-10 sm:mb-14">
@@ -109,26 +109,23 @@ export default function Concept() {
                 <ScissorsIcon className="w-4 h-4 text-brand" />
                 <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">Nos piliers</span>
               </div>
-              <RevealText tag="h2" className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[-0.04em] text-dark leading-tight">
+              <RevealText tag="h2" className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-[-0.04em] text-white leading-tight">
                 Ce qui nous définit
               </RevealText>
             </motion.div>
 
-            <motion.div variants={stagger} className="divide-y divide-beige/60">
+            <motion.div variants={stagger} className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
               {PILLARS.map((p) => (
-                <motion.div
-                  key={p.id}
-                  variants={fadeUp}
-                  className="grid grid-cols-[36px_1fr_auto] sm:grid-cols-[52px_1fr_auto] gap-4 sm:gap-8 py-7 sm:py-10 group items-center"
-                >
-                  <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.4em] sm:tracking-[0.55em] text-brand/65 font-bold">{p.id}</span>
+                <motion.div key={p.id} variants={fadeUp}
+                  className="grid grid-cols-[36px_1fr_auto] sm:grid-cols-[52px_1fr_auto] gap-4 sm:gap-8 py-7 sm:py-10 group items-center">
+                  <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.55em] text-brand/65 font-bold">{p.id}</span>
                   <div>
-                    <h2 className="text-base sm:text-xl lg:text-2xl font-black uppercase tracking-[-0.02em] text-dark group-hover:text-brand transition-colors duration-300">
+                    <h2 className="text-base sm:text-xl lg:text-2xl font-black uppercase tracking-[-0.02em] text-white group-hover:text-brand transition-colors duration-300">
                       {p.title}
                     </h2>
-                    <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm leading-6 sm:leading-7 text-dark/60 font-medium max-w-lg">{p.desc}</p>
+                    <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm leading-6 sm:leading-7 font-medium max-w-lg" style={{ color: 'rgba(244,239,234,0.55)' }}>{p.desc}</p>
                   </div>
-                  <p.Icon className="w-5 h-4 sm:w-6 sm:h-5 text-beige group-hover:text-brand transition-colors duration-300 shrink-0" />
+                  <p.Icon className="w-5 h-4 sm:w-6 sm:h-5 text-white/20 group-hover:text-brand transition-colors duration-300 shrink-0" />
                 </motion.div>
               ))}
             </motion.div>
@@ -202,7 +199,7 @@ export default function Concept() {
       </section>
 
       {/* ═══════════════════ ADRESSE & MAPS ═════════════════ */}
-      <section className="bg-cream py-14 sm:py-20">
+      <section className="py-14 sm:py-20" style={{background:'#405568'}}>
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <motion.div variants={fadeUp}>
@@ -210,15 +207,14 @@ export default function Concept() {
                 <ScissorsIcon className="w-4 h-4 text-brand" />
                 <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">Nous trouver</span>
               </div>
-              <h2 className="text-3xl font-black uppercase tracking-[-0.04em] text-dark sm:text-4xl leading-tight mb-6">
+              <h2 className="text-3xl font-black uppercase tracking-[-0.04em] text-white sm:text-4xl leading-tight mb-6">
                 1 Rue de la Madeleine<br />
-                <span className="text-muted text-2xl font-bold">77170 Brie-Comte-Robert</span>
+                <span className="text-2xl font-bold" style={{ color: 'rgba(244,239,234,0.45)' }}>77170 Brie-Comte-Robert</span>
               </h2>
-              <ul className="space-y-3 text-sm font-medium text-dark/65 mb-8">
+              <ul className="space-y-3 text-sm font-medium mb-8" style={{ color: 'rgba(244,239,234,0.60)' }}>
                 {[
                   { icon: '✂️', text: 'Mercredi — Samedi · Ouvert' },
-                  { icon: '🕐', text: '9h00 – 12h00  /  13h00 – 19h00' },
-                  { icon: '☕', text: 'Pause déjeuner : 12h – 13h' },
+                  { icon: '🕐', text: '10h00 – 19h30 en continu' },
                   { icon: '🚫', text: 'Lun, Mar, Dim : fermé' },
                 ].map((h) => (
                   <li key={h.text} className="flex items-center gap-3">
@@ -227,23 +223,19 @@ export default function Concept() {
                   </li>
                 ))}
               </ul>
-              <DiamondDivider className="text-dark max-w-xs mb-8" />
+              <DiamondDivider className="text-white/20 max-w-xs mb-8" />
               <div className="flex flex-wrap gap-4">
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                  <a
-                    href="https://www.google.com/maps/search/?api=1&query=1+Rue+de+la+Madeleine+77170+Brie-Comte-Robert"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-3 bg-dark px-8 py-4 text-[10px] font-black uppercase tracking-[0.35em] text-cream transition-colors duration-300 hover:bg-brand hover:text-dark"
-                  >
+                  <a href="https://www.google.com/maps/search/?api=1&query=1+Rue+de+la+Madeleine+77170+Brie-Comte-Robert"
+                    target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-3 bg-white px-8 py-4 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-brand transition-colors duration-300"
+                    style={{ color: '#5C4031' }}>
                     📍 Voir sur Google Maps
                   </a>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                  <Link
-                    to="/prestations"
-                    className="inline-flex items-center gap-2 border border-beige px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.35em] text-dark transition-all duration-300 hover:border-dark"
-                  >
+                  <Link to="/prestations"
+                    className="inline-flex items-center gap-2 border border-white/20 px-8 py-4 text-[10px] font-semibold uppercase tracking-[0.35em] text-white transition-all duration-300 hover:border-brand">
                     <ScissorsIcon className="w-3.5 h-3.5 text-brand" />
                     Réserver maintenant
                   </Link>
