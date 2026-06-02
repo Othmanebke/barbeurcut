@@ -171,20 +171,8 @@ export default function Home() {
           className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 sm:px-10 text-center"
           style={{ paddingTop: 'var(--navbar-h, 72px)', x: titleX, y: titleY }}
         >
-          {/* Badge */}
-          <motion.div className="flex items-center justify-center gap-3 mb-12"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9, duration: 0.7 }}>
-            <motion.span className="block h-px bg-white/30"
-              initial={{ width: 0 }} animate={{ width: '5rem' }}
-              transition={{ delay: 1.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }} />
-            <span className="text-[9px] uppercase tracking-[0.6em] font-bold"
-                  style={{ color: 'rgba(255,255,255,0.50)' }}>
-              Barbier indépendant · Brie-Comte-Robert
-            </span>
-            <motion.span className="block h-px bg-white/30"
-              initial={{ width: 0 }} animate={{ width: '5rem' }}
-              transition={{ delay: 1.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }} />
-          </motion.div>
+          {/* Espaceur */}
+          <div className="mb-12" />
 
           {/* WONDER — tombe du haut */}
           <div className="overflow-hidden leading-none mb-0">
