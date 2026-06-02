@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import RevealText from '../components/RevealText';
 import Marquee from '../components/Marquee';
 import { ScissorsIcon, RazorIcon, CombIcon, BrushIcon } from '../components/BarberIcons';
@@ -54,19 +54,17 @@ function Eyebrow({ children, Icon = ScissorsIcon }) {
   );
 }
 
-/* ── Lettre animée pour le titre hero ── */
-function AnimChar({ char, delay }) {
+/* ── Anneau pulsant carré ── */
+function SquarePulse({ delay, size }) {
   return (
-    <div className="overflow-hidden inline-block">
-      <motion.span
-        className="inline-block"
-        initial={{ y: '110%' }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {char === ' ' ? ' ' : char}
-      </motion.span>
-    </div>
+    <motion.div className="absolute pointer-events-none"
+      style={{ width: size, height: size, top: '50%', left: '50%',
+               marginTop: -size / 2, marginLeft: -size / 2,
+               border: '1px solid rgba(255,255,255,0.06)' }}
+      initial={{ scale: 0.2, opacity: 0.7 }}
+      animate={{ scale: 3.2, opacity: 0 }}
+      transition={{ duration: 5, delay, repeat: Infinity, ease: 'easeOut', repeatDelay: 0.3 }}
+    />
   );
 }
 
@@ -84,130 +82,165 @@ const STEPS = [
 
 /* ═══════════════════════════════════════════════════════════════ */
 export default function Home() {
+  const heroRef = useRef(null);
+  const mouseX  = useMotionValue(0.5);
+  const mouseY  = useMotionValue(0.5);
+  const spring  = { damping: 28, stiffness: 90 };
+  const smoothX = useSpring(mouseX, spring);
+  const smoothY = useSpring(mouseY, spring);
+  const titleX  = useTransform(smoothX, [0, 1], [-22, 22]);
+  const titleY  = useTransform(smoothY, [0, 1], [-12, 12]);
+  const driftX  = useTransform(smoothX, [0, 1], [12, -12]);
+
+  const onMouseMove = (e) => {
+    const r = heroRef.current?.getBoundingClientRect();
+    if (!r) return;
+    mouseX.set((e.clientX - r.left) / r.width);
+    mouseY.set((e.clientY - r.top)  / r.height);
+  };
+
   return (
     <>
-      {/* ════════════════════ HERO ANIMÉ ════════════════════════ */}
+      {/* ═══════════════════ HERO ════════════════════════════ */}
       <section
-        className="relative flex flex-col overflow-hidden"
-        style={{ minHeight: 'clamp(560px, 92vh, 1000px)', background: '#5C4031' }}
+        ref={heroRef}
+        onMouseMove={onMouseMove}
+        className="relative flex flex-col overflow-hidden select-none"
+        style={{ minHeight: 'clamp(580px, 95vh, 1040px)', background: '#5C4031', cursor: 'none' }}
       >
-        {/* Grille déco animée en fond */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Lignes verticales */}
-          {[15, 35, 65, 85].map((pct, i) => (
-            <motion.div key={i}
-              className="absolute top-0 bottom-0 w-px"
-              style={{ left: `${pct}%`, background: 'rgba(255,255,255,0.04)' }}
-              initial={{ scaleY: 0, originY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: 1.2, delay: 0.1 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-            />
-          ))}
-          {/* Lignes horizontales */}
-          {[25, 75].map((pct, i) => (
-            <motion.div key={i}
-              className="absolute left-0 right-0 h-px"
-              style={{ top: `${pct}%`, background: 'rgba(255,255,255,0.04)' }}
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 1.4, delay: 0.3 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
-            />
-          ))}
-          {/* WC watermark */}
-          <motion.p
-            className="absolute inset-0 flex items-center justify-center font-black uppercase leading-none tracking-[-0.05em] select-none"
-            style={{ fontSize: 'clamp(12rem, 40vw, 36rem)', color: 'rgba(255,255,255,0.03)' }}
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 2, delay: 0.5 }}
-          >
-            WC
-          </motion.p>
+        {/* ── Couche 1 : anneaux carrés pulsants ── */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
+          <SquarePulse delay={0}   size={200} />
+          <SquarePulse delay={1.6} size={200} />
+          <SquarePulse delay={3.2} size={200} />
         </div>
 
-        {/* Ligne scan horizontale */}
+        {/* ── Couche 2 : texte fantôme défilant en fond ── */}
         <motion.div
-          className="absolute left-0 right-0 h-[1px] z-20 pointer-events-none"
-          style={{ background: 'rgba(255,255,255,0.25)', top: '50%' }}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: [0, 1, 1, 0] }}
-          transition={{ duration: 1.2, times: [0, 0.4, 0.8, 1], delay: 0.1, ease: 'easeInOut' }}
-        />
-
-        {/* Coin déco haut-droit */}
-        <motion.div
-          className="absolute top-20 right-10 hidden lg:block pointer-events-none"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }}>
-          <div className="w-16 h-16 border border-white/10 flex items-center justify-center">
-            <ScissorsIcon className="w-5 h-5" style={{ color: 'rgba(255,255,255,0.15)' }} />
-          </div>
+          className="absolute bottom-24 left-0 right-0 pointer-events-none overflow-hidden"
+          style={{ x: driftX }}
+        >
+          <motion.p
+            className="whitespace-nowrap font-black uppercase leading-none"
+            style={{ fontSize: 'clamp(5rem,18vw,14rem)', color: 'rgba(255,255,255,0.028)' }}
+            animate={{ x: ['0%', '-33%'] }}
+            transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
+          >
+            BARBERSHOP · WONDERCLUB · BRIE-COMTE-ROBERT · BARBERSHOP · WONDERCLUB · BRIE-COMTE-ROBERT ·
+          </motion.p>
         </motion.div>
 
-        {/* Contenu centré */}
-        <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 sm:px-10 text-center"
-             style={{ paddingTop: 'var(--navbar-h, 72px)' }}>
+        {/* ── Couche 3 : lignes de grille qui s'étendent ── */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[12, 37, 63, 88].map((pct, i) => (
+            <motion.div key={i} className="absolute top-0 bottom-0 w-px"
+              style={{ left: `${pct}%`, background: 'rgba(255,255,255,0.04)' }}
+              initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
+              transition={{ duration: 1.5, delay: 0.2 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+            />
+          ))}
+        </div>
 
+        {/* ── Couche 4 : ligne scanner ── */}
+        <motion.div
+          className="absolute left-0 right-0 z-20 pointer-events-none"
+          style={{ height: 1, top: '50%', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.5) 50%, transparent)' }}
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: [0, 1, 1, 0], opacity: [0, 1, 1, 0] }}
+          transition={{ duration: 1.0, times: [0, 0.35, 0.7, 1], delay: 0.05 }}
+        />
+
+        {/* ── Coins décoratifs ── */}
+        {[
+          { top: 80, left: 32, d: 1.5 },
+          { top: 80, right: 32, d: 1.7 },
+        ].map((pos, i) => (
+          <motion.div key={i}
+            className="absolute hidden lg:flex items-center justify-center pointer-events-none"
+            style={{ top: pos.top, left: pos.left, right: pos.right, width: 56, height: 56,
+                     border: '1px solid rgba(255,255,255,0.10)' }}
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: pos.d, duration: 0.5, ease: 'backOut' }}>
+            <ScissorsIcon className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.18)' }} />
+          </motion.div>
+        ))}
+
+        {/* ── Contenu principal (couche parallaxe) ── */}
+        <motion.div
+          className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 sm:px-10 text-center"
+          style={{ paddingTop: 'var(--navbar-h, 72px)', x: titleX, y: titleY }}
+        >
           {/* Badge */}
-          <motion.div
-            className="flex items-center justify-center gap-3 mb-10"
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}>
-            <motion.span className="block h-px w-12 sm:w-20 bg-white/25"
-              initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.6, delay: 1.0 }} />
-            <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.55)' }}>
+          <motion.div className="flex items-center justify-center gap-3 mb-12"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9, duration: 0.7 }}>
+            <motion.span className="block h-px bg-white/30"
+              initial={{ width: 0 }} animate={{ width: '5rem' }}
+              transition={{ delay: 1.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }} />
+            <span className="text-[9px] uppercase tracking-[0.6em] font-bold"
+                  style={{ color: 'rgba(255,255,255,0.50)' }}>
               Barbier indépendant · Brie-Comte-Robert
             </span>
-            <motion.span className="block h-px w-12 sm:w-20 bg-white/25"
-              initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.6, delay: 1.0 }} />
+            <motion.span className="block h-px bg-white/30"
+              initial={{ width: 0 }} animate={{ width: '5rem' }}
+              transition={{ delay: 1.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }} />
           </motion.div>
 
-          {/* WONDER — lettres qui montent */}
-          <div className="mb-1 sm:mb-2">
-            <h1 className="font-black uppercase leading-[0.88] tracking-[-0.04em] text-white"
-                style={{ fontSize: 'clamp(4rem, 15vw, 13rem)' }}>
-              {'WONDER'.split('').map((c, i) => (
-                <AnimChar key={i} char={c} delay={0.35 + i * 0.07} />
-              ))}
-            </h1>
+          {/* WONDER — tombe du haut */}
+          <div className="overflow-hidden leading-none mb-0">
+            <motion.h1
+              className="font-black uppercase tracking-[-0.04em] text-white"
+              style={{ fontSize: 'clamp(4rem, 16vw, 14rem)', lineHeight: 0.92 }}
+              initial={{ y: '-105%' }}
+              animate={{ y: 0 }}
+              transition={{ duration: 1.1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            >
+              WONDER
+            </motion.h1>
           </div>
 
-          {/* CLUB — légèrement décalé, couleur différente */}
-          <div className="mb-8 sm:mb-10">
-            <h1 className="font-black uppercase leading-[0.88] tracking-[-0.02em]"
-                style={{ fontSize: 'clamp(4rem, 15vw, 13rem)', color: 'rgba(255,255,255,0.40)' }}>
-              {'CLUB'.split('').map((c, i) => (
-                <AnimChar key={i} char={c} delay={0.72 + i * 0.07} />
-              ))}
-            </h1>
+          {/* CLUB — monte du bas */}
+          <div className="overflow-hidden leading-none mb-10">
+            <motion.h1
+              className="font-black uppercase tracking-[-0.02em]"
+              style={{ fontSize: 'clamp(4rem, 16vw, 14rem)', lineHeight: 0.92, color: 'rgba(255,255,255,0.28)' }}
+              initial={{ y: '105%' }}
+              animate={{ y: 0 }}
+              transition={{ duration: 1.1, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            >
+              CLUB
+            </motion.h1>
           </div>
 
-          {/* Séparateur animé */}
-          <motion.div
-            className="flex items-center justify-center gap-5 mb-10"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>
-            <motion.span className="block h-px bg-white/30"
-              initial={{ width: 0 }} animate={{ width: '4rem' }}
-              transition={{ duration: 0.8, delay: 1.3, ease: [0.22, 1, 0.36, 1] }} />
+          {/* Ligne centrale qui s'étend */}
+          <motion.div className="flex items-center gap-4 mb-10">
+            <motion.span className="block h-px bg-white/25"
+              initial={{ width: 0 }} animate={{ width: '5rem' }}
+              transition={{ delay: 1.4, duration: 0.9 }} />
             <motion.span
-              initial={{ opacity: 0, scale: 0, rotate: -45 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 0.5, delay: 1.6, ease: 'backOut' }}
-              style={{ color: 'rgba(255,255,255,0.40)', fontSize: '0.85rem' }}>✦</motion.span>
-            <motion.span className="block h-px bg-white/30"
-              initial={{ width: 0 }} animate={{ width: '4rem' }}
-              transition={{ duration: 0.8, delay: 1.3, ease: [0.22, 1, 0.36, 1] }} />
+              initial={{ opacity: 0, rotate: -90, scale: 0 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              transition={{ delay: 1.7, duration: 0.5, ease: 'backOut' }}
+              style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1rem' }}>✦</motion.span>
+            <motion.span className="block h-px bg-white/25"
+              initial={{ width: 0 }} animate={{ width: '5rem' }}
+              transition={{ delay: 1.4, duration: 0.9 }} />
           </motion.div>
 
-          {/* CTA */}
+          {/* CTA avec glow */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.55, delay: 1.7, ease: [0.34, 1.56, 0.64, 1] }}
-            className="mb-10">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }}>
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.85, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-10"
+          >
+            <motion.div
+              whileHover={{ scale: 1.06, boxShadow: '0 0 60px rgba(255,255,255,0.18), 0 0 120px rgba(255,255,255,0.08)' }}
+              whileTap={{ scale: 0.96 }}
+              className="inline-block"
+            >
               <Link to="/prestations"
-                className="inline-flex items-center gap-3 bg-white px-10 sm:px-14 py-4 sm:py-5 text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-300 hover:bg-cream hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]"
+                className="inline-flex items-center gap-3 bg-white px-10 sm:px-14 py-4 sm:py-5 text-[10px] font-black uppercase tracking-[0.4em] transition-colors duration-300 hover:bg-creamMid"
                 style={{ color: '#5C4031' }}>
                 <ScissorsIcon className="w-3.5 h-3.5" /> Réserver un créneau
               </Link>
@@ -216,34 +249,35 @@ export default function Home() {
 
           {/* Diplôme */}
           <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ delay: 2.1, duration: 0.8 }}
             className="text-[9px] uppercase tracking-[0.45em] font-bold"
-            style={{ color: 'rgba(255,255,255,0.25)' }}>
+            style={{ color: 'rgba(255,255,255,0.22)' }}>
             Diplôme BP · CMA Saint-Maur-des-Fossés
           </motion.p>
-        </div>
+        </motion.div>
 
-        {/* Stats bar */}
+        {/* ── Stats bar ── */}
         <motion.div
-          className="relative z-10 border-t border-white/8"
-          style={{ background: 'rgba(64,85,104,0.55)', backdropFilter: 'blur(10px)' }}
-          initial={{ y: 40, opacity: 0 }}
+          className="relative z-10 border-t"
+          style={{ borderColor: 'rgba(255,255,255,0.08)', background: 'rgba(64,85,104,0.60)', backdropFilter: 'blur(12px)' }}
+          initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.7, delay: 2.1 }}>
-          <div className="mx-auto max-w-7xl grid grid-cols-3 divide-x divide-white/10 px-4 sm:px-10">
+          transition={{ delay: 2.2, duration: 0.7 }}
+        >
+          <div className="mx-auto max-w-7xl grid grid-cols-3 divide-x px-4 sm:px-10"
+               style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
             {[
               { target: 100, suffix: '%', label: 'Satisfaits' },
               { target: 8,   suffix: '+', label: "Ans d'exp."  },
               { fixed: 'BP',              label: 'Diplôme'     },
             ].map((s) => (
-              <div key={s.label} className="py-4 sm:py-5 text-center">
-                <p className="text-lg sm:text-2xl font-black text-white">
+              <div key={s.label} className="py-5 sm:py-6 text-center">
+                <p className="text-xl sm:text-3xl font-black text-white">
                   {s.fixed ?? <AnimatedCounter target={s.target} suffix={s.suffix} />}
                 </p>
-                <p className="mt-0.5 text-[8px] sm:text-[9px] uppercase tracking-[0.35em] font-medium"
-                   style={{ color: 'rgba(244,239,234,0.40)' }}>
-                  {s.label}
-                </p>
+                <p className="mt-1 text-[8px] sm:text-[9px] uppercase tracking-[0.4em] font-bold"
+                   style={{ color: 'rgba(244,239,234,0.35)' }}>{s.label}</p>
               </div>
             ))}
           </div>
