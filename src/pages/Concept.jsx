@@ -252,7 +252,7 @@ export default function Concept() {
 
             <p className="text-sm sm:text-base leading-8 font-medium max-w-lg"
                style={{ color: 'rgba(92,64,49,0.65)' }}>
-              Barbier indépendant depuis 2018. J'ai décroché mon CAP puis mon BP Coiffure à la CMA de Saint-Maur-des-Fossés. Aujourd'hui je loue mon siège et je travaille à mon compte pour donner le meilleur à chaque client, sans contrainte.
+              Barbier indépendant depuis 2017. J'ai décroché mon CAP puis mon BP Coiffure à la CMA de Saint-Maur-des-Fossés. Aujourd'hui je loue mon siège et je travaille à mon compte pour donner le meilleur à chaque client, sans contrainte.
             </p>
 
             {/* Timeline diplômes */}
@@ -261,8 +261,8 @@ export default function Concept() {
                  style={{ color: 'rgba(64,85,104,0.40)' }}>Parcours</p>
               {[
                 { year: '2019', label: 'CAP Coiffure',         sub: 'CMA Saint-Maur-des-Fossés' },
-                { year: '2019', label: 'BP Coiffure',          sub: 'CMA Saint-Maur-des-Fossés' },
-                { year: '2019', label: 'Lancement Wonderclub', sub: 'Artisan indépendant · Brie-Comte-Robert', active: true },
+                { year: '2021', label: 'BP Coiffure',          sub: 'CMA Saint-Maur-des-Fossés' },
+                { year: '2017', label: 'Lancement Wonderclub', sub: 'Artisan indépendant · Brie-Comte-Robert', active: true },
               ].map((step, i) => (
                 <motion.div key={i} className="flex items-start gap-5"
                   initial={{ opacity: 0, x: 20 }}

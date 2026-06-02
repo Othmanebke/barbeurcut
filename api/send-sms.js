@@ -71,87 +71,91 @@ export default async function handler(req, res) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Réservation confirmée — Wonderclub</title>
+        <style>
+          body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
+          table { border-collapse: collapse; }
+          img { max-width: 100%; height: auto; display: block; }
+        </style>
       </head>
-      <body style="margin:0;padding:0;background:#FFF8E7;font-family:Arial,sans-serif;">
-        <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF8E7;padding:40px 16px;">
+      <body style="background:#F4EFEA;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#F4EFEA;padding:40px 20px;">
           <tr><td align="center">
-            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;">
 
               <!-- ── HEADER ── -->
-              <tr><td style="background:#4A2F1A;padding:28px 36px;border-bottom:3px solid #FFFFFF;">
+              <tr><td style="background:#5C4031;padding:32px 40px;border-bottom:4px solid #F4EFEA;">
                 <table width="100%" cellpadding="0" cellspacing="0"><tr>
-
-                  <!-- Logo -->
+                  <!-- Logo/Marque -->
                   <td style="vertical-align:middle;">
-                    <table cellpadding="0" cellspacing="0"><tr>
-                      <td style="background:#FFFFFF;width:38px;height:38px;text-align:center;vertical-align:middle;">
-                        <img src="https://barbeurcut.vercel.app/logo.png"
-                             width="26" height="26" alt="W"
-                             style="display:block;margin:auto;" />
-                      </td>
-                    </tr></table>
+                    <span style="font-size:18px;font-weight:900;text-transform:uppercase;
+                                 letter-spacing:6px;color:#F4EFEA;display:block;">Wonderclub</span>
                   </td>
-
                   <!-- Statut -->
                   <td align="right" style="vertical-align:middle;">
-                    <span style="font-size:10px;text-transform:uppercase;letter-spacing:4px;
-                                 color:#FFFFFF;font-weight:700;">Réservation confirmée ✓</span>
+                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:3px;
+                                 color:#F4EFEA;font-weight:700;display:block;">✓ Confirmé</span>
                   </td>
-
                 </tr></table>
               </td></tr>
 
               <!-- ── BODY ── -->
-              <tr><td style="background:#4A2F1A;padding:36px 36px 32px;">
+              <tr><td style="background:#FFFFFF;padding:40px 40px 28px;">
 
-                <p style="margin:0 0 6px;font-size:10px;text-transform:uppercase;
-                           letter-spacing:4px;color:#FFFFFF;font-weight:700;">Bonjour ${clientName}</p>
-                <h1 style="margin:0 0 28px;font-size:26px;font-weight:900;
-                            text-transform:uppercase;letter-spacing:-1px;color:#FFF8E7;line-height:1.1;">
+                <p style="margin:0 0 8px;font-size:11px;text-transform:uppercase;
+                           letter-spacing:3px;color:#5C4031;font-weight:700;">Bonjour ${clientName},</p>
+
+                <h1 style="margin:0 0 32px;font-size:28px;font-weight:900;
+                            text-transform:uppercase;letter-spacing:-1px;color:#5C4031;line-height:1.15;">
                   Ton rendez-vous<br>est confirmé.
                 </h1>
 
                 <!-- Récap -->
                 <table width="100%" cellpadding="0" cellspacing="0"
-                       style="background:#405568;margin-bottom:28px;">
+                       style="background:#F9F6F2;margin-bottom:32px;border:1px solid #EBE3DB;">
                   ${[
-                    ['Prestation',  `${serviceTitle} — ${servicePriceLabel}`],
-                    ['Date',        formattedDate],
-                    ['Horaire',     time],
-                    ['Adresse',     '1 Rue de la Madeleine, 77170 Brie-Comte-Robert'],
-                    ['Référence',   confirmationNumber],
+                    ['Prestation',  `<strong>${serviceTitle}</strong> — ${servicePriceLabel}`],
+                    ['Date & Heure', `${formattedDate} à ${time}`],
+                    ['Adresse',     '1 Rue de la Madeleine<br>77170 Brie-Comte-Robert'],
+                    ['Référence',   `<strong>#${confirmationNumber}</strong>`],
                   ].map(([label, val]) => `
                     <tr>
-                      <td style="padding:11px 16px;font-size:9px;text-transform:uppercase;
-                                 letter-spacing:3px;color:#FFFFFF;font-weight:700;
-                                 border-bottom:1px solid rgba(255,248,231,0.07);width:38%;">${label}</td>
-                      <td style="padding:11px 16px;font-size:13px;font-weight:600;color:#FFF8E7;
-                                 border-bottom:1px solid rgba(255,248,231,0.07);">${val}</td>
+                      <td style="padding:13px 16px;font-size:10px;text-transform:uppercase;
+                                 letter-spacing:2px;color:#5C4031;font-weight:700;
+                                 border-bottom:1px solid #EBE3DB;width:35%;vertical-align:top;">${label}</td>
+                      <td style="padding:13px 16px;font-size:14px;font-weight:500;color:#3D2A1E;
+                                 border-bottom:1px solid #EBE3DB;">${val}</td>
                     </tr>
                   `).join('')}
                 </table>
 
-                <p style="margin:0 0 28px;font-size:13px;line-height:1.9;
-                           color:rgba(255,248,231,0.60);font-weight:400;">
-                  Je suis barbier indépendant et je loue mon siège à cette adresse.
-                  Présente-toi directement sur place à l'heure prévue.
+                <p style="margin:0 0 24px;font-size:14px;line-height:1.8;
+                           color:#5C4031;font-weight:500;">
+                  Je suis barbier indépendant et je loue mon siège à cette adresse. 
+                  <strong>Présente-toi directement à l'heure prévue.</strong>
                 </p>
 
                 <!-- CTA -->
                 <a href="https://barbeurcut.vercel.app"
-                   style="display:inline-block;background:#FFFFFF;color:#4A2F1A;
-                          padding:14px 32px;font-size:10px;font-weight:900;
-                          text-transform:uppercase;letter-spacing:4px;text-decoration:none;">
-                  Voir le site
+                   style="display:inline-block;background:#5C4031;color:#F4EFEA;
+                          padding:15px 36px;font-size:11px;font-weight:900;
+                          text-transform:uppercase;letter-spacing:3px;text-decoration:none;border:none;border-radius:0;">
+                  → Visiter le site
                 </a>
 
               </td></tr>
 
+              <!-- ── DIVIDER ── -->
+              <tr><td style="height:1px;background:#EBE3DB;"></td></tr>
+
               <!-- ── FOOTER ── -->
-              <tr><td style="background:#405568;padding:18px 36px;border-top:1px solid rgba(255,248,231,0.08);">
-                <p style="margin:0;font-size:9px;color:rgba(255,248,231,0.20);
-                           text-transform:uppercase;letter-spacing:3px;font-weight:500;text-align:center;">
-                  © ${new Date().getFullYear()} Wonderclub · Barbier indépendant · Brie-Comte-Robert 77170
+              <tr><td style="background:#F9F6F2;padding:24px 40px;">
+                <p style="margin:0;font-size:10px;color:#5C4031;
+                           text-transform:uppercase;letter-spacing:2px;font-weight:600;text-align:center;">
+                  Wonderclub • Barbier indépendant • Brie-Comte-Robert
+                </p>
+                <p style="margin:12px 0 0;font-size:9px;color:rgba(92,64,49,0.50);
+                           text-align:center;letter-spacing:1px;">
+                  © ${new Date().getFullYear()} — 1 Rue de la Madeleine, 77170
                 </p>
               </td></tr>
 
@@ -183,49 +187,65 @@ export default async function handler(req, res) {
   if (BARBER_EMAIL && SENDER_EMAIL) {
     const barberHtml = `
       <!DOCTYPE html><html lang="fr">
-      <head><meta charset="UTF-8"></head>
-      <body style="margin:0;padding:0;background:#FFF8E7;font-family:Arial,sans-serif;">
-        <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF8E7;padding:32px 16px;">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <style>
+          body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
+          table { border-collapse: collapse; }
+        </style>
+      </head>
+      <body style="background:#F4EFEA;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#F4EFEA;padding:40px 20px;">
           <tr><td align="center">
-            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#4A2F1A;color:#FFF8E7;">
-              <tr><td style="padding:24px 32px;border-bottom:3px solid #FFFFFF;">
-                <span style="font-size:12px;font-weight:900;text-transform:uppercase;
-                             letter-spacing:5px;color:#FFFFFF;">Nouveau RDV ✓</span>
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;">
+              <!-- ── HEADER ── -->
+              <tr><td style="background:#5C4031;padding:32px 40px;border-bottom:4px solid #F4EFEA;">
+                <span style="font-size:18px;font-weight:900;text-transform:uppercase;
+                             letter-spacing:6px;color:#F4EFEA;">Nouveau RDV ✓</span>
               </td></tr>
-              <tr><td style="padding:28px 32px;">
-                <h1 style="margin:0 0 24px;font-size:22px;font-weight:900;
-                            text-transform:uppercase;color:#FFF8E7;letter-spacing:-1px;">
+              
+              <!-- ── BODY ── -->
+              <tr><td style="background:#FFFFFF;padding:40px 40px 28px;">
+                <h1 style="margin:0 0 28px;font-size:28px;font-weight:900;
+                            text-transform:uppercase;color:#5C4031;letter-spacing:-1px;">
                   ${clientName}
                 </h1>
-                <table width="100%" cellpadding="0" cellspacing="0" style="background:#405568;margin-bottom:20px;">
+                
+                <table width="100%" cellpadding="0" cellspacing="0" style="background:#F9F6F2;margin-bottom:28px;border:1px solid #EBE3DB;">
                   ${[
-                    ['Prestation', `${serviceTitle} — ${servicePriceLabel}`],
-                    ['Date',       formattedDate],
-                    ['Horaire',    time],
-                    ['Téléphone',  clientPhone],
-                    ['Email',      clientEmail || 'Non renseigné'],
-                    ['Référence',  confirmationNumber],
+                    ['Prestation', `<strong>${serviceTitle}</strong> — ${servicePriceLabel}`],
+                    ['Date & Heure',    `${formattedDate} à ${time}`],
+                    ['Téléphone',  `<strong><a href="tel:${clientPhone}" style="color:#5C4031;text-decoration:none;">${clientPhone}</a></strong>`],
+                    ['Email',      clientEmail || '—'],
+                    ['Référence',  `<strong>#${confirmationNumber}</strong>`],
                   ].map(([label, val]) => `
                     <tr>
-                      <td style="padding:10px 14px;font-size:9px;text-transform:uppercase;
-                                 letter-spacing:3px;color:#FFFFFF;font-weight:700;
-                                 border-bottom:1px solid rgba(255,248,231,0.07);width:36%;">${label}</td>
-                      <td style="padding:10px 14px;font-size:13px;font-weight:600;color:#FFF8E7;
-                                 border-bottom:1px solid rgba(255,248,231,0.07);">${val}</td>
+                      <td style="padding:13px 16px;font-size:10px;text-transform:uppercase;
+                                 letter-spacing:2px;color:#5C4031;font-weight:700;
+                                 border-bottom:1px solid #EBE3DB;width:35%;vertical-align:top;">${label}</td>
+                      <td style="padding:13px 16px;font-size:14px;font-weight:500;color:#3D2A1E;
+                                 border-bottom:1px solid #EBE3DB;">${val}</td>
                     </tr>
                   `).join('')}
                 </table>
+                
                 <a href="tel:${clientPhone}"
-                   style="display:inline-block;background:#FFFFFF;color:#4A2F1A;
-                          padding:12px 28px;font-size:10px;font-weight:900;
-                          text-transform:uppercase;letter-spacing:4px;text-decoration:none;">
-                  Appeler le client
+                   style="display:inline-block;background:#5C4031;color:#F4EFEA;
+                          padding:15px 36px;font-size:11px;font-weight:900;
+                          text-transform:uppercase;letter-spacing:3px;text-decoration:none;">
+                  ☎ Appeler
                 </a>
               </td></tr>
-              <tr><td style="padding:16px 32px;border-top:1px solid rgba(255,248,231,0.08);">
-                <p style="margin:0;font-size:9px;color:rgba(255,248,231,0.20);
-                           text-transform:uppercase;letter-spacing:3px;text-align:center;">
-                  Wonderclub · Barbier indépendant
+              
+              <!-- ── DIVIDER ── -->
+              <tr><td style="height:1px;background:#EBE3DB;"></td></tr>
+              
+              <!-- ── FOOTER ── -->
+              <tr><td style="background:#F9F6F2;padding:20px 40px;">
+                <p style="margin:0;font-size:10px;color:#5C4031;
+                           text-transform:uppercase;letter-spacing:2px;font-weight:600;text-align:center;">
+                  Wonderclub Admin
                 </p>
               </td></tr>
             </table>
@@ -253,9 +273,9 @@ export default async function handler(req, res) {
   /* ── 3. SMS CLIENT (confirmation, nécessite crédits Brevo ~0,07€/SMS) ── */
   if (clientPhone) {
     const clientMsg =
-      `Wonderclub - RDV confirme !\n` +
+      `Wonderclub ✓ RDV confirmé\n` +
       `${serviceTitle}\n` +
-      `${formattedDate} a ${time}\n` +
+      `${formattedDate} à ${time}\n` +
       `1 Rue de la Madeleine, 77170 Brie-Comte-Robert\n` +
       `Ref: ${confirmationNumber}`;
 
@@ -272,8 +292,8 @@ export default async function handler(req, res) {
   if (BARBER_PHONE) {
     const barberMsg =
       `Nouveau RDV Wonderclub\n` +
-      `${clientName} - ${serviceTitle}\n` +
-      `${formattedDate} a ${time}\n` +
+      `${clientName} - ${serviceTitle} (${servicePriceLabel})\n` +
+      `${formattedDate} à ${time}\n` +
       `Tel: ${clientPhone}`;
 
     try {
