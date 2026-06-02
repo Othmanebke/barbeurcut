@@ -63,33 +63,74 @@ function BigNumber({ value, label }) {
   );
 }
 
-/* Valeur pilier — rangée large */
+/* Valeur pilier — carte pleine largeur avec numéro fantôme */
 function PillarRow({ id, title, desc, Icon, delay = 0 }) {
   const [ref, inView] = useReveal();
   return (
     <motion.div ref={ref}
-      className="group flex items-start gap-6 sm:gap-12 py-8 sm:py-12 border-b"
-      style={{ borderColor: 'rgba(255,255,255,0.08)' }}
-      initial={{ opacity: 0, x: -40 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.75, delay, ease: EASE }}>
+      className="relative overflow-hidden group cursor-default border-b"
+      style={{ borderColor: 'rgba(255,255,255,0.06)', background: '#3D2A1E' }}
+      whileHover={{ backgroundColor: '#4A3428' }}
+      transition={{ duration: 0.4 }}>
 
-      {/* Numéro */}
-      <span className="text-[10px] sm:text-xs uppercase tracking-[0.6em] font-black shrink-0 mt-1"
-            style={{ color: 'rgba(255,255,255,0.25)' }}>{id}</span>
-
-      {/* Titre + desc */}
-      <div className="flex-1 min-w-0">
-        <h3 className="font-black uppercase tracking-[-0.02em] text-white mb-3 transition-colors duration-300 group-hover:text-white/70"
-            style={{ fontSize: 'clamp(1.4rem, 4vw, 3rem)', lineHeight: 1 }}>
-          {title}
-        </h3>
-        <p className="text-sm sm:text-base leading-7 max-w-xl font-medium"
-           style={{ color: 'rgba(244,239,234,0.50)' }}>{desc}</p>
+      {/* Numéro fantôme en fond */}
+      <div className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 font-black leading-none select-none pointer-events-none"
+           style={{ fontSize: 'clamp(6rem, 18vw, 14rem)', color: 'rgba(255,255,255,0.04)' }}>
+        {id}
       </div>
 
-      {/* Icône */}
-      <Icon className="w-6 h-5 shrink-0 mt-2 transition-all duration-300 text-white/15 group-hover:text-white/40 hidden sm:block" />
+      {/* Barre gauche qui apparaît au hover */}
+      <motion.div
+        className="absolute left-0 top-0 bottom-0 w-0.5 bg-white/60 origin-top"
+        initial={{ scaleY: 0 }}
+        whileHover={{ scaleY: 1 }}
+        transition={{ duration: 0.35, ease: EASE }}
+      />
+
+      <div className="relative z-10 px-8 sm:px-12 py-10 sm:py-14">
+        <div className="grid grid-cols-[1fr_auto] gap-6 items-start">
+          <div>
+            {/* Numéro petit */}
+            <motion.span
+              className="text-[9px] uppercase tracking-[0.6em] font-black block mb-4"
+              style={{ color: 'rgba(255,255,255,0.22)' }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.6, delay, ease: EASE }}>
+              {id}
+            </motion.span>
+
+            {/* Titre — glisse depuis la gauche */}
+            <div className="overflow-hidden">
+              <motion.h3
+                className="font-black uppercase tracking-[-0.03em] text-white"
+                style={{ fontSize: 'clamp(1.8rem, 5vw, 4rem)', lineHeight: 0.95 }}
+                initial={{ x: '-80px', opacity: 0 }}
+                animate={inView ? { x: 0, opacity: 1 } : {}}
+                transition={{ duration: 0.8, delay: delay + 0.1, ease: EASE }}>
+                {title}
+              </motion.h3>
+            </div>
+
+            {/* Desc — glisse depuis la gauche avec délai */}
+            <motion.p
+              className="mt-4 text-sm sm:text-base leading-7 max-w-lg font-medium"
+              style={{ color: 'rgba(244,239,234,0.45)' }}
+              initial={{ x: '-40px', opacity: 0 }}
+              animate={inView ? { x: 0, opacity: 1 } : {}}
+              transition={{ duration: 0.75, delay: delay + 0.25, ease: EASE }}>
+              {desc}
+            </motion.p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.5, delay: delay + 0.3, ease: 'backOut' }}>
+            <Icon className="w-7 h-6 text-white/10 group-hover:text-white/25 transition-colors duration-400 mt-8" />
+          </motion.div>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -118,12 +159,15 @@ export default function Concept() {
           ))}
         </div>
 
-        {/* Haut — label */}
-        <motion.div className="relative z-10 px-6 sm:px-10 pt-10"
-          initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}>
-          <span className="text-[9px] uppercase tracking-[0.6em] font-bold"
-                style={{ color: 'rgba(255,255,255,0.30)' }}>Mon approche</span>
+        {/* Haut — Depuis 2018 top right */}
+        <motion.div className="relative z-10 px-6 sm:px-10 pt-10 flex justify-end"
+          initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 1.5 }}>
+          <div className="flex flex-col items-end gap-0.5">
+            <span className="text-[8px] uppercase tracking-[0.5em] font-bold"
+                  style={{ color: 'rgba(255,255,255,0.25)' }}>Depuis</span>
+            <span className="font-black text-white leading-none" style={{ fontSize: '2.2rem' }}>2018</span>
+          </div>
         </motion.div>
 
         {/* Centre — titre géant */}
@@ -168,30 +212,14 @@ export default function Concept() {
               transition={{ duration: 0.9, delay: 1.1, ease: EASE }} />
           </motion.div>
 
-          {/* Phrase subtitle qui glisse depuis gauche */}
-          <motion.div className="overflow-hidden">
-            <motion.p
-              className="text-sm sm:text-base leading-8 font-medium max-w-lg"
-              style={{ color: 'rgba(244,239,234,0.55)' }}
-              initial={{ x: '-60px', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.85, delay: 1.3, ease: EASE }}>
-              Barbier indépendant depuis 2018. Je loue mon siège, je travaille pour toi.
-            </motion.p>
-          </motion.div>
         </div>
 
-        {/* Bas — scroll indicator + stat */}
-        <motion.div className="relative z-10 px-6 sm:px-10 pb-10 flex items-end justify-between"
+        {/* Bas — scroll indicator centré */}
+        <motion.div className="relative z-10 px-6 sm:px-10 pb-10 flex justify-center"
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 1.6 }}>
-          <div className="flex flex-col gap-1">
-            <span className="text-[8px] uppercase tracking-[0.5em] font-bold"
-                  style={{ color: 'rgba(255,255,255,0.25)' }}>Depuis</span>
-            <span className="font-black text-white" style={{ fontSize: '2.5rem', lineHeight: 1 }}>2018</span>
-          </div>
           <motion.div
-            className="flex items-center gap-2"
+            className="flex flex-col items-center gap-2"
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}>
             <span className="text-[8px] uppercase tracking-[0.5em] font-bold"
@@ -243,21 +271,25 @@ export default function Concept() {
       <Marquee />
 
       {/* ══════════════════ PILIERS ════════════════════════ */}
-      <section style={{ background: '#405568' }} className="py-14 sm:py-20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-6 sm:px-10">
+      <section style={{ background: '#3D2A1E' }}>
+        {/* Header section */}
+        <div className="px-6 sm:px-12 py-10 border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
           <motion.div
-            className="flex items-center gap-4 mb-12 pb-6 border-b"
-            style={{ borderColor: 'rgba(255,255,255,0.08)' }}
-            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-            viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <span className="text-[9px] uppercase tracking-[0.55em] font-bold text-white/40">Mes valeurs</span>
-            <span className="block h-px flex-1 bg-white/10" />
+            className="flex items-center justify-between"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}>
+            <span className="text-[9px] uppercase tracking-[0.6em] font-bold"
+                  style={{ color: 'rgba(255,255,255,0.30)' }}>Mes valeurs</span>
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold"
+                  style={{ color: 'rgba(255,255,255,0.15)' }}>03 principes</span>
           </motion.div>
-
-          {PILLARS.map((p, i) => (
-            <PillarRow key={p.id} {...p} delay={i * 0.12} />
-          ))}
         </div>
+
+        {PILLARS.map((p, i) => (
+          <PillarRow key={p.id} {...p} delay={i * 0.1} />
+        ))}
       </section>
 
       <Marquee dark reverse />
