@@ -1,13 +1,9 @@
 import { motion } from 'framer-motion';
 import { useBooking } from '../context/BookingContext';
 import { useNavigate } from 'react-router-dom';
-import { ScissorsIcon, DiamondDivider } from '../components/BarberIcons';
+import { ScissorsIcon } from '../components/BarberIcons';
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  show:   { opacity: 1, y: 0,  transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
-};
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } } };
+const EASE = [0.22, 1, 0.36, 1];
 
 export default function Confirmation() {
   const { state, resetBooking } = useBooking();
@@ -15,111 +11,161 @@ export default function Confirmation() {
   const ok = Boolean(state.confirmationNumber);
 
   const rows = [
-    { label: 'N° confirmation', value: state.confirmationNumber || 'En attente',           highlight: ok },
-    { label: 'Prestation',      value: state.selectedService?.title ?? 'Non sélectionnée', highlight: false },
-    { label: 'Lieu',            value: state.location,                                     highlight: false },
-    { label: 'Date',            value: state.date || 'Non définie',                        highlight: false },
-    { label: 'Heure',           value: state.time || 'Non définie',                        highlight: false },
-    { label: 'Client',          value: state.clientInfo.name || 'Non renseigné',           highlight: false },
-    { label: 'Téléphone',       value: state.clientInfo.phone || 'Non renseigné',          highlight: false },
+    { label: 'Référence',   value: state.confirmationNumber || '—',                       accent: true },
+    { label: 'Prestation',  value: state.selectedService?.title ?? '—',                   accent: false },
+    { label: 'Durée',       value: state.selectedService ? `${state.selectedService.duration} min` : '—', accent: false },
+    { label: 'Tarif',       value: state.selectedService?.priceLabel ?? '—',              accent: false },
+    { label: 'Date',        value: state.date || '—',                                     accent: false },
+    { label: 'Heure',       value: state.time || '—',                                     accent: false },
+    { label: 'Client',      value: state.clientInfo.name || '—',                          accent: false },
   ];
 
   return (
-    <motion.section
-      className="mx-auto max-w-4xl px-6 sm:px-10 pb-20"
-      style={{ paddingTop: 'calc(var(--navbar-h, 72px) + 2.5rem)' }}
-      initial="hidden"
-      animate="show"
-      variants={stagger}
-    >
-      {/* Header */}
-      <motion.header variants={fadeUp} className="mb-12">
-        <div className="flex items-center gap-3 mb-5">
-          <ScissorsIcon className="w-4 h-4 text-brand" />
-          <span className="block h-px w-6 bg-brand" />
-          <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">Confirmation</span>
+    <div className="min-h-screen" style={{ background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
+
+      {/* ── Header — grand ✓ ── */}
+      <div className="relative overflow-hidden" style={{ background: '#3D2A1E', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        {/* Numéro fantôme */}
+        <div className="absolute right-0 top-0 bottom-0 flex items-center pointer-events-none select-none overflow-hidden">
+          <span className="font-black text-white leading-none" style={{ fontSize: '18rem', opacity: 0.03 }}>✓</span>
         </div>
 
-        <div className="flex items-start gap-5">
-          {ok && (
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.3 }}
-              className="mt-1.5 inline-flex h-10 w-10 shrink-0 items-center justify-center bg-brand text-dark text-lg font-black"
-            >
-              ✓
-            </motion.span>
-          )}
-          <div>
-            <h1 className="text-4xl font-black uppercase tracking-[-0.04em] text-dark sm:text-5xl">
-              {ok ? 'Réservation confirmée' : 'Presque prêt'}
-            </h1>
-            <p className="mt-4 max-w-xl text-base leading-8 text-dark/62 font-medium">
-              {ok
-                ? 'Votre créneau est bien enregistré. Vous recevrez un email de confirmation avec toutes les informations.'
-                : 'Merci pour votre demande. Le résumé ci-dessous confirme votre réservation.'}
-            </p>
-          </div>
+        <div className="relative z-10 mx-auto max-w-4xl px-6 sm:px-10 py-14 sm:py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: EASE }}>
+
+            <span className="text-[9px] uppercase tracking-[0.6em] font-bold block mb-8"
+                  style={{ color: 'rgba(255,255,255,0.35)' }}>
+              {ok ? 'Réservation confirmée' : 'En attente'}
+            </span>
+
+            <div className="flex items-start gap-6 sm:gap-10">
+              {/* Icône ✓ animée */}
+              <motion.div
+                className="flex items-center justify-center border-2 border-white/30 shrink-0"
+                style={{ width: 64, height: 64 }}
+                initial={{ scale: 0, rotate: -45 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 16, delay: 0.3 }}>
+                <span className="text-white font-black text-2xl">✓</span>
+              </motion.div>
+
+              <div>
+                <div className="overflow-hidden">
+                  <motion.h1
+                    className="font-black uppercase leading-[0.88] tracking-[-0.04em] text-white"
+                    style={{ fontSize: 'clamp(2.5rem, 8vw, 6rem)' }}
+                    initial={{ y: '100%' }}
+                    animate={{ y: 0 }}
+                    transition={{ duration: 0.9, delay: 0.1, ease: EASE }}>
+                    {ok ? 'Réservation' : 'Presque'}
+                  </motion.h1>
+                </div>
+                <div className="overflow-hidden">
+                  <motion.h1
+                    className="font-black uppercase leading-[0.88] tracking-[-0.04em]"
+                    style={{ fontSize: 'clamp(2.5rem, 8vw, 6rem)', color: 'rgba(255,255,255,0.28)' }}
+                    initial={{ y: '100%' }}
+                    animate={{ y: 0 }}
+                    transition={{ duration: 0.9, delay: 0.2, ease: EASE }}>
+                    {ok ? 'confirmée.' : 'prêt.'}
+                  </motion.h1>
+                </div>
+
+                <motion.p
+                  className="mt-6 text-sm sm:text-base leading-8 font-medium max-w-lg"
+                  style={{ color: 'rgba(244,239,234,0.55)' }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.7, delay: 0.5 }}>
+                  {ok
+                    ? 'Ton créneau est enregistré. Un email et un SMS de confirmation t\'ont été envoyés.'
+                    : 'Merci. Le récapitulatif de ta demande est ci-dessous.'}
+                </motion.p>
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </motion.header>
+      </div>
 
-      <div className="grid gap-5 md:grid-cols-2">
-        {/* Résumé */}
-        <motion.div variants={fadeUp} className="border border-beige bg-creamMid p-5 sm:p-8">
-          <div className="flex items-center gap-2 mb-6">
-            <ScissorsIcon className="w-3.5 h-3.5 text-brand/60" />
-            <p className="text-[9px] uppercase tracking-[0.45em] text-muted font-bold">Résumé de la réservation</p>
-          </div>
-          <ul className="space-y-4">
-            {rows.map((row) => (
-              <li key={row.label} className="flex items-start justify-between gap-6 border-b border-beige/50 pb-4 last:border-0 last:pb-0">
-                <span className="text-[9px] uppercase tracking-[0.35em] text-muted font-bold shrink-0">{row.label}</span>
-                <span className={`text-sm font-bold text-right ${row.highlight ? 'text-brand' : 'text-dark'}`}>
-                  {row.value}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
+      {/* ── Récap + actions ── */}
+      <div className="mx-auto max-w-4xl px-6 sm:px-10 py-12 sm:py-16">
+        <div className="grid gap-6 md:grid-cols-[1fr_300px]">
 
-        {/* Info + actions */}
-        <motion.div variants={fadeUp} className="border border-beige bg-cream p-5 sm:p-8 flex flex-col justify-between">
-          <div>
-            <p className="text-[9px] uppercase tracking-[0.45em] text-muted font-bold mb-6">Information importante</p>
-            <div className="border-l-2 border-brand pl-5 mb-6">
-              <p className="text-sm leading-7 text-dark/68 font-medium">
-                Un email de confirmation vient de vous être envoyé avec le récapitulatif de votre réservation.
+          {/* Récap */}
+          <motion.div
+            className="border border-white/8"
+            style={{ background: '#3D2A1E' }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4 }}>
+
+            <div className="px-6 py-4 border-b border-white/8 flex items-center gap-3">
+              <ScissorsIcon className="w-3.5 h-3.5 text-white/30" />
+              <span className="text-[9px] uppercase tracking-[0.5em] font-bold text-white/40">Récapitulatif</span>
+            </div>
+
+            <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+              {rows.map((row, i) => (
+                <motion.div key={row.label}
+                  className="flex items-center justify-between gap-6 px-6 py-4"
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 + i * 0.07 }}>
+                  <span className="text-[9px] uppercase tracking-[0.4em] font-bold shrink-0"
+                        style={{ color: 'rgba(255,255,255,0.35)' }}>{row.label}</span>
+                  <span className={`text-sm font-bold text-right ${row.accent ? 'text-white font-black text-base' : 'text-white/80'}`}>
+                    {row.value}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Actions */}
+          <motion.div
+            className="flex flex-col gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.6 }}>
+
+            {/* Info */}
+            <div className="border-l-2 border-white/25 pl-5 py-2">
+              <p className="text-sm leading-7 font-medium" style={{ color: 'rgba(244,239,234,0.55)' }}>
+                Paiement sur place. Espèces ou chèque uniquement.
               </p>
             </div>
-            <p className="text-sm leading-7 text-muted font-medium">
-              Pour modifier votre réservation, revenez à l'étape précédente ou sélectionnez une nouvelle prestation.
-            </p>
 
-            <DiamondDivider className="text-dark mt-8 mb-0" />
-          </div>
+            <div className="border-l-2 border-white/25 pl-5 py-2">
+              <p className="text-sm leading-7 font-medium" style={{ color: 'rgba(244,239,234,0.55)' }}>
+                1 Rue de la Madeleine<br />77170 Brie-Comte-Robert
+              </p>
+            </div>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2">
-            <motion.button
-              type="button"
-              onClick={() => navigate('/reservation')}
-              whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              className="inline-flex w-full items-center justify-center border border-beige bg-creamMid px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.28em] text-dark transition-all duration-200 hover:border-dark"
-            >
-              Modifier
-            </motion.button>
-            <motion.button
-              type="button"
-              onClick={() => { resetBooking(); navigate('/prestations'); }}
-              whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              className="inline-flex w-full items-center justify-center gap-2 bg-brand px-5 py-3.5 text-[10px] font-black uppercase tracking-[0.28em] text-dark transition-colors duration-300 hover:bg-brandDark"
-            >
-              <ScissorsIcon className="w-3.5 h-3.5" />
-              Nouvelle réservation
-            </motion.button>
-          </div>
-        </motion.div>
+            <div className="flex flex-col gap-3 mt-4">
+              <motion.button
+                type="button"
+                onClick={() => { resetBooking(); navigate('/prestations'); }}
+                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                className="w-full flex items-center justify-center gap-2 bg-white py-4 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-creamMid transition-colors"
+                style={{ color: '#5C4031' }}>
+                <ScissorsIcon className="w-3.5 h-3.5" />
+                Nouvelle réservation
+              </motion.button>
+
+              <motion.button
+                type="button"
+                onClick={() => navigate('/reservation')}
+                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                className="w-full flex items-center justify-center border border-white/20 py-4 text-[10px] font-bold uppercase tracking-[0.28em] text-white hover:border-white/50 transition-colors">
+                Modifier
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
       </div>
-    </motion.section>
+    </div>
   );
 }

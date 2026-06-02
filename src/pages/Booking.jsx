@@ -5,7 +5,7 @@ import { useBooking } from '../context/BookingContext';
 import { fetchAvailability, subscribeToAvailability } from '../api/availability';
 import { acquireLock, releaseLock } from '../api/slotLock';
 import { buildBusyRanges, generateDynamicSlots, filterPastSlots, OPEN_DAYS } from '../utils/timeSlots';
-import { ScissorsIcon, DiamondDivider } from '../components/BarberIcons';
+import { ScissorsIcon } from '../components/BarberIcons';
 
 /* ─── Day window builder ──────────────────────────────────── */
 function buildDayWindow(days, fullDayOff, dateBookings, dateBlocks, serviceDuration) {
@@ -73,39 +73,31 @@ function Steps({ serviceOk, dateOk, infoOk }) {
 function DayCard({ day, selected, onClick }) {
   const ok   = day.status === 'available';
   const full = day.status === 'complet';
-
   return (
     <motion.button
       type="button"
       onClick={ok ? onClick : undefined}
       disabled={!ok}
-      whileHover={ok ? { y: -3 } : {}}
+      whileHover={ok ? { y: -4, borderColor: 'rgba(255,255,255,0.5)' } : {}}
       whileTap={ok ? { scale: 0.96 } : {}}
-      className={`
-        relative min-w-[90px] sm:min-w-[100px] flex-shrink-0 snap-start
-        flex flex-col items-center gap-0 pt-4 pb-3 px-3 overflow-hidden
-        transition-all duration-250 select-none
-        ${selected
-          ? 'bg-dark border-2 border-brand shadow-gold'
-          : ok
-          ? 'bg-denim border-2 border-denim hover:border-brand cursor-pointer'
-          : full
-          ? 'bg-denim/50 border-2 border-white/10 cursor-not-allowed'
-          : 'bg-dark/50 border-2 border-white/5 cursor-not-allowed opacity-40'}
-      `}
-    >
-      <span className={`text-[8px] uppercase font-black tracking-[0.45em] mb-1 ${
-        selected ? 'text-brand' : full ? 'text-white/30' : 'text-cream/60'
-      }`}>{day.dayShort}</span>
-      <span className={`text-[2rem] font-black leading-none ${
-        selected ? 'text-white' : full ? 'text-white/30' : 'text-white'
-      }`}>{day.dayNum}</span>
-      <span className={`text-[8px] font-medium mt-0.5 ${selected ? 'text-cream/50' : 'text-cream/40'}`}>{day.monthShort}</span>
+      className="relative min-w-[88px] sm:min-w-[96px] flex-shrink-0 snap-start flex flex-col items-center gap-0 pt-4 pb-3 px-3 overflow-hidden select-none transition-all duration-200 border"
+      style={{
+        background: selected ? '#FFFFFF' : ok ? '#3D2A1E' : '#2A1D13',
+        borderColor: selected ? '#FFFFFF' : ok ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)',
+        opacity: ok ? 1 : 0.35,
+        cursor: ok ? 'pointer' : 'not-allowed',
+      }}>
+      <span className="text-[8px] uppercase font-black tracking-[0.45em] mb-1"
+            style={{ color: selected ? '#5C4031' : 'rgba(255,255,255,0.45)' }}>{day.dayShort}</span>
+      <span className="text-[2rem] font-black leading-none"
+            style={{ color: selected ? '#5C4031' : full ? 'rgba(255,255,255,0.25)' : '#FFFFFF' }}>{day.dayNum}</span>
+      <span className="text-[8px] font-medium mt-0.5"
+            style={{ color: selected ? 'rgba(92,64,49,0.55)' : 'rgba(244,239,234,0.35)' }}>{day.monthShort}</span>
       <div className="mt-2 w-full text-center min-h-[16px]">
-        {full && <span className="text-[7px] text-white/30 font-bold uppercase tracking-widest">Complet</span>}
-        {ok   && <span className={`text-[7px] font-black ${selected ? 'text-brand' : 'text-brand/70'}`}>Dispo</span>}
+        {full && <span className="text-[7px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Complet</span>}
+        {ok && !selected && <span className="text-[7px] font-black" style={{ color: 'rgba(255,255,255,0.40)' }}>Dispo</span>}
+        {selected && <span className="text-[7px] font-black" style={{ color: 'rgba(92,64,49,0.70)' }}>Sélectionné</span>}
       </div>
-      {selected && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand" />}
     </motion.button>
   );
 }
@@ -117,17 +109,16 @@ function TimeSlot({ hour, selected, pending, onClick }) {
       type="button"
       onClick={pending ? undefined : onClick}
       disabled={pending}
-      whileHover={!pending ? { scale: 1.05, y: -2 } : {}}
+      whileHover={!pending && !selected ? { backgroundColor: '#FFFFFF', color: '#5C4031', borderColor: '#FFFFFF' } : {}}
       whileTap={!pending ? { scale: 0.95 } : {}}
-      className={`py-3.5 sm:py-4 px-2 text-center font-black text-sm sm:text-base transition-all duration-200 ${
-        pending
-          ? 'bg-brand/15 text-brand/50 border-2 border-brand/30 cursor-wait'
-          : selected
-          ? 'bg-brand text-dark border-2 border-brand shadow-gold'
-          : 'bg-denim text-white border-2 border-denim hover:border-brand hover:text-brand'
-      }`}
-    >
-      {pending ? <span className="animate-pulse">…</span> : hour}
+      className="py-3.5 sm:py-4 px-2 text-center font-black text-sm sm:text-base transition-all duration-200 border"
+      style={{
+        background: selected ? '#FFFFFF' : pending ? 'rgba(255,255,255,0.05)' : '#3D2A1E',
+        color: selected ? '#5C4031' : pending ? 'rgba(255,255,255,0.30)' : '#FFFFFF',
+        borderColor: selected ? '#FFFFFF' : pending ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.12)',
+        cursor: pending ? 'wait' : 'pointer',
+      }}>
+      {pending ? <span className="animate-pulse text-white/30">…</span> : hour}
     </motion.button>
   );
 }
@@ -135,7 +126,6 @@ function TimeSlot({ hour, selected, pending, onClick }) {
 /* ─── Booking page ────────────────────────────────────────── */
 export default function Booking() {
   const { state, selectLocation, selectDate, selectTime, setClientInfo, submitBooking, isLoading } = useBooking();
-  const [salonInfo, setSalonInfo]       = useState(null);
   const [rawData, setRawData]           = useState(null); // { days, dateBookings, dateBlocks, fullDayOff }
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedSlot, setSelectedSlot] = useState('');
@@ -157,9 +147,8 @@ export default function Booking() {
   const loadAvailability = useCallback(async (preserveSelection = false) => {
     try {
       const { salon, days, dateBookings, dateBlocks, fullDayOff } = await fetchAvailability();
-      setSalonInfo(salon);
-      setRawData({ days, dateBookings, dateBlocks, fullDayOff });
       selectLocation(salon.name);
+      setRawData({ days, dateBookings, dateBlocks, fullDayOff });
       if (!preserveSelection) {
         setSelectedDate(state.date || '');
         setSelectedSlot(state.time || '');
@@ -282,35 +271,38 @@ export default function Booking() {
     </div>
   );
 
-  return (
-    <div style={padTop} className="min-h-screen bg-dark">
+  const BG = '#5C4031';
+  const BG2 = '#3D2A1E';
 
-      {/* ══ HEADER ══ */}
-      <div className="relative bg-darkMid grain overflow-hidden border-b border-white/8">
+  return (
+    <div style={{ ...padTop, background: BG }} className="min-h-screen">
+
+      {/* ══ HEADER — steps + prestation ══ */}
+      <div className="border-b" style={{ background: BG2, borderColor: 'rgba(255,255,255,0.06)' }}>
         <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
-          <div className="flex items-start justify-between mb-7 sm:mb-8">
+          <div className="flex items-start justify-between mb-8">
             <Steps serviceOk={Boolean(state.selectedService)} dateOk={step1done} infoOk={step2done && step1done} />
           </div>
-
           <AnimatePresence mode="wait">
             {state.selectedService ? (
-              <motion.div key="service" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                className="flex items-center justify-between gap-4 border-l-4 border-brand bg-white/5 px-5 py-4">
+              <motion.div key="s" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                className="flex items-center justify-between gap-4 border-l-[3px] border-white/40 px-5 py-4"
+                style={{ background: 'rgba(255,255,255,0.04)' }}>
                 <div className="flex items-center gap-4 min-w-0">
-                  <ScissorsIcon className="w-4 h-4 text-brand shrink-0" />
+                  <ScissorsIcon className="w-4 h-4 text-white/40 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[8px] uppercase tracking-[0.45em] text-white/40 font-medium">Prestation</p>
+                    <p className="text-[8px] uppercase tracking-[0.45em] font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>Prestation sélectionnée</p>
                     <p className="text-base sm:text-lg font-black text-white truncate">{state.selectedService.title}</p>
-                    <p className="text-[9px] text-brand/70 font-medium">{state.selectedService.duration} min</p>
+                    <p className="text-[9px] font-medium" style={{ color: 'rgba(255,255,255,0.40)' }}>{state.selectedService.duration} min</p>
                   </div>
                 </div>
-                <span className="text-xl sm:text-2xl font-black text-brand shrink-0">{state.selectedService.priceLabel}</span>
+                <span className="text-xl sm:text-2xl font-black text-white shrink-0">{state.selectedService.priceLabel}</span>
               </motion.div>
             ) : (
-              <motion.div key="no-service" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="flex flex-wrap items-center justify-between gap-3 border border-red-500/25 bg-red-500/8 px-5 py-4">
+              <motion.div key="ns" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="flex flex-wrap items-center justify-between gap-3 border border-red-500/20 bg-red-500/8 px-5 py-4">
                 <p className="text-sm text-red-300 font-medium">Aucune prestation sélectionnée</p>
-                <Link to="/prestations" className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.4em] text-brand">
+                <Link to="/prestations" className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.4em] text-white">
                   <ScissorsIcon className="w-3 h-3" /> Choisir →
                 </Link>
               </motion.div>
@@ -320,13 +312,14 @@ export default function Booking() {
       </div>
 
       {/* ══ ÉTAPE 01 — JOUR ══ */}
-      <div className="border-b border-white/8">
+      <div className="border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
-          <div className="flex items-center gap-3 mb-5">
-            <span className="inline-flex h-7 w-7 items-center justify-center bg-denim text-brand text-[9px] font-black">01</span>
+          <div className="flex items-center gap-4 mb-6">
+            <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>01</span>
+            <span className="block h-px flex-1 bg-white/10" />
             <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">Choisissez votre jour</h2>
           </div>
-          <div className="no-scrollbar flex gap-2.5 sm:gap-3 overflow-x-auto pb-2 snap-x snap-mandatory">
+          <div className="no-scrollbar flex gap-2 sm:gap-3 overflow-x-auto pb-2 snap-x snap-mandatory">
             {dayWindow.map((d) => (
               <DayCard key={d.key} day={d} selected={selectedDate === d.key} onClick={() => handleSelectDate(d.key)} />
             ))}
@@ -339,41 +332,38 @@ export default function Booking() {
         {selectedDate && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-b border-white/8">
-            <div className="bg-darkMid">
-              <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="inline-flex h-7 w-7 items-center justify-center bg-denim text-brand text-[9px] font-black">02</span>
-                  <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">Choisissez votre horaire</h2>
-                </div>
-
-                {activeSlots.length > 0 ? (
-                  <motion.div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-8 gap-2.5 sm:gap-3"
-                    initial="hidden" animate="show"
-                    variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}>
-                    {activeSlots.map((h) => (
-                      <motion.div key={h} variants={{ hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1, transition: { duration: 0.3 } } }}>
-                        <TimeSlot hour={h} selected={selectedSlot === h} pending={pendingSlot === h} onClick={() => handleSelectSlot(h)} />
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                ) : (
-                  <div className="flex items-center gap-3 border border-white/10 bg-white/5 px-5 py-4">
-                    <span className="text-white/40 text-lg font-black">✗</span>
-                    <p className="text-sm font-bold text-white/60">Aucun créneau disponible — choisis un autre jour.</p>
-                  </div>
-                )}
-
-                <AnimatePresence>
-                  {lockError && (
-                    <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                      className="flex items-start gap-3 border-l-4 border-amber-500 bg-amber-500/10 px-4 py-3 mt-4">
-                      <span className="text-amber-400 font-black shrink-0">!</span>
-                      <p className="text-sm text-amber-300 font-medium">{lockError}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+            className="overflow-hidden border-b" style={{ borderColor: 'rgba(255,255,255,0.06)', background: BG2 }}>
+            <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
+              <div className="flex items-center gap-4 mb-6">
+                <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>02</span>
+                <span className="block h-px flex-1 bg-white/10" />
+                <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">Choisissez votre horaire</h2>
               </div>
+              {activeSlots.length > 0 ? (
+                <motion.div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-8 gap-2 sm:gap-2.5"
+                  initial="hidden" animate="show"
+                  variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}>
+                  {activeSlots.map((h) => (
+                    <motion.div key={h} variants={{ hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1, transition: { duration: 0.25 } } }}>
+                      <TimeSlot hour={h} selected={selectedSlot === h} pending={pendingSlot === h} onClick={() => handleSelectSlot(h)} />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <div className="flex items-center gap-3 border border-white/10 bg-white/4 px-5 py-4">
+                  <span className="text-white/30 text-lg font-black">✗</span>
+                  <p className="text-sm font-bold" style={{ color: 'rgba(244,239,234,0.50)' }}>Aucun créneau disponible — choisis un autre jour.</p>
+                </div>
+              )}
+              <AnimatePresence>
+                {lockError && (
+                  <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                    className="flex items-start gap-3 border-l-4 border-amber-500 bg-amber-500/10 px-4 py-3 mt-4">
+                    <span className="text-amber-400 font-black shrink-0">!</span>
+                    <p className="text-sm text-amber-300 font-medium">{lockError}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         )}
@@ -386,8 +376,9 @@ export default function Booking() {
             exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden">
             <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
-              <div className="flex items-center gap-3 mb-8">
-                <span className="inline-flex h-7 w-7 items-center justify-center bg-denim text-brand text-[9px] font-black">03</span>
+              <div className="flex items-center gap-4 mb-8">
+                <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>03</span>
+                <span className="block h-px flex-1 bg-white/10" />
                 <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">Tes informations</h2>
               </div>
 
@@ -409,7 +400,10 @@ export default function Booking() {
                           email: field === 'email' ? e.target.value : state.clientInfo.email,
                         })}
                         placeholder={placeholder}
-                        className="w-full border-2 border-white/10 bg-denim px-5 py-4 text-white text-sm font-medium placeholder:text-white/25 outline-none transition-colors focus:border-brand"
+                        className="w-full border px-5 py-4 text-white text-sm font-medium outline-none transition-colors"
+                        style={{ background: BG2, borderColor: 'rgba(255,255,255,0.12)', placeholderColor: 'rgba(255,255,255,0.25)' }}
+                        onFocus={e => e.target.style.borderColor='rgba(255,255,255,0.5)'}
+                        onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'}
                         disabled={isLoading}
                       />
                     </label>
@@ -423,24 +417,24 @@ export default function Booking() {
                     </motion.div>
                   )}
 
-                  {/* Paiement */}
-                  <div className="border border-white/10 bg-denim px-5 py-4">
-                    <p className="text-[9px] uppercase tracking-[0.45em] text-brand font-bold mb-2">Paiement sur place</p>
-                    <p className="text-sm text-cream/70 font-medium">J'accepte uniquement les règlements en <strong className="text-white">espèces</strong> ou par <strong className="text-white">chèque</strong>.</p>
+                  <div className="border-l-2 border-white/20 pl-5 py-2" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                    <p className="text-[9px] uppercase tracking-[0.45em] font-bold text-white mb-1">Paiement sur place</p>
+                    <p className="text-sm font-medium" style={{ color: 'rgba(244,239,234,0.55)' }}>Espèces ou chèque uniquement.</p>
                   </div>
 
-                  <p className="text-xs text-white/30 font-medium">
+                  <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>
                     Confirmation par email et SMS après réservation.
                   </p>
                 </div>
 
                 {/* Récap */}
-                <div className="bg-denim p-6 sm:p-7 flex flex-col gap-5 border border-white/8">
-                  <p className="text-[9px] uppercase tracking-[0.5em] text-brand font-bold">Récapitulatif</p>
+                <div className="flex flex-col gap-5 border p-6 sm:p-7"
+                     style={{ background: BG2, borderColor: 'rgba(255,255,255,0.08)' }}>
+
+                  <span className="text-[9px] uppercase tracking-[0.5em] font-bold text-white/40">Récapitulatif</span>
 
                   <div className="space-y-3">
                     {[
-                      { label: 'Salon',      val: salonInfo?.name },
                       { label: 'Prestation', val: state.selectedService?.title ?? '—' },
                       { label: 'Durée',      val: state.selectedService ? `${state.selectedService.duration} min` : '—' },
                       { label: 'Tarif',      val: state.selectedService?.priceLabel ?? '—' },
@@ -449,29 +443,31 @@ export default function Booking() {
                         : '—' },
                       { label: 'Horaire', val: selectedSlot || '—' },
                     ].map((r) => (
-                      <div key={r.label} className="flex items-start justify-between gap-3 border-b border-white/8 pb-2.5 last:border-0 last:pb-0">
-                        <span className="text-[8px] uppercase tracking-[0.35em] text-white/40 font-bold shrink-0">{r.label}</span>
+                      <div key={r.label} className="flex items-start justify-between gap-3 pb-3 border-b last:border-0 last:pb-0"
+                           style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                        <span className="text-[8px] uppercase tracking-[0.35em] font-bold shrink-0"
+                              style={{ color: 'rgba(255,255,255,0.35)' }}>{r.label}</span>
                         <span className="text-xs font-bold text-white text-right capitalize">{r.val}</span>
                       </div>
                     ))}
                   </div>
 
-                  <DiamondDivider className="text-white/20" />
+                  <div className="h-px bg-white/8" />
 
                   {/* Countdown */}
                   <AnimatePresence>
                     {lockExpiry && selectedSlot && (
                       <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-1.5">
                         <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-[0.35em]">
-                          <span className={timeLeft < 60 ? 'text-red-400' : 'text-brand'}>Créneau réservé</span>
+                          <span className={timeLeft < 60 ? 'text-red-400' : 'text-white/60'}>Créneau réservé</span>
                           <span className={`font-black tabular-nums text-xs ${timeLeft < 60 ? 'text-red-400' : 'text-white/70'}`}>
                             {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
                           </span>
                         </div>
-                        <div className="h-0.5 w-full bg-white/10 overflow-hidden">
-                          <div className={`h-full ${timeLeft < 60 ? 'bg-red-400' : 'bg-brand'}`} style={{ width: `${(timeLeft / 300) * 100}%` }} />
+                        <div className="h-px w-full bg-white/10 overflow-hidden">
+                          <div className={`h-full ${timeLeft < 60 ? 'bg-red-400' : 'bg-white'}`}
+                               style={{ width: `${(timeLeft / 300) * 100}%` }} />
                         </div>
-                        <p className="text-[8px] text-white/25">Confirme avant expiration.</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -480,18 +476,21 @@ export default function Booking() {
                     disabled={!state.selectedService || isLoading}
                     whileHover={state.selectedService && !isLoading ? { scale: 1.03 } : {}}
                     whileTap={state.selectedService && !isLoading ? { scale: 0.97 } : {}}
-                    className={`w-full flex items-center justify-center gap-2.5 py-5 text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-300 ${
-                      state.selectedService && !isLoading
-                        ? 'bg-brand text-dark hover:bg-brandDark shadow-gold cursor-pointer'
-                        : 'bg-white/8 text-white/30 cursor-not-allowed'
-                    }`}>
+                    className="w-full flex items-center justify-center gap-2.5 py-5 text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-300"
+                    style={{
+                      background: state.selectedService && !isLoading ? '#FFFFFF' : 'rgba(255,255,255,0.06)',
+                      color: state.selectedService && !isLoading ? '#5C4031' : 'rgba(255,255,255,0.25)',
+                      cursor: state.selectedService && !isLoading ? 'pointer' : 'not-allowed',
+                    }}>
                     {isLoading
                       ? <><motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}><ScissorsIcon className="w-4 h-4" /></motion.span> En cours…</>
                       : <><ScissorsIcon className="w-4 h-4" /> Confirmer ma réservation</>
                     }
                   </motion.button>
 
-                  <p className="text-[9px] text-white/20 font-medium text-center">Paiement sur place — espèces ou chèque uniquement</p>
+                  <p className="text-[9px] font-medium text-center" style={{ color: 'rgba(255,255,255,0.20)' }}>
+                    Espèces ou chèque · Paiement sur place
+                  </p>
                 </div>
               </div>
             </div>
