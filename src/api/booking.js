@@ -65,22 +65,16 @@ export async function createBooking({ service, date, time, clientName, clientPho
   return confirmationNumber;
 }
 
-/* ── Annuler un RDV (dashboard barbier) ─────────────────────── */
+/* ── Annuler un RDV — RPC admin (bypass RLS) ───────────────── */
 export async function cancelBooking(appointmentId) {
   if (!SUPABASE_READY) throw new Error('Supabase non configuré.');
-
-  const { error } = await supabase
-    .from('appointments')
-    .update({ status: 'cancelled' })
-    .eq('id', appointmentId);
-
+  const { error } = await supabase.rpc('admin_cancel_appointment', { p_id: appointmentId });
   if (error) throw new Error(error.message);
 }
 
 /* ── Récupérer les RDV (admin) ──────────────────────────────── */
 export async function fetchAppointments({ from, to }) {
   if (!SUPABASE_READY) return [];
-
   const { data, error } = await supabase
     .from('appointments')
     .select('*')
@@ -89,42 +83,41 @@ export async function fetchAppointments({ from, to }) {
     .eq('status', 'confirmed')
     .order('date')
     .order('time');
-
   if (error) throw new Error(error.message);
   return data ?? [];
 }
 
-/* ── Bloquer / débloquer un créneau (admin) ─────────────────── */
+/* ── Bloquer un créneau / journée — RPC admin ───────────────── */
 export async function blockSlot(date, time = null, reason = 'Indisponible') {
   if (!SUPABASE_READY) throw new Error('Supabase non configuré.');
-
-  const { error } = await supabase
-    .from('availability_blocks')
-    .upsert([{ date, time, reason }], { onConflict: 'date,time' });
-
+  const { error } = await supabase.rpc('admin_block', { p_date: date, p_time: time, p_reason: reason });
   if (error) throw new Error(error.message);
 }
 
+/* ── Débloquer un créneau / journée — RPC admin ─────────────── */
 export async function unblockSlot(date, time = null) {
   if (!SUPABASE_READY) throw new Error('Supabase non configuré.');
-
-  let query = supabase.from('availability_blocks').delete().eq('date', date);
-  if (time) query = query.eq('time', time);
-  else query = query.is('time', null);
-
-  const { error } = await query;
+  const { error } = await supabase.rpc('admin_unblock', { p_date: date, p_time: time });
   if (error) throw new Error(error.message);
 }
 
+/* ── Ajouter une pause horaire — RPC admin ───────────────────── */
+export async function addPauseBlock(date, startTime, endTime) {
+  if (!SUPABASE_READY) throw new Error('Supabase non configuré.');
+  const { error } = await supabase.rpc('admin_add_pause', {
+    p_date: date, p_start: startTime, p_end: endTime,
+  });
+  if (error) throw new Error(error.message);
+}
+
+/* ── Récupérer les blocs ─────────────────────────────────────── */
 export async function fetchBlocks({ from, to }) {
   if (!SUPABASE_READY) return [];
-
   const { data, error } = await supabase
     .from('availability_blocks')
     .select('*')
     .gte('date', from)
     .lte('date', to);
-
   if (error) throw new Error(error.message);
   return data ?? [];
 }

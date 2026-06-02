@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScissorsIcon, DiamondDivider } from '../components/BarberIcons';
-import { fetchAppointments, cancelBooking, blockSlot, unblockSlot, fetchBlocks } from '../api/booking';
+import { fetchAppointments, cancelBooking, blockSlot, unblockSlot, fetchBlocks, addPauseBlock } from '../api/booking';
 import { SUPABASE_READY } from '../lib/supabase';
 import { supabase } from '../lib/supabase';
 import logo from '../assets/logo.png';
@@ -25,15 +25,6 @@ function monday(ref = new Date()) {
 }
 function fmt(dateStr, opts = { weekday:'long', day:'2-digit', month:'long' }) {
   return new Date(dateStr + 'T12:00:00').toLocaleDateString('fr-FR', opts);
-}
-
-/* ── Ajout/suppression d'une pause (block avec end_time) ── */
-async function addPause(date, startTime, endTime) {
-  if (!SUPABASE_READY) return;
-  const { error } = await supabase.from('availability_blocks').insert([{
-    date, time: startTime, end_time: endTime, reason: 'Pause',
-  }]);
-  if (error) throw new Error(error.message);
 }
 
 /* ══ PIN SCREEN ══ */
@@ -117,6 +108,17 @@ function Dashboard() {
 
   useEffect(() => { load(); }, [load]);
 
+  /* ── Temps réel : reload quand un RDV ou un bloc change ── */
+  useEffect(() => {
+    if (!SUPABASE_READY) return;
+    const ch = supabase
+      .channel('admin-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'appointments'        }, load)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'availability_blocks' }, load)
+      .subscribe();
+    return () => supabase.removeChannel(ch);
+  }, [load]);
+
   const todayAppts = appointments.filter(a => a.date === todayKey);
   const apptAt     = (d, t) => appointments.find(a => a.date === d && a.time === t);
   const isBlocked  = (d, t) => blocks.some(b => b.date === d && (b.time === t || !b.time));
@@ -130,7 +132,7 @@ function Dashboard() {
 
   const handleAddPause = async () => {
     if (!pauseModal) return;
-    try { await addPause(pauseModal.date, pauseStart, pauseEnd); setPauseModal(null); load(); }
+    try { await addPauseBlock(pauseModal.date, pauseStart, pauseEnd); setPauseModal(null); load(); }
     catch (e) { alert('Erreur : ' + e.message); }
   };
 
