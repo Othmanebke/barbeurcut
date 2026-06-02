@@ -12,6 +12,9 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
  *    (appears bright on dark bg, dark on light bg / neon buttons)
  */
 function CustomCursor() {
+  // Pas de curseur custom sur les appareils tactiles
+  if (typeof window !== 'undefined' && !window.matchMedia('(pointer: fine)').matches) return null;
+
   const [hovering, setHovering] = useState(false);
   const [visible, setVisible] = useState(false);
 

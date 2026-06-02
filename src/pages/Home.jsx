@@ -106,7 +106,7 @@ export default function Home() {
         ref={heroRef}
         onMouseMove={onMouseMove}
         className="relative flex flex-col overflow-hidden select-none"
-        style={{ minHeight: 'clamp(480px, 88vh, 1040px)', background: '#5C4031', cursor: 'none' }}
+        style={{ minHeight: 'clamp(480px, 88vh, 1040px)', background: '#5C4031' }}
       >
         {/* ── Couche 1 : anneaux carrés pulsants ── */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">

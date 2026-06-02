@@ -37,7 +37,7 @@ export default function Footer() {
             </div>
 
             <p className="text-[9px] uppercase tracking-[0.4em] text-brand/70 font-bold pt-1">
-              CAP Coiffure · Depuis 2018
+              BP Coiffure · Depuis 2018
             </p>
             <p className="text-[9px] text-cream/30 font-medium">
               Artisan indépendant · Siège loué au 1 Rue de la Madeleine
@@ -49,9 +49,10 @@ export default function Footer() {
             <div className="flex flex-col gap-2.5">
               <p className="text-[8px] uppercase tracking-[0.5em] text-cream/22 font-bold mb-1">Navigation</p>
               {[
-                { to: '/concept',     label: 'Concept'  },
-                { to: '/prestations', label: 'Services' },
-                { to: '/reservation', label: 'Réserver' },
+                { to: '/concept',          label: 'Concept'   },
+                { to: '/prestations',      label: 'Services'  },
+                { to: '/reservation',      label: 'Réserver'  },
+                { to: '/mentions-legales', label: 'Mentions légales' },
               ].map((l) => (
                 <Link key={l.to} to={l.to} className="text-sm text-cream/50 font-medium hover:text-brand transition-colors">
                   {l.label}
