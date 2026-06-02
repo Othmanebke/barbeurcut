@@ -34,34 +34,6 @@ function RevealWords({ text, className, style, delay = 0 }) {
   );
 }
 
-/* Chiffre animé */
-function BigNumber({ value, label }) {
-  const [ref, inView] = useReveal();
-  return (
-    <motion.div ref={ref}
-      className="flex flex-col gap-2 p-8 sm:p-10 border-r last:border-r-0 border-white/10 group cursor-default"
-      whileHover={{ backgroundColor: '#5C4031' }}
-      style={{ background: '#405568' }}
-      transition={{ duration: 0.4 }}>
-      <motion.p
-        className="font-black leading-none tracking-[-0.04em] text-white"
-        style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
-        initial={{ opacity: 0, y: 30 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7, ease: EASE }}>
-        {value}
-      </motion.p>
-      <motion.p
-        className="text-[9px] uppercase tracking-[0.45em] font-bold"
-        style={{ color: 'rgba(244,239,234,0.45)' }}
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.6, delay: 0.2 }}>
-        {label}
-      </motion.p>
-    </motion.div>
-  );
-}
 
 /* Valeur pilier — carte pleine largeur avec numéro fantôme */
 function PillarRow({ id, title, desc, Icon, delay = 0 }) {
@@ -234,17 +206,121 @@ export default function Concept() {
         </div>
       </section>
 
-      {/* ══════════════════ CHIFFRES ════════════════════════ */}
-      <div className="grid grid-cols-2 md:grid-cols-4">
-        {[
-          { value: '2018', label: 'En activité' },
-          { value: '100%', label: 'Satisfaits'  },
-          { value: 'BP',   label: 'Diplômé'     },
-          { value: 'Mer–Sam', label: '10h–19h30' },
-        ].map((s) => <BigNumber key={s.label} {...s} />)}
-      </div>
+      {/* ══════════════════ PRÉSENTATION DU BARBIER ═════════ */}
+      <section className="relative overflow-hidden" style={{ background: '#F4EFEA' }}>
 
-      <Marquee />
+        {/* Watermark BARBIER en fond */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none">
+          <p className="font-black uppercase leading-none tracking-[-0.05em] whitespace-nowrap"
+             style={{ fontSize: 'clamp(6rem, 22vw, 18rem)', color: 'rgba(64,85,104,0.07)' }}>
+            BARBIER
+          </p>
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6 sm:px-10 py-16 sm:py-24 lg:py-32">
+          <div className="border border-denim/20 p-8 sm:p-12 lg:p-16 relative">
+
+            {/* Coins décoratifs */}
+            {[
+              'absolute -top-px -left-px w-6 h-6 border-t-2 border-l-2 border-denim/50',
+              'absolute -top-px -right-px w-6 h-6 border-t-2 border-r-2 border-denim/50',
+              'absolute -bottom-px -left-px w-6 h-6 border-b-2 border-l-2 border-denim/50',
+              'absolute -bottom-px -right-px w-6 h-6 border-b-2 border-r-2 border-denim/50',
+            ].map((cls, i) => <div key={i} className={cls} />)}
+
+            <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+
+              {/* Gauche — stats grandes */}
+              <motion.div
+                className="grid grid-cols-2 gap-px"
+                style={{ background: 'rgba(64,85,104,0.08)' }}
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: EASE }}>
+                {[
+                  { val: '8+',     label: "Ans d'expérience" },
+                  { val: '100%',   label: 'Clients satisfaits' },
+                  { val: 'BP',     label: 'Diplôme coiffure' },
+                  { val: 'Mer–Sam', label: '10h00 – 19h30' },
+                ].map((s, i) => (
+                  <motion.div key={s.val}
+                    className="p-6 sm:p-8 flex flex-col gap-2"
+                    style={{ background: '#F4EFEA' }}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: i * 0.1, ease: EASE }}>
+                    <p className="font-black leading-none tracking-[-0.04em]"
+                       style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#5C4031' }}>
+                      {s.val}
+                    </p>
+                    <p className="text-[9px] uppercase tracking-[0.45em] font-bold"
+                       style={{ color: 'rgba(64,85,104,0.60)' }}>
+                      {s.label}
+                    </p>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Droite — présentation */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.15, ease: EASE }}>
+
+                <p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-5"
+                   style={{ color: 'rgba(64,85,104,0.50)' }}>
+                  Le barbier
+                </p>
+
+                <h2 className="font-black uppercase leading-[0.92] tracking-[-0.04em] mb-6"
+                    style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#5C4031' }}>
+                  Wonderclub
+                </h2>
+
+                <div className="space-y-4 mb-8">
+                  {[
+                    { label: 'Diplôme',      val: 'BP Coiffure — CMA Saint-Maur-des-Fossés' },
+                    { label: 'Statut',       val: 'Artisan indépendant — siège loué' },
+                    { label: 'Adresse',      val: '1 Rue de la Madeleine, 77170 Brie-Comte-Robert' },
+                    { label: 'Disponible',   val: 'Mercredi au Samedi · 10h00–19h30' },
+                    { label: 'Paiement',     val: 'Espèces ou chèque uniquement' },
+                  ].map((row, i) => (
+                    <motion.div key={row.label}
+                      className="flex items-start gap-4 pb-4 border-b last:border-0 last:pb-0"
+                      style={{ borderColor: 'rgba(64,85,104,0.10)' }}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.2 + i * 0.08 }}>
+                      <span className="text-[8px] uppercase tracking-[0.45em] font-bold shrink-0 pt-0.5 w-20"
+                            style={{ color: 'rgba(64,85,104,0.45)' }}>{row.label}</span>
+                      <span className="text-sm font-medium leading-6"
+                            style={{ color: '#5C4031' }}>{row.val}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <motion.div
+                  whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                  className="inline-block">
+                  <Link to="/reservation"
+                    className="inline-flex items-center gap-3 px-8 py-4 text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-300 hover:opacity-80"
+                    style={{ background: '#5C4031', color: '#F4EFEA' }}>
+                    <ScissorsIcon className="w-3.5 h-3.5" />
+                    Prendre rendez-vous
+                  </Link>
+                </motion.div>
+
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Marquee brown />
 
       {/* ══════════════════ PILIERS ════════════════════════ */}
       <section style={{ background: '#3D2A1E' }}>
