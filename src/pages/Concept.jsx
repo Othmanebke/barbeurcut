@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import Marquee from '../components/Marquee';
 import { ScissorsIcon, CombIcon, RazorIcon } from '../components/BarberIcons';
 
@@ -101,83 +101,104 @@ const PILLARS = [
 ];
 
 export default function Concept() {
-  /* Parallaxe scroll sur la photo hero */
-  const heroRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const photoY = useTransform(scrollYProgress, [0, 1], ['0%', '25%']);
-
   return (
     <>
-      {/* ══════════════════════ HERO ══════════════════════════ */}
-      <section ref={heroRef}
-        className="relative flex min-h-[85vh] flex-col justify-end overflow-hidden"
-        style={{ background: '#5C4031' }}>
-
-        {/* Photo avec parallaxe */}
-        <motion.div className="absolute inset-0" style={{ y: photoY }}>
-          <div className="absolute inset-0"
-            style={{
-              backgroundImage: 'url("https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1920&q=80")',
-              backgroundSize: 'cover', backgroundPosition: 'center top',
-              filter: 'grayscale(30%) brightness(0.35)',
-            }}
-          />
-        </motion.div>
-
-        {/* Gradient bas */}
-        <div className="absolute inset-0"
-             style={{ background: 'linear-gradient(to top, #5C4031 0%, rgba(92,64,49,0.6) 50%, transparent 100%)' }} />
+      {/* ══════════════════════ HERO TYPOGRAPHIQUE ══════════════ */}
+      <section
+        className="relative flex flex-col justify-between overflow-hidden"
+        style={{ minHeight: '100vh', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
 
         {/* Lignes verticales déco */}
         <div className="absolute inset-0 pointer-events-none">
-          {[20, 50, 80].map((pct, i) => (
+          {[25, 50, 75].map((pct, i) => (
             <motion.div key={i} className="absolute top-0 bottom-0 w-px"
               style={{ left: `${pct}%`, background: 'rgba(255,255,255,0.04)' }}
               initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
-              transition={{ duration: 1.5, delay: i * 0.15, ease: EASE }} />
+              transition={{ duration: 2, delay: i * 0.2, ease: EASE }} />
           ))}
         </div>
 
-        {/* Contenu */}
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 pb-16 sm:pb-20"
-             style={{ paddingTop: 'var(--navbar-h, 72px)' }}>
+        {/* Haut — label */}
+        <motion.div className="relative z-10 px-6 sm:px-10 pt-10"
+          initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.3 }}>
+          <span className="text-[9px] uppercase tracking-[0.6em] font-bold"
+                style={{ color: 'rgba(255,255,255,0.30)' }}>Mon approche</span>
+        </motion.div>
 
-          <motion.p
-            className="text-[9px] uppercase tracking-[0.6em] font-bold mb-6"
-            style={{ color: 'rgba(255,255,255,0.45)' }}
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}>
-            Mon approche
-          </motion.p>
+        {/* Centre — titre géant */}
+        <div className="relative z-10 px-4 sm:px-8 py-8 flex-1 flex flex-col justify-center">
 
+          {/* LE — glisse depuis la gauche */}
           <div className="overflow-hidden">
             <motion.h1
-              className="font-black uppercase leading-[0.88] tracking-[-0.04em] text-white"
-              style={{ fontSize: 'clamp(4rem, 13vw, 11rem)' }}
-              initial={{ y: '100%' }} animate={{ y: 0 }}
-              transition={{ duration: 1.0, delay: 0.4, ease: EASE }}>
-              Le
-            </motion.h1>
-          </div>
-          <div className="overflow-hidden mb-10">
-            <motion.h1
-              className="font-black uppercase leading-[0.88] tracking-[-0.04em]"
-              style={{ fontSize: 'clamp(4rem, 13vw, 11rem)', color: 'rgba(255,255,255,0.30)' }}
-              initial={{ y: '100%' }} animate={{ y: 0 }}
-              transition={{ duration: 1.0, delay: 0.55, ease: EASE }}>
-              Concept
+              className="font-black uppercase leading-[0.85] tracking-[-0.05em] text-white"
+              style={{ fontSize: 'clamp(6rem, 22vw, 20rem)' }}
+              initial={{ x: '-100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 1.0, delay: 0.2, ease: EASE }}>
+              LE
             </motion.h1>
           </div>
 
-          <motion.div
-            className="max-w-lg border-l-2 border-white/20 pl-6"
-            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 1.0 }}>
-            <p className="text-base leading-8 font-medium" style={{ color: 'rgba(244,239,234,0.65)' }}>
-              Je suis barbier indépendant. Je loue mon siège au cœur de Brie-Comte-Robert et je travaille à mon compte depuis 2018.
-            </p>
+          {/* CONCEPT — glisse depuis la droite */}
+          <div className="overflow-hidden">
+            <motion.h1
+              className="font-black uppercase leading-[0.85] tracking-[-0.05em]"
+              style={{ fontSize: 'clamp(4.5rem, 16vw, 14rem)', color: 'rgba(255,255,255,0.22)' }}
+              initial={{ x: '100%', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 1.0, delay: 0.35, ease: EASE }}>
+              CONCEPT
+            </motion.h1>
+          </div>
+
+          {/* Ligne déco qui grandit */}
+          <motion.div className="flex items-center gap-4 mt-8 mb-8"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
+            <motion.span className="block h-px bg-white/25"
+              initial={{ width: 0 }} animate={{ width: '4rem' }}
+              transition={{ duration: 0.9, delay: 1.1, ease: EASE }} />
+            <motion.span
+              initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }}
+              transition={{ delay: 1.4, duration: 0.4, ease: 'backOut' }}
+              style={{ color: 'rgba(255,255,255,0.30)', fontSize: '1rem' }}>✦</motion.span>
+            <motion.span className="block h-px bg-white/25"
+              initial={{ width: 0 }} animate={{ width: '4rem' }}
+              transition={{ duration: 0.9, delay: 1.1, ease: EASE }} />
+          </motion.div>
+
+          {/* Phrase subtitle qui glisse depuis gauche */}
+          <motion.div className="overflow-hidden">
+            <motion.p
+              className="text-sm sm:text-base leading-8 font-medium max-w-lg"
+              style={{ color: 'rgba(244,239,234,0.55)' }}
+              initial={{ x: '-60px', opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.85, delay: 1.3, ease: EASE }}>
+              Barbier indépendant depuis 2018. Je loue mon siège, je travaille pour toi.
+            </motion.p>
           </motion.div>
         </div>
+
+        {/* Bas — scroll indicator + stat */}
+        <motion.div className="relative z-10 px-6 sm:px-10 pb-10 flex items-end justify-between"
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 1.6 }}>
+          <div className="flex flex-col gap-1">
+            <span className="text-[8px] uppercase tracking-[0.5em] font-bold"
+                  style={{ color: 'rgba(255,255,255,0.25)' }}>Depuis</span>
+            <span className="font-black text-white" style={{ fontSize: '2.5rem', lineHeight: 1 }}>2018</span>
+          </div>
+          <motion.div
+            className="flex items-center gap-2"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}>
+            <span className="text-[8px] uppercase tracking-[0.5em] font-bold"
+                  style={{ color: 'rgba(255,255,255,0.25)' }}>Scroll</span>
+            <span className="block w-px h-8 bg-white/20" />
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* ══════════════════ MANIFESTE ════════════════════════ */}
