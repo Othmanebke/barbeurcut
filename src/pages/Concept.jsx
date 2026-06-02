@@ -189,10 +189,10 @@ export default function Concept() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: EASE }}>
                 {[
-                  { val: '8+',     label: "Ans d'expérience" },
-                  { val: '100%',   label: 'Clients satisfaits' },
-                  { val: 'BP',     label: 'Diplôme coiffure' },
-                  { val: 'Mer–Sam', label: '10h00 – 19h30' },
+                  { val: '8+',      label: "Ans d'expérience" },
+                  { val: '100%',    label: 'Clients satisfaits' },
+                  { val: 'CAP+BP',  label: 'Diplômes coiffure' },
+                  { val: '2018',    label: 'En activité depuis' },
                 ].map((s, i) => (
                   <motion.div key={s.val}
                     className="p-6 sm:p-8 flex flex-col gap-2"
@@ -202,7 +202,7 @@ export default function Concept() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: i * 0.1, ease: EASE }}>
                     <p className="font-black leading-none tracking-[-0.04em]"
-                       style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#5C4031' }}>
+                       style={{ fontSize: 'clamp(1.6rem, 4vw, 3rem)', color: '#5C4031' }}>
                       {s.val}
                     </p>
                     <p className="text-[9px] uppercase tracking-[0.45em] font-bold"
@@ -213,7 +213,7 @@ export default function Concept() {
                 ))}
               </motion.div>
 
-              {/* Droite — présentation */}
+              {/* Droite — qui je suis */}
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -222,24 +222,31 @@ export default function Concept() {
 
                 <p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-5"
                    style={{ color: 'rgba(64,85,104,0.50)' }}>
-                  Le barbier
+                  Qui je suis
                 </p>
 
-                <h2 className="font-black uppercase leading-[0.92] tracking-[-0.04em] mb-6"
+                <h2 className="font-black uppercase leading-[0.92] tracking-[-0.04em] mb-2"
                     style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#5C4031' }}>
-                  Wonderclub
+                  Steevy Manche
                 </h2>
+                <p className="text-sm font-bold mb-6" style={{ color: 'rgba(64,85,104,0.55)' }}>
+                  Barbier indépendant · Wonderclub
+                </p>
 
-                <div className="space-y-4 mb-8">
+                <p className="text-sm sm:text-base leading-8 font-medium mb-8"
+                   style={{ color: 'rgba(92,64,49,0.65)' }}>
+                  Je m'appelle Steevy, barbier indépendant depuis 2018. J'ai décroché mon CAP puis mon BP Coiffure à la CMA de Saint-Maur-des-Fossés. Aujourd'hui je loue mon siège et je travaille à mon compte parce que je veux pouvoir donner le meilleur à chaque client, sans contrainte.
+                </p>
+
+                <div className="space-y-3 mb-8">
                   {[
-                    { label: 'Diplôme',      val: 'BP Coiffure — CMA Saint-Maur-des-Fossés' },
-                    { label: 'Statut',       val: 'Artisan indépendant — siège loué' },
-                    { label: 'Adresse',      val: '1 Rue de la Madeleine, 77170 Brie-Comte-Robert' },
-                    { label: 'Disponible',   val: 'Mercredi au Samedi · 10h00–19h30' },
-                    { label: 'Paiement',     val: 'Espèces ou chèque uniquement' },
+                    { label: 'Diplômes',   val: 'CAP Coiffure + BP Coiffure — CMA Saint-Maur-des-Fossés' },
+                    { label: 'Adresse',    val: '1 Rue de la Madeleine, 77170 Brie-Comte-Robert' },
+                    { label: 'Horaires',   val: 'Mercredi au Samedi · 10h00 – 19h30' },
+                    { label: 'Paiement',   val: 'Espèces ou chèque uniquement' },
                   ].map((row, i) => (
                     <motion.div key={row.label}
-                      className="flex items-start gap-4 pb-4 border-b last:border-0 last:pb-0"
+                      className="flex items-start gap-4 pb-3 border-b last:border-0 last:pb-0"
                       style={{ borderColor: 'rgba(64,85,104,0.10)' }}
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
