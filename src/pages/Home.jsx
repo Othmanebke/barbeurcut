@@ -258,7 +258,7 @@ export default function Home() {
       </section>
 
       {/* fond clair → texte bleu */}
-      <Marquee light />
+      <Marquee />
 
       {/* ══════════════════ SERVICES PREVIEW ══════════════════ */}
       <section style={{ background: '#405568' }} className="py-14 sm:py-20 lg:py-28">
@@ -314,7 +314,7 @@ export default function Home() {
       </section>
 
       {/* fond sombre → texte blanc */}
-      <Marquee reverse />
+      <Marquee brown reverse />
 
       {/* ══════════════════ COMMENT ÇA MARCHE ══════════════════ */}
       <section style={{ background: '#5C4031' }} className="py-14 sm:py-20 lg:py-28">
@@ -367,7 +367,7 @@ export default function Home() {
       </section>
 
       {/* fond denim → texte blanc */}
-      <Marquee dark reverse />
+      <Marquee brown reverse />
 
       {/* ══════════════════ ABOUT TEASER ══════════════════════ */}
       <section style={{ background: '#405568' }} className="py-14 sm:py-20 lg:py-28">

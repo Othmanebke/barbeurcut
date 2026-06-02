@@ -159,16 +159,7 @@ export default function Concept() {
           ))}
         </div>
 
-        {/* Haut — Depuis 2018 top right */}
-        <motion.div className="relative z-10 px-6 sm:px-10 pt-10 flex justify-end"
-          initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.5 }}>
-          <div className="flex flex-col items-end gap-0.5">
-            <span className="text-[8px] uppercase tracking-[0.5em] font-bold"
-                  style={{ color: 'rgba(255,255,255,0.25)' }}>Depuis</span>
-            <span className="font-black text-white leading-none" style={{ fontSize: '2.2rem' }}>2018</span>
-          </div>
-        </motion.div>
+        <div className="relative z-10 pt-10" />
 
         {/* Centre — titre géant */}
         <div className="relative z-10 px-4 sm:px-8 py-8 flex-1 flex flex-col justify-center">
@@ -214,19 +205,6 @@ export default function Concept() {
 
         </div>
 
-        {/* Bas — scroll indicator centré */}
-        <motion.div className="relative z-10 px-6 sm:px-10 pb-10 flex justify-center"
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.6 }}>
-          <motion.div
-            className="flex flex-col items-center gap-2"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}>
-            <span className="text-[8px] uppercase tracking-[0.5em] font-bold"
-                  style={{ color: 'rgba(255,255,255,0.25)' }}>Scroll</span>
-            <span className="block w-px h-8 bg-white/20" />
-          </motion.div>
-        </motion.div>
       </section>
 
       {/* ══════════════════ MANIFESTE ════════════════════════ */}
@@ -292,7 +270,7 @@ export default function Concept() {
         ))}
       </section>
 
-      <Marquee dark reverse />
+      <Marquee brown reverse />
 
       {/* ══════════════════ SPLIT — INDÉPENDANT ════════════ */}
       <section style={{ background: '#5C4031' }} className="overflow-hidden">
@@ -381,7 +359,7 @@ export default function Concept() {
         </div>
       </section>
 
-      <Marquee light />
+      <Marquee />
 
       {/* ══════════════════ ADRESSE ════════════════════════ */}
       <section style={{ background: '#405568' }} className="py-14 sm:py-20">

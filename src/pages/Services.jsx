@@ -1,196 +1,267 @@
-import { useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, useInView } from 'framer-motion';
-import RevealText from '../components/RevealText';
+import { useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import Marquee from '../components/Marquee';
-import BentoServices from '../components/BentoServices';
-import { ScissorsIcon, RazorIcon, CombIcon, BrushIcon, DiamondDivider } from '../components/BarberIcons';
+import { ScissorsIcon, RazorIcon, CombIcon, BrushIcon } from '../components/BarberIcons';
+import { serviceCategories } from '../data/services';
+import { useBooking } from '../context/BookingContext';
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } },
-};
-const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.13, delayChildren: 0.06 } } };
+const EASE = [0.22, 1, 0.36, 1];
 
-function Section({ children, className = '' }) {
+/* ── Carte service — prix + durée au hover ── */
+function ServiceCard({ service, index, onBook, delay = 0 }) {
+  const [hovered, setHovered] = useState(false);
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '0px 0px -8% 0px' });
+  const inView = useInView(ref, { once: true, margin: '0px 0px -5% 0px' });
+
   return (
-    <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? 'show' : 'hidden'} className={className}>
-      {children}
+    <motion.div
+      ref={ref}
+      className="relative overflow-hidden cursor-pointer border-b group"
+      style={{ borderColor: 'rgba(255,255,255,0.07)', background: '#3D2A1E' }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      onClick={() => onBook(service)}
+      initial={{ opacity: 0, x: -30 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.7, delay, ease: EASE }}
+      whileHover={{ backgroundColor: '#2E1F14' }}
+    >
+      {/* Barre gauche hover */}
+      <motion.div className="absolute left-0 top-0 bottom-0 w-[3px] bg-white origin-top"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: hovered ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: EASE }} />
+
+      {/* Numéro fantôme */}
+      <div className="absolute right-6 sm:right-10 top-1/2 -translate-y-1/2 font-black leading-none pointer-events-none select-none"
+           style={{ fontSize: 'clamp(4rem, 12vw, 9rem)', color: 'rgba(255,255,255,0.04)' }}>
+        {String(index + 1).padStart(2, '0')}
+      </div>
+
+      <div className="relative z-10 px-8 sm:px-10 lg:px-14 py-7 sm:py-9">
+        <div className="flex items-center justify-between gap-6">
+
+          {/* Gauche : numéro + titre + desc hover */}
+          <div className="flex items-start gap-6 sm:gap-10 min-w-0">
+            <span className="text-[9px] uppercase tracking-[0.55em] font-black shrink-0 mt-1"
+                  style={{ color: 'rgba(255,255,255,0.22)' }}>
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <div className="min-w-0">
+              <h3 className="font-black uppercase tracking-[-0.02em] text-white"
+                  style={{ fontSize: 'clamp(1.2rem, 3.5vw, 2.2rem)', lineHeight: 1.05 }}>
+                {service.title}
+              </h3>
+              <AnimatePresence>
+                {hovered && (
+                  <motion.p key="desc"
+                    className="text-sm leading-6 mt-2 max-w-md font-medium"
+                    style={{ color: 'rgba(244,239,234,0.50)' }}
+                    initial={{ opacity: 0, y: -8, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                    exit={{ opacity: 0, y: -8, height: 0 }}
+                    transition={{ duration: 0.28, ease: EASE }}>
+                    {service.description}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Droite : durée + prix + flèche */}
+          <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+
+            <AnimatePresence>
+              {hovered && (
+                <motion.div key="dur"
+                  className="hidden sm:flex flex-col items-end gap-0.5"
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 12 }}
+                  transition={{ duration: 0.25, ease: EASE }}>
+                  <span className="text-[8px] uppercase tracking-[0.5em] font-bold"
+                        style={{ color: 'rgba(244,239,234,0.30)' }}>Durée</span>
+                  <span className="text-sm font-black text-white">{service.duration} min</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="flex flex-col items-end gap-0.5">
+              <span className="text-[8px] uppercase tracking-[0.5em] font-bold hidden sm:block"
+                    style={{ color: 'rgba(244,239,234,0.30)' }}>
+                {hovered ? 'Prix' : `${service.duration} min`}
+              </span>
+              <span className="font-black text-white"
+                    style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)', lineHeight: 1 }}>
+                {service.priceLabel}
+              </span>
+            </div>
+
+            <motion.div
+              className="hidden sm:flex items-center justify-center border border-white/15 group-hover:border-white group-hover:bg-white transition-all duration-300"
+              style={{ width: 44, height: 44 }}
+              animate={{ opacity: hovered ? 1 : 0.35 }}>
+              <ScissorsIcon className="w-4 h-3.5 text-white/40 group-hover:text-dark transition-colors duration-300" />
+            </motion.div>
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 }
 
-const ENGAGEMENTS = [
-  { Icon: ScissorsIcon, title: 'Tarifs fixes',          desc: 'Le prix que tu vois c\'est le prix que tu paies. Pas de frais cachés.' },
-  { Icon: CombIcon,     title: 'Paiement sur place',    desc: 'Tu règles directement chez moi en espèces ou par carte.' },
-  { Icon: RazorIcon,    title: 'Diplômé CAP Coiffure',  desc: 'Je suis le seul barbier ici. Tu sais exactement avec qui tu viens.' },
-  { Icon: BrushIcon,    title: 'Satisfaction garantie', desc: 'Si la coupe ne te plaît pas je la retravaille sans te refacturer.' },
-];
-
 export default function Services() {
-  const gridRef = useRef(null);
-  const gridInView = useInView(gridRef, { once: true, margin: '0px 0px -5% 0px' });
+  const { selectService } = useBooking();
+  const navigate = useNavigate();
+
+  const handleBook = (s) => {
+    selectService({ id: s.id, title: s.title, price: s.price, priceLabel: s.priceLabel, duration: s.duration, cites: [] });
+    navigate('/reservation');
+  };
+
+  let globalIdx = 0;
 
   return (
     <>
-      {/* ═══════════════════════ HERO ═══════════════════════ */}
-      <section
-        className="relative flex min-h-[68vh] flex-col justify-end overflow-hidden grain"
-        style={{
-          backgroundImage:
-            'linear-gradient(to bottom, rgba(74,47,26,0.48) 0%, rgba(74,47,26,0.92) 100%),' +
-            'url("https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=1920&q=80")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <RazorIcon className="absolute top-28 right-14 w-32 h-20 text-brand/7 hidden lg:block pointer-events-none" />
+      {/* ══════════════ HERO TYPOGRAPHIQUE ════════════════════ */}
+      <section className="relative flex flex-col overflow-hidden"
+               style={{ minHeight: '72vh', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
 
-        <div
-          className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 pb-16"
-          style={{ paddingTop: 'var(--navbar-h, 72px)' }}
-        >
-          <motion.div initial="hidden" animate="show" variants={stagger} className="grid gap-10 lg:grid-cols-2 lg:items-end">
-            <div>
-              <motion.div variants={fadeUp} className="flex items-center gap-3 mb-8">
-                <ScissorsIcon className="w-4 h-4 text-brand" />
-                <span className="block h-px w-6 bg-brand" />
-                <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">Nos prestations</span>
-              </motion.div>
-              <div className="overflow-mask">
-                <motion.h1 variants={fadeUp} className="text-[clamp(3rem,7vw,6rem)] font-black uppercase tracking-[-0.04em] text-cream leading-[0.92]">
-                  Services
-                </motion.h1>
-              </div>
+        <div className="absolute inset-0 pointer-events-none">
+          {[20, 50, 80].map((pct, i) => (
+            <motion.div key={i} className="absolute top-0 bottom-0 w-px"
+              style={{ left: `${pct}%`, background: 'rgba(255,255,255,0.04)' }}
+              initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
+              transition={{ duration: 1.5, delay: i * 0.12, ease: EASE }} />
+          ))}
+        </div>
+
+        <div className="relative z-10 flex flex-1 flex-col justify-end px-6 sm:px-10 pb-14 sm:pb-20">
+
+          <motion.p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-6"
+            style={{ color: 'rgba(255,255,255,0.35)' }}
+            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}>
+            Catalogue
+          </motion.p>
+
+          <div className="overflow-hidden mb-1">
+            <motion.h1 className="font-black uppercase leading-[0.88] tracking-[-0.05em] text-white"
+              style={{ fontSize: 'clamp(4.5rem, 15vw, 12rem)' }}
+              initial={{ x: '-100%', opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 1.0, delay: 0.2, ease: EASE }}>
+              MES
+            </motion.h1>
+          </div>
+          <div className="overflow-hidden mb-10">
+            <motion.h1 className="font-black uppercase leading-[0.88] tracking-[-0.05em]"
+              style={{ fontSize: 'clamp(3rem, 11vw, 9rem)', color: 'rgba(255,255,255,0.25)' }}
+              initial={{ x: '100%', opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 1.0, delay: 0.35, ease: EASE }}>
+              SERVICES
+            </motion.h1>
+          </div>
+
+          <motion.div className="flex items-center justify-between"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 1.0 }}>
+            <div className="flex items-center gap-8 sm:gap-12">
+              {[{ l: 'À partir de', v: '10€' }, { l: "Jusqu'à", v: '35€' }].map((s) => (
+                <div key={s.l} className="flex flex-col gap-0.5">
+                  <span className="text-[8px] uppercase tracking-[0.5em] font-bold"
+                        style={{ color: 'rgba(255,255,255,0.30)' }}>{s.l}</span>
+                  <span className="text-xl sm:text-2xl font-black text-white">{s.v}</span>
+                </div>
+              ))}
             </div>
-            <motion.div variants={fadeUp} className="border-l-2 border-brand pl-8 flex flex-col gap-5">
-              <p className="text-base leading-8 text-cream/65 font-medium">
-                Choisis ta prestation et réserve ton créneau. Tous les prix sont affichés avant que tu confirmes quoi que ce soit.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
-                  <Link
-                    to="/reservation"
-                    className="inline-flex items-center gap-2 bg-brand px-8 py-4 text-[10px] font-black uppercase tracking-[0.35em] text-dark transition-colors duration-300 hover:bg-brandDark"
-                  >
-                    <ScissorsIcon className="w-3.5 h-3.5" />
-                    Réserver un créneau
-                  </Link>
-                </motion.div>
-              </div>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+              <Link to="/reservation"
+                className="inline-flex items-center gap-2 bg-white px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-creamMid transition-colors"
+                style={{ color: '#5C4031' }}>
+                <ScissorsIcon className="w-3.5 h-3.5" /> Réserver
+              </Link>
             </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── Prix strip ── */}
-      <div className="bg-dark border-b border-cream/8">
-        <div className="mx-auto max-w-7xl px-6 sm:px-10">
-          <div className="flex flex-wrap items-center gap-x-10 gap-y-2 py-4">
-            {[
-              { label: 'À partir de', val: '13€' },
-              { label: 'Jusqu\'à',    val: '35€' },
-              { label: 'Sur devis',   val: 'Design & Couleur' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3">
-                {i > 0 && <span className="text-cream/15 hidden sm:block">·</span>}
-                <span className="text-[9px] uppercase tracking-[0.4em] text-cream/30 font-medium">{item.label}</span>
-                <span className="text-sm font-black text-brand">{item.val}</span>
-              </div>
-            ))}
-            <div className="ml-auto hidden md:flex items-center gap-2">
-              <ScissorsIcon className="w-3 h-3 text-cream/20" />
-              <span className="text-[9px] uppercase tracking-[0.4em] text-cream/25 font-medium">Paiement sur place</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Marquee ── */}
       <Marquee />
 
-      {/* ═══════════════ SERVICES LIST ══════════════════════ */}
-      <section className="py-16" style={{background:'#405568'}}>
-        <div className="mx-auto max-w-7xl px-6 sm:px-10">
-          {/* Label hint */}
+      {/* ══════════════ LISTE DES SERVICES ════════════════════ */}
+      {serviceCategories.map((cat) => (
+        <div key={cat.id}>
           <motion.div
-            ref={gridRef}
-            initial={{ opacity: 0, y: 20 }}
-            animate={gridInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-4 pb-6 mb-8 border-b border-beige/60"
-          >
-            <ScissorsIcon className="w-4 h-4 text-brand shrink-0" />
-            <p className="text-[9px] uppercase tracking-[0.55em] text-white/40 font-bold">
-              Clique sur une prestation pour réserver directement
-            </p>
-            <span className="h-px flex-1 bg-beige/60 hidden sm:block" />
-          </motion.div>
-
-          <motion.div
+            className="flex items-center justify-between px-8 sm:px-10 lg:px-14 py-5 border-b"
+            style={{ background: '#405568', borderColor: 'rgba(255,255,255,0.10)' }}
             initial={{ opacity: 0 }}
-            animate={gridInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <BentoServices />
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}>
+            <span className="text-[9px] uppercase tracking-[0.6em] font-bold text-white/60">{cat.name}</span>
+            <span className="text-[8px] uppercase tracking-[0.5em] font-bold text-white/25">
+              {cat.services.length} prestation{cat.services.length > 1 ? 's' : ''}
+            </span>
           </motion.div>
+
+          {cat.services.map((s) => {
+            const idx = globalIdx++;
+            return <ServiceCard key={s.id} service={s} index={idx} onBook={handleBook} delay={idx * 0.05} />;
+          })}
         </div>
-      </section>
+      ))}
 
-      {/* ── Marquee gold ── */}
-      <Marquee gold speed={24} />
+      <Marquee brown />
 
-      {/* ═══════════ NOS ENGAGEMENTS ════════════════════════ */}
-      <section className="py-14 sm:py-20" style={{background:'#405568'}}>
+      {/* ══════════════ ENGAGEMENTS ═══════════════════════════ */}
+      <section style={{ background: '#405568' }} className="py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
-          <Section>
-            <motion.div variants={fadeUp} className="mb-12 flex items-end justify-between">
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <ScissorsIcon className="w-4 h-4 text-brand" />
-                  <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">La Wonderclub promesse</span>
+          <motion.div className="mb-12"
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ duration: 0.6 }}>
+            <span className="text-[9px] uppercase tracking-[0.6em] font-bold"
+                  style={{ color: 'rgba(255,255,255,0.35)' }}>La promesse Wonderclub</span>
+            <h2 className="font-black uppercase tracking-[-0.04em] text-white mt-3"
+                style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
+              Mes engagements
+            </h2>
+          </motion.div>
+
+          <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-4"
+               style={{ background: 'rgba(255,255,255,0.06)' }}>
+            {[
+              { Icon: ScissorsIcon, title: 'Tarifs fixes',        desc: 'Le prix affiché est le prix payé. Aucune surprise.' },
+              { Icon: CombIcon,     title: 'Espèces ou chèque',   desc: 'Paiement sur place uniquement.' },
+              { Icon: RazorIcon,    title: 'Diplômé BP',          desc: 'CMA Saint-Maur-des-Fossés. Un seul artisan.' },
+              { Icon: BrushIcon,    title: 'Satisfaction garantie', desc: 'Pas content ? Je retravaille sans frais.' },
+            ].map((e, i) => (
+              <motion.div key={e.title}
+                className="group p-6 sm:p-8 flex flex-col gap-4 hover:bg-white transition-colors duration-400 cursor-default"
+                style={{ background: '#405568' }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}>
+                <e.Icon className="w-6 h-5 text-white/30 group-hover:text-dark/40 transition-colors duration-400" />
+                <div>
+                  <p className="text-sm font-black uppercase text-white group-hover:text-dark transition-colors duration-400">{e.title}</p>
+                  <p className="mt-2 text-xs leading-5 font-medium transition-colors duration-400 group-hover:text-dark/55"
+                     style={{ color: 'rgba(244,239,234,0.45)' }}>{e.desc}</p>
                 </div>
-                <RevealText tag="h2" className="text-3xl font-black uppercase tracking-[-0.04em] text-white sm:text-4xl leading-tight">
-                  Nos engagements
-                </RevealText>
-              </div>
-              <DiamondDivider className="text-white/30 hidden lg:flex max-w-[120px]" />
-            </motion.div>
-
-            <motion.div variants={stagger} className="grid gap-px sm:grid-cols-2 lg:grid-cols-4" style={{ background: 'rgba(255,255,255,0.06)' }}>
-              {ENGAGEMENTS.map((e) => (
-                <motion.div key={e.title} variants={fadeUp}
-                  whileHover={{ y: -4 }}
-                  transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-                  className="group p-6 sm:p-8 flex flex-col gap-4 sm:gap-5 hover:bg-brand transition-colors duration-400"
-                  style={{ background: '#405568' }}>
-                  <e.Icon className="w-6 h-5 text-brand/50 group-hover:text-dark/50 transition-colors duration-400" />
-                  <div>
-                    <p className="text-sm font-black uppercase tracking-[-0.01em] text-white group-hover:text-dark transition-colors duration-400">
-                      {e.title}
-                    </p>
-                    <p className="mt-2 text-xs leading-5 font-medium transition-colors duration-400 group-hover:text-dark/60" style={{ color: 'rgba(244,239,234,0.50)' }}>
-                      {e.desc}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Final CTA */}
-            <motion.div variants={fadeUp} className="mt-12 text-center">
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
-                <Link to="/reservation"
-                  className="inline-flex items-center gap-3 bg-white px-10 py-5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-brand transition-all duration-300"
-                  style={{ color: '#5C4031' }}>
-                  <ScissorsIcon className="w-3.5 h-3.5" />
-                  Réserver maintenant
-                </Link>
               </motion.div>
+            ))}
+          </div>
+
+          <motion.div className="mt-12 text-center"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+            viewport={{ once: true }} transition={{ delay: 0.3 }}>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
+              <Link to="/reservation"
+                className="inline-flex items-center gap-3 bg-white px-10 py-5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-creamMid transition-all"
+                style={{ color: '#5C4031' }}>
+                <ScissorsIcon className="w-3.5 h-3.5" /> Réserver maintenant
+              </Link>
             </motion.div>
-          </Section>
+          </motion.div>
         </div>
       </section>
     </>
