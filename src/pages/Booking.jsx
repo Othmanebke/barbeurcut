@@ -44,7 +44,7 @@ function Steps({ serviceOk, dateOk, infoOk }) {
         <div key={s.num} className="flex items-center">
           <div className="flex flex-col items-center gap-1.5">
             <motion.span
-              animate={{ backgroundColor: s.done ? '#C68E17' : 'transparent' }}
+              animate={{ backgroundColor: s.done ? '#FFFFFF' : 'transparent' }}
               transition={{ duration: 0.4 }}
               className={`inline-flex h-8 w-8 shrink-0 items-center justify-center text-[9px] font-black border-2 transition-colors duration-300 ${
                 s.done ? 'border-brand text-dark' : 'border-white/20 text-white/40'
@@ -58,7 +58,7 @@ function Steps({ serviceOk, dateOk, infoOk }) {
           </div>
           {i < steps.length - 1 && (
             <motion.div
-              animate={{ backgroundColor: s.done ? '#C68E17' : 'rgba(255,255,255,0.10)' }}
+              animate={{ backgroundColor: s.done ? '#FFFFFF' : 'rgba(255,255,255,0.10)' }}
               transition={{ duration: 0.4 }}
               className="h-px w-8 sm:w-14 mx-2 sm:mx-3 mt-0 sm:-mt-4"
             />

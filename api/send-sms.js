@@ -78,13 +78,13 @@ export default async function handler(req, res) {
             <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
 
               <!-- ── HEADER ── -->
-              <tr><td style="background:#4A2F1A;padding:28px 36px;border-bottom:3px solid #C68E17;">
+              <tr><td style="background:#4A2F1A;padding:28px 36px;border-bottom:3px solid #FFFFFF;">
                 <table width="100%" cellpadding="0" cellspacing="0"><tr>
 
                   <!-- Logo -->
                   <td style="vertical-align:middle;">
                     <table cellpadding="0" cellspacing="0"><tr>
-                      <td style="background:#C68E17;width:38px;height:38px;text-align:center;vertical-align:middle;">
+                      <td style="background:#FFFFFF;width:38px;height:38px;text-align:center;vertical-align:middle;">
                         <img src="https://barbeurcut.vercel.app/logo.png"
                              width="26" height="26" alt="W"
                              style="display:block;margin:auto;" />
@@ -95,7 +95,7 @@ export default async function handler(req, res) {
                   <!-- Statut -->
                   <td align="right" style="vertical-align:middle;">
                     <span style="font-size:10px;text-transform:uppercase;letter-spacing:4px;
-                                 color:#C68E17;font-weight:700;">Réservation confirmée ✓</span>
+                                 color:#FFFFFF;font-weight:700;">Réservation confirmée ✓</span>
                   </td>
 
                 </tr></table>
@@ -105,7 +105,7 @@ export default async function handler(req, res) {
               <tr><td style="background:#4A2F1A;padding:36px 36px 32px;">
 
                 <p style="margin:0 0 6px;font-size:10px;text-transform:uppercase;
-                           letter-spacing:4px;color:#C68E17;font-weight:700;">Bonjour ${clientName}</p>
+                           letter-spacing:4px;color:#FFFFFF;font-weight:700;">Bonjour ${clientName}</p>
                 <h1 style="margin:0 0 28px;font-size:26px;font-weight:900;
                             text-transform:uppercase;letter-spacing:-1px;color:#FFF8E7;line-height:1.1;">
                   Ton rendez-vous<br>est confirmé.
@@ -113,7 +113,7 @@ export default async function handler(req, res) {
 
                 <!-- Récap -->
                 <table width="100%" cellpadding="0" cellspacing="0"
-                       style="background:#3D2710;margin-bottom:28px;">
+                       style="background:#405568;margin-bottom:28px;">
                   ${[
                     ['Prestation',  `${serviceTitle} — ${servicePriceLabel}`],
                     ['Date',        formattedDate],
@@ -123,7 +123,7 @@ export default async function handler(req, res) {
                   ].map(([label, val]) => `
                     <tr>
                       <td style="padding:11px 16px;font-size:9px;text-transform:uppercase;
-                                 letter-spacing:3px;color:#C68E17;font-weight:700;
+                                 letter-spacing:3px;color:#FFFFFF;font-weight:700;
                                  border-bottom:1px solid rgba(255,248,231,0.07);width:38%;">${label}</td>
                       <td style="padding:11px 16px;font-size:13px;font-weight:600;color:#FFF8E7;
                                  border-bottom:1px solid rgba(255,248,231,0.07);">${val}</td>
@@ -139,7 +139,7 @@ export default async function handler(req, res) {
 
                 <!-- CTA -->
                 <a href="https://barbeurcut.vercel.app"
-                   style="display:inline-block;background:#C68E17;color:#4A2F1A;
+                   style="display:inline-block;background:#FFFFFF;color:#4A2F1A;
                           padding:14px 32px;font-size:10px;font-weight:900;
                           text-transform:uppercase;letter-spacing:4px;text-decoration:none;">
                   Voir le site
@@ -148,7 +148,7 @@ export default async function handler(req, res) {
               </td></tr>
 
               <!-- ── FOOTER ── -->
-              <tr><td style="background:#3D2710;padding:18px 36px;border-top:1px solid rgba(255,248,231,0.08);">
+              <tr><td style="background:#405568;padding:18px 36px;border-top:1px solid rgba(255,248,231,0.08);">
                 <p style="margin:0;font-size:9px;color:rgba(255,248,231,0.20);
                            text-transform:uppercase;letter-spacing:3px;font-weight:500;text-align:center;">
                   © ${new Date().getFullYear()} Wonderclub · Barbier indépendant · Brie-Comte-Robert 77170
@@ -188,16 +188,16 @@ export default async function handler(req, res) {
         <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF8E7;padding:32px 16px;">
           <tr><td align="center">
             <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#4A2F1A;color:#FFF8E7;">
-              <tr><td style="padding:24px 32px;border-bottom:3px solid #C68E17;">
+              <tr><td style="padding:24px 32px;border-bottom:3px solid #FFFFFF;">
                 <span style="font-size:12px;font-weight:900;text-transform:uppercase;
-                             letter-spacing:5px;color:#C68E17;">Nouveau RDV ✓</span>
+                             letter-spacing:5px;color:#FFFFFF;">Nouveau RDV ✓</span>
               </td></tr>
               <tr><td style="padding:28px 32px;">
                 <h1 style="margin:0 0 24px;font-size:22px;font-weight:900;
                             text-transform:uppercase;color:#FFF8E7;letter-spacing:-1px;">
                   ${clientName}
                 </h1>
-                <table width="100%" cellpadding="0" cellspacing="0" style="background:#3D2710;margin-bottom:20px;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="background:#405568;margin-bottom:20px;">
                   ${[
                     ['Prestation', `${serviceTitle} — ${servicePriceLabel}`],
                     ['Date',       formattedDate],
@@ -208,7 +208,7 @@ export default async function handler(req, res) {
                   ].map(([label, val]) => `
                     <tr>
                       <td style="padding:10px 14px;font-size:9px;text-transform:uppercase;
-                                 letter-spacing:3px;color:#C68E17;font-weight:700;
+                                 letter-spacing:3px;color:#FFFFFF;font-weight:700;
                                  border-bottom:1px solid rgba(255,248,231,0.07);width:36%;">${label}</td>
                       <td style="padding:10px 14px;font-size:13px;font-weight:600;color:#FFF8E7;
                                  border-bottom:1px solid rgba(255,248,231,0.07);">${val}</td>
@@ -216,7 +216,7 @@ export default async function handler(req, res) {
                   `).join('')}
                 </table>
                 <a href="tel:${clientPhone}"
-                   style="display:inline-block;background:#C68E17;color:#4A2F1A;
+                   style="display:inline-block;background:#FFFFFF;color:#4A2F1A;
                           padding:12px 28px;font-size:10px;font-weight:900;
                           text-transform:uppercase;letter-spacing:4px;text-decoration:none;">
                   Appeler le client

@@ -55,7 +55,7 @@ export function BarberPole({ className = '' }) {
         className="absolute inset-0 animate-[barberpole_2s_linear_infinite]"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(45deg, #C68E17 0px, #C68E17 6px, #4A2F1A 6px, #4A2F1A 12px, #FFF8E7 12px, #FFF8E7 18px, #4A2F1A 18px, #4A2F1A 24px)',
+            'repeating-linear-gradient(45deg, #FFFFFF 0px, #FFFFFF 6px, #4A2F1A 6px, #4A2F1A 12px, #FFF8E7 12px, #FFF8E7 18px, #4A2F1A 18px, #4A2F1A 24px)',
           backgroundSize: '34px 34px',
         }}
       />

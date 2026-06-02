@@ -276,7 +276,7 @@ export default function Home() {
             <motion.div variants={stagger} className="grid grid-cols-2 gap-3 sm:gap-4">
               {[
                 { bg: '#5C4031', val: '100%', label: 'Clients satisfaits', sub: 'Clients' },
-                { bg: '#C68E17', val: '8+',   label: 'Ans depuis 2018',    sub: 'Expérience', dark: true },
+                { bg: '#FFFFFF', val: '8+',   label: 'Ans depuis 2018',    sub: 'Expérience', dark: true },
               ].map((c) => (
                 <motion.div key={c.val} variants={fadeUp}
                   className="p-5 sm:p-7 aspect-square flex flex-col justify-between cursor-default"

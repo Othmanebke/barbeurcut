@@ -4,18 +4,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand:     '#C68E17',   // gold accent
-        brandDark: '#9A6B10',   // deep gold hover
-        brandLight:'#F0DFA0',   // pale gold tint
-        dark:      '#5C4031',   // Shimmer On — fond principal
+        brand:     '#FFFFFF',   // blanc — accent principal
+        brandDark: '#D8D0C8',   // blanc cassé — hover
+        brandLight:'rgba(255,255,255,0.12)',
+        dark:      '#5C4031',   // Shimmer On brown — fond principal
         darkMid:   '#4A3225',   // légèrement plus sombre
-        denim:     '#405568',   // Dark Denim — cartes / sections UI
+        denim:     '#405568',   // Dark Denim — cartes / sections
         denimDark: '#344558',   // hover denim
         cream:     '#F4EFEA',   // texte secondaire
-        creamMid:  '#E8E0D8',   // variante cream
-        muted:     '#C4B4A8',   // texte atténué sur fond sombre
-        beige:     '#7A6255',   // séparateurs / bordures
-        white:     '#FFFFFF',   // texte principal / boutons
+        creamMid:  '#E8E0D8',   // variante
+        muted:     'rgba(244,239,234,0.50)',
+        beige:     '#6A5A4E',   // bordures subtiles
+        white:     '#FFFFFF',
       },
       borderRadius: {
         none:    '0',
@@ -34,7 +34,7 @@ export default {
       },
       boxShadow: {
         warm: '0 24px 64px rgba(92, 64, 49, 0.30)',
-        gold: '0 8px 32px rgba(198, 142, 23, 0.25)',
+        gold: '0 8px 32px rgba(255,255,255,0.12)',
       },
       keyframes: {
         'line-grow': {
