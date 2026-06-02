@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ScissorsIcon, DiamondDivider } from './BarberIcons';
+import { DiamondDivider } from './BarberIcons';
 import logo from '../assets/logo.png';
 
 const MAPS_URL =
@@ -7,7 +7,7 @@ const MAPS_URL =
 
 export default function Footer() {
   return (
-    <footer className="bg-dark text-cream">
+    <footer style={{ background: '#5C4031', color: '#F4EFEA' }}>
 
       {/* ── Infos essentielles ── */}
       <div className="mx-auto max-w-7xl px-6 sm:px-10 pt-14 sm:pt-16 pb-10">
@@ -32,7 +32,7 @@ export default function Footer() {
             </a>
 
             <div className="text-sm text-cream/35 font-medium space-y-1">
-              <p>Mer — Sam · 9h–12h / 13h–19h</p>
+              <p>Mer — Sam · 10h–19h30</p>
               <p className="text-cream/22 text-xs">Lun, Mar, Dim : fermé</p>
             </div>
 

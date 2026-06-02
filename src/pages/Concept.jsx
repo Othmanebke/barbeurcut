@@ -146,8 +146,8 @@ export default function Concept() {
     <>
       {/* ══════════════════════ HERO TYPOGRAPHIQUE ══════════════ */}
       <section
-        className="relative flex flex-col justify-between overflow-hidden"
-        style={{ minHeight: '100vh', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
+        className="relative flex flex-col overflow-hidden"
+        style={{ minHeight: 'clamp(480px, 88vh, 920px)', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
 
         {/* Lignes verticales déco */}
         <div className="absolute inset-0 pointer-events-none">
@@ -159,16 +159,14 @@ export default function Concept() {
           ))}
         </div>
 
-        <div className="relative z-10 pt-10" />
-
         {/* Centre — titre géant */}
-        <div className="relative z-10 px-4 sm:px-8 py-8 flex-1 flex flex-col justify-center">
+        <div className="relative z-10 px-4 sm:px-8 py-10 sm:py-16 flex-1 flex flex-col justify-center">
 
           {/* LE — glisse depuis la gauche */}
           <div className="overflow-hidden">
             <motion.h1
               className="font-black uppercase leading-[0.85] tracking-[-0.05em] text-white"
-              style={{ fontSize: 'clamp(6rem, 22vw, 20rem)' }}
+              style={{ fontSize: 'clamp(3.5rem, 22vw, 20rem)' }}
               initial={{ x: '-100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 1.0, delay: 0.2, ease: EASE }}>
@@ -180,7 +178,7 @@ export default function Concept() {
           <div className="overflow-hidden">
             <motion.h1
               className="font-black uppercase leading-[0.85] tracking-[-0.05em]"
-              style={{ fontSize: 'clamp(4.5rem, 16vw, 14rem)', color: 'rgba(255,255,255,0.22)' }}
+              style={{ fontSize: 'clamp(2.5rem, 16vw, 14rem)', color: 'rgba(255,255,255,0.22)' }}
               initial={{ x: '100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 1.0, delay: 0.35, ease: EASE }}>
@@ -362,7 +360,7 @@ export default function Concept() {
       <Marquee />
 
       {/* ══════════════════ ADRESSE ════════════════════════ */}
-      <section style={{ background: '#405568' }} className="py-14 sm:py-20">
+      <section style={{ background: '#405568' }} className="py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
 

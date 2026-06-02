@@ -106,7 +106,7 @@ export default function Home() {
         ref={heroRef}
         onMouseMove={onMouseMove}
         className="relative flex flex-col overflow-hidden select-none"
-        style={{ minHeight: 'clamp(580px, 95vh, 1040px)', background: '#5C4031', cursor: 'none' }}
+        style={{ minHeight: 'clamp(480px, 88vh, 1040px)', background: '#5C4031', cursor: 'none' }}
       >
         {/* ── Couche 1 : anneaux carrés pulsants ── */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
@@ -163,7 +163,7 @@ export default function Home() {
           <div className="overflow-hidden leading-none mb-0">
             <motion.h1
               className="font-black uppercase tracking-[-0.04em] text-white"
-              style={{ fontSize: 'clamp(4rem, 16vw, 14rem)', lineHeight: 0.92 }}
+              style={{ fontSize: 'clamp(2.8rem, 16vw, 14rem)', lineHeight: 0.92 }}
               initial={{ y: '-105%' }}
               animate={{ y: 0 }}
               transition={{ duration: 1.1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -176,7 +176,7 @@ export default function Home() {
           <div className="overflow-hidden leading-none mb-10">
             <motion.h1
               className="font-black uppercase tracking-[-0.02em]"
-              style={{ fontSize: 'clamp(4rem, 16vw, 14rem)', lineHeight: 0.92, color: 'rgba(255,255,255,0.28)' }}
+              style={{ fontSize: 'clamp(2.8rem, 16vw, 14rem)', lineHeight: 0.92, color: 'rgba(255,255,255,0.28)' }}
               initial={{ y: '105%' }}
               animate={{ y: 0 }}
               transition={{ duration: 1.1, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
@@ -261,7 +261,7 @@ export default function Home() {
       <Marquee />
 
       {/* ══════════════════ SERVICES PREVIEW ══════════════════ */}
-      <section style={{ background: '#405568' }} className="py-14 sm:py-20 lg:py-28">
+      <section style={{ background: '#405568' }} className="py-10 sm:py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section>
             <div className="flex items-end justify-between pb-6 sm:pb-8 border-b mb-2"
@@ -317,7 +317,7 @@ export default function Home() {
       <Marquee brown reverse />
 
       {/* ══════════════════ COMMENT ÇA MARCHE ══════════════════ */}
-      <section style={{ background: '#5C4031' }} className="py-14 sm:py-20 lg:py-28">
+      <section style={{ background: '#5C4031' }} className="py-10 sm:py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section>
             <motion.div variants={fadeUp} className="text-center mb-10 sm:mb-16">
@@ -370,7 +370,7 @@ export default function Home() {
       <Marquee brown reverse />
 
       {/* ══════════════════ ABOUT TEASER ══════════════════════ */}
-      <section style={{ background: '#405568' }} className="py-14 sm:py-20 lg:py-28">
+      <section style={{ background: '#405568' }} className="py-10 sm:py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <Section className="grid gap-10 sm:gap-16 lg:grid-cols-2 lg:items-center">
             <motion.div variants={fadeUp}>

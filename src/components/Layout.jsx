@@ -52,7 +52,7 @@ export default function Layout() {
       {/* Rideau de transition */}
       <TransitionCurtain isVisible={false} />
 
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={location.pathname}

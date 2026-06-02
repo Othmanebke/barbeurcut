@@ -92,8 +92,7 @@ function ServiceCard({ service, index, onBook, delay = 0 }) {
                     style={{ color: 'rgba(244,239,234,0.30)' }}>
                 {hovered ? 'Prix' : `${service.duration} min`}
               </span>
-              <span className="font-black text-white"
-                    style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)', lineHeight: 1 }}>
+              <span className="font-black text-white text-lg sm:text-xl" style={{ lineHeight: 1 }}>
                 {service.priceLabel}
               </span>
             </div>
@@ -126,7 +125,7 @@ export default function Services() {
     <>
       {/* ══════════════ HERO TYPOGRAPHIQUE ════════════════════ */}
       <section className="relative flex flex-col overflow-hidden"
-               style={{ minHeight: '72vh', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
+               style={{ minHeight: 'clamp(380px, 68vh, 800px)', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
 
         <div className="absolute inset-0 pointer-events-none">
           {[20, 50, 80].map((pct, i) => (
@@ -148,7 +147,7 @@ export default function Services() {
 
           <div className="overflow-hidden mb-1">
             <motion.h1 className="font-black uppercase leading-[0.88] tracking-[-0.05em] text-white"
-              style={{ fontSize: 'clamp(4.5rem, 15vw, 12rem)' }}
+              style={{ fontSize: 'clamp(3rem, 15vw, 12rem)' }}
               initial={{ x: '-100%', opacity: 0 }} animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 1.0, delay: 0.2, ease: EASE }}>
               MES
@@ -156,7 +155,7 @@ export default function Services() {
           </div>
           <div className="overflow-hidden mb-10">
             <motion.h1 className="font-black uppercase leading-[0.88] tracking-[-0.05em]"
-              style={{ fontSize: 'clamp(3rem, 11vw, 9rem)', color: 'rgba(255,255,255,0.25)' }}
+              style={{ fontSize: 'clamp(2rem, 11vw, 9rem)', color: 'rgba(255,255,255,0.25)' }}
               initial={{ x: '100%', opacity: 0 }} animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 1.0, delay: 0.35, ease: EASE }}>
               SERVICES
@@ -213,7 +212,7 @@ export default function Services() {
       <Marquee brown />
 
       {/* ══════════════ ENGAGEMENTS ═══════════════════════════ */}
-      <section style={{ background: '#405568' }} className="py-14 sm:py-20">
+      <section style={{ background: '#405568' }} className="py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <motion.div className="mb-12"
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
