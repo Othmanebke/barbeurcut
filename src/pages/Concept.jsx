@@ -12,27 +12,6 @@ function useReveal(opts = {}) {
   return [ref, inView];
 }
 
-/* Révèle chaque mot d'un texte au scroll */
-function RevealWords({ text, className, style, delay = 0 }) {
-  const [ref, inView] = useReveal();
-  const words = text.split(' ');
-  return (
-    <span ref={ref} className={className} style={style}>
-      {words.map((word, i) => (
-        <span key={i} className="inline-block overflow-hidden mr-[0.25em]">
-          <motion.span
-            className="inline-block"
-            initial={{ y: '110%', opacity: 0 }}
-            animate={inView ? { y: 0, opacity: 1 } : {}}
-            transition={{ duration: 0.7, delay: delay + i * 0.055, ease: EASE }}
-          >
-            {word}
-          </motion.span>
-        </span>
-      ))}
-    </span>
-  );
-}
 
 
 /* Valeur pilier — carte pleine largeur avec numéro fantôme */
@@ -175,35 +154,6 @@ export default function Concept() {
 
         </div>
 
-      </section>
-
-      {/* ══════════════════ MANIFESTE ════════════════════════ */}
-      <section style={{ background: '#4A3225' }} className="py-16 sm:py-24 overflow-hidden">
-        <div className="mx-auto max-w-7xl px-6 sm:px-10">
-          <p className="text-[8px] uppercase tracking-[0.6em] font-bold mb-8"
-             style={{ color: 'rgba(255,255,255,0.30)' }}>Manifeste</p>
-          <RevealWords
-            text="Je ne travaille pas pour un patron."
-            className="block font-black uppercase leading-tight tracking-[-0.03em] text-white mb-4"
-            style={{ fontSize: 'clamp(2rem, 6vw, 5rem)' }}
-          />
-          <RevealWords
-            text="Je travaille pour toi."
-            className="block font-black uppercase leading-tight tracking-[-0.03em]"
-            style={{ fontSize: 'clamp(2rem, 6vw, 5rem)', color: 'rgba(255,255,255,0.25)' }}
-            delay={0.3}
-          />
-          <motion.div className="mt-10 max-w-lg"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.6 }}>
-            <p className="text-sm sm:text-base leading-8 font-medium"
-               style={{ color: 'rgba(244,239,234,0.50)' }}>
-              Chaque réservation est un engagement direct entre nous deux. Pas d'intermédiaire, pas de surprise.
-            </p>
-          </motion.div>
-        </div>
       </section>
 
       {/* ══════════════════ PRÉSENTATION DU BARBIER ═════════ */}
