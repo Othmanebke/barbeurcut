@@ -72,10 +72,20 @@ function PinScreen({ onSuccess }) {
 /* ══ STAT CARD ══ */
 function StatCard({ label, value, sub }) {
   return (
-    <div className="bg-denim border border-white/8 p-5 flex flex-col gap-1">
-      <p className="text-[8px] uppercase tracking-[0.5em] text-white/40 font-bold">{label}</p>
-      <p className="text-3xl font-black text-white leading-none">{value}</p>
-      {sub && <p className="text-xs text-cream/50 font-medium mt-0.5">{sub}</p>}
+    <div className="relative overflow-hidden border border-white/8 p-6 sm:p-8 flex flex-col justify-between min-h-[120px]"
+         style={{ background: '#405568' }}>
+      {/* Numéro fantôme en fond */}
+      <span className="absolute right-3 bottom-0 font-black leading-none pointer-events-none select-none"
+            style={{ fontSize: '5rem', color: 'rgba(255,255,255,0.05)' }}>
+        {value}
+      </span>
+      <p className="text-[8px] uppercase tracking-[0.5em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>
+        {label}
+      </p>
+      <div>
+        <p className="font-black text-white leading-none" style={{ fontSize: '2.8rem' }}>{value}</p>
+        {sub && <p className="text-xs font-medium mt-1.5" style={{ color: 'rgba(244,239,234,0.45)' }}>{sub}</p>}
+      </div>
     </div>
   );
 }
@@ -137,16 +147,22 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen" style={{ background: '#3D2A1E' }}>
 
-      {/* Header */}
-      <div className="bg-darkMid sticky top-0 z-40 border-b border-white/8">
+      {/* Header avec ligne accent */}
+      <div className="sticky top-0 z-40 border-b" style={{ background: '#2E1F14', borderColor: 'rgba(255,255,255,0.06)' }}>
+        {/* Ligne accent top */}
+        <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, #FFFFFF 0%, rgba(255,255,255,0.3) 40%, transparent 100%)' }} />
         <div className="mx-auto max-w-6xl px-6 sm:px-10 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 bg-brand flex items-center justify-center shrink-0">
               <img src={logo} alt="Wonderclub" className="h-5 w-5 object-contain" style={{ filter: 'invert(1)' }} />
             </div>
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Dashboard</span>
+            <span className="hidden sm:block text-[8px] uppercase tracking-[0.35em] font-bold ml-2"
+                  style={{ color: 'rgba(255,255,255,0.20)' }}>
+              Wonderclub · {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })}
+            </span>
           </div>
           <button onClick={() => { sessionStorage.removeItem(AUTH_KEY); window.location.reload(); }}
             className="text-[9px] uppercase tracking-[0.4em] text-white/30 hover:text-white font-bold transition-colors">
@@ -170,35 +186,41 @@ function Dashboard() {
         </div>
 
         {/* Nav semaine + vue */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-5"
+             style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
           <div className="flex items-center gap-2">
             <button onClick={() => setWeekStart(w => addDays(w, -7))}
-              className="h-9 w-9 border border-white/10 bg-denim text-white font-bold text-sm hover:border-brand transition-colors flex items-center justify-center">←</button>
+              className="h-9 w-9 border border-white/10 text-white font-bold text-sm hover:border-white/40 transition-colors flex items-center justify-center"
+              style={{ background: '#405568' }}>←</button>
             <span className="text-sm font-black text-white px-2">
               {fmt(from, { day:'2-digit', month:'short' })} — {fmt(to, { day:'2-digit', month:'short', year:'numeric' })}
             </span>
             <button onClick={() => setWeekStart(w => addDays(w, 7))}
-              className="h-9 w-9 border border-white/10 bg-denim text-white font-bold text-sm hover:border-brand transition-colors flex items-center justify-center">→</button>
+              className="h-9 w-9 border border-white/10 text-white font-bold text-sm hover:border-white/40 transition-colors flex items-center justify-center"
+              style={{ background: '#405568' }}>→</button>
             <button onClick={() => setWeekStart(monday())}
-              className="h-9 px-3 border border-brand text-brand text-[9px] font-black uppercase tracking-[0.3em] hover:bg-brand hover:text-dark transition-all">
+              className="h-9 px-3 border border-white/30 text-white text-[9px] font-black uppercase tracking-[0.3em] hover:bg-white hover:text-dark transition-all"
+              style={{ color: 'rgba(255,255,255,0.70)' }}>
               Auj.
             </button>
           </div>
           <div className="flex border border-white/10 overflow-hidden">
             {[['list','Liste'],['week','Calendrier']].map(([v, l]) => (
               <button key={v} onClick={() => setView(v)}
-                className={`px-4 py-2 text-[9px] uppercase tracking-[0.35em] font-black transition-colors ${
-                  view === v ? 'bg-brand text-dark' : 'text-white/40 hover:text-white bg-denim'
-                }`}>{l}</button>
+                className="px-4 py-2 text-[9px] uppercase tracking-[0.35em] font-black transition-colors"
+                style={{
+                  background: view === v ? '#FFFFFF' : '#405568',
+                  color: view === v ? '#3D2A1E' : 'rgba(255,255,255,0.40)',
+                }}>{l}</button>
             ))}
           </div>
         </div>
 
         {/* Contenu */}
         {loading ? (
-          <div className="bg-denim border border-white/8 p-16 flex justify-center">
+          <div className="border border-white/8 p-16 flex justify-center" style={{ background: '#405568' }}>
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
-              <ScissorsIcon className="w-7 h-7 text-brand" />
+              <ScissorsIcon className="w-7 h-7 text-white" />
             </motion.div>
           </div>
         ) : view === 'list' ? (
@@ -213,28 +235,43 @@ function Dashboard() {
               const pauses   = blocks.filter(b => b.date === k && b.time && b.reason === 'Pause');
 
               return (
-                <div key={k} className="bg-denim border border-white/8 overflow-hidden">
-                  <div className={`px-6 py-4 flex items-center justify-between ${isToday ? 'bg-darkMid' : 'bg-denim'}`}>
+                <div key={k}
+                  className="overflow-hidden border"
+                  style={{
+                    background: isToday ? '#405568' : '#3D2A1E',
+                    borderColor: isToday ? 'rgba(255,255,255,0.20)' : 'rgba(255,255,255,0.06)',
+                    borderLeft: isToday ? '3px solid #FFFFFF' : '3px solid transparent',
+                  }}>
+                  <div className="px-6 py-4 flex items-center justify-between"
+                       style={{ background: isToday ? '#344558' : 'rgba(255,255,255,0.03)' }}>
                     <div className="flex items-center gap-3">
-                      <div className={`h-2 w-2 rounded-full ${dayAppts.length > 0 ? 'bg-brand' : 'bg-white/20'}`} />
+                      <div className="h-2 w-2 rounded-full"
+                           style={{ background: dayAppts.length > 0 ? '#FFFFFF' : 'rgba(255,255,255,0.18)' }} />
                       <p className="text-sm font-black uppercase text-white">
                         {fmt(k, { weekday:'long', day:'2-digit', month:'long' })}
                       </p>
-                      {isToday && <span className="text-[8px] font-bold uppercase tracking-[0.4em] text-brand">Aujourd'hui</span>}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {dayAppts.length > 0 && (
-                        <span className="text-[9px] font-bold text-white/40">{dayAppts.length} RDV</span>
+                      {isToday && (
+                        <span className="text-[8px] font-black uppercase tracking-[0.4em] px-2 py-0.5 border border-white/30 text-white/70">
+                          Auj.
+                        </span>
                       )}
-                      {/* Bouton pause */}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {dayAppts.length > 0 && (
+                        <span className="text-[9px] font-bold" style={{ color: 'rgba(255,255,255,0.40)' }}>
+                          {dayAppts.length} RDV
+                        </span>
+                      )}
                       <button onClick={() => setPauseModal({ date: k })}
-                        className="text-[8px] uppercase tracking-[0.3em] font-bold text-brand/60 hover:text-brand transition-colors px-2">
+                        className="text-[8px] uppercase tracking-[0.3em] font-bold transition-colors hover:text-white px-2"
+                        style={{ color: 'rgba(255,255,255,0.35)' }}>
                         + Pause
                       </button>
                       <button onClick={() => handleBlockDay(k)}
                         className={`text-[8px] uppercase tracking-[0.3em] font-bold transition-colors ${
-                          full ? 'text-red-400 hover:text-red-300' : 'text-white/30 hover:text-red-400'
-                        }`}>
+                          full ? 'text-red-400 hover:text-red-300' : 'hover:text-red-400'
+                        }`}
+                        style={{ color: full ? undefined : 'rgba(255,255,255,0.22)' }}>
                         {full ? 'Rouvrir' : 'Fermer'}
                       </button>
                     </div>

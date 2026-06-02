@@ -498,7 +498,27 @@ export default function Booking() {
         )}
       </AnimatePresence>
 
-      <div className="h-12 sm:h-16" />
+      {/* ── Info section finale ── */}
+      <div style={{ background: '#F4EFEA', borderTop: '1px solid rgba(64,85,104,0.12)' }}>
+        <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0 sm:divide-x"
+               style={{ borderColor: 'rgba(64,85,104,0.12)' }}>
+            {[
+              { label: 'Paiement',  val: 'Espèces ou chèque',         icon: '◈' },
+              { label: 'Adresse',   val: '1 Rue de la Madeleine, 77170', icon: '◎' },
+              { label: 'Horaires',  val: 'Mer–Sam · 10h00–19h30',    icon: '◷' },
+            ].map((item, i) => (
+              <div key={i} className="sm:px-8 first:pl-0 last:pr-0">
+                <p className="text-[8px] uppercase tracking-[0.5em] font-bold mb-2"
+                   style={{ color: 'rgba(64,85,104,0.45)' }}>
+                  {item.icon} {item.label}
+                </p>
+                <p className="text-sm font-bold" style={{ color: '#405568' }}>{item.val}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
