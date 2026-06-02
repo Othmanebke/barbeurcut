@@ -157,47 +157,40 @@ export default function Concept() {
       </section>
 
       {/* ══════════════════ QUI JE SUIS ══════════════════════ */}
-      <section className="relative overflow-hidden" style={{ background: '#3D2A1E' }}>
+      <section className="relative overflow-hidden" style={{ background: '#F4EFEA' }}>
 
         {/* SM initiales en fond */}
         <div className="absolute right-0 top-0 bottom-0 flex items-center pointer-events-none select-none overflow-hidden">
           <span className="font-black leading-none tracking-[-0.08em]"
-                style={{ fontSize: 'clamp(14rem, 40vw, 32rem)', color: 'rgba(255,255,255,0.03)' }}>
+                style={{ fontSize: 'clamp(14rem, 40vw, 32rem)', color: 'rgba(64,85,104,0.05)' }}>
             SM
           </span>
         </div>
 
         {/* Nom pleine largeur en haut */}
-        <div className="relative z-10 border-b overflow-hidden" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+        <div className="relative z-10 border-b overflow-hidden" style={{ borderColor: 'rgba(64,85,104,0.12)' }}>
           <div className="px-6 sm:px-10 pt-12 pb-8">
             <motion.p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-4"
-              style={{ color: 'rgba(255,255,255,0.30)' }}
+              style={{ color: 'rgba(64,85,104,0.50)' }}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}>
               Qui je suis
             </motion.p>
-
             <div className="overflow-hidden">
-              <motion.h2
-                className="font-black uppercase leading-[0.85] tracking-[-0.04em]"
-                style={{ fontSize: 'clamp(3rem, 11vw, 9rem)', color: '#FFFFFF' }}
-                initial={{ y: '100%' }}
-                whileInView={{ y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.9, ease: EASE }}>
+              <motion.h2 className="font-black uppercase leading-[0.85] tracking-[-0.04em]"
+                style={{ fontSize: 'clamp(3rem, 11vw, 9rem)', color: '#5C4031' }}
+                initial={{ y: '100%' }} whileInView={{ y: 0 }}
+                viewport={{ once: true }} transition={{ duration: 0.9, ease: EASE }}>
                 Steevy
               </motion.h2>
             </div>
             <div className="overflow-hidden">
-              <motion.h2
-                className="font-black uppercase leading-[0.85] tracking-[-0.04em]"
-                style={{ fontSize: 'clamp(3rem, 11vw, 9rem)', color: 'rgba(255,255,255,0.22)' }}
-                initial={{ y: '100%' }}
-                whileInView={{ y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.9, delay: 0.1, ease: EASE }}>
+              <motion.h2 className="font-black uppercase leading-[0.85] tracking-[-0.04em]"
+                style={{ fontSize: 'clamp(3rem, 11vw, 9rem)', color: 'rgba(64,85,104,0.40)' }}
+                initial={{ y: '100%' }} whileInView={{ y: 0 }}
+                viewport={{ once: true }} transition={{ duration: 0.9, delay: 0.1, ease: EASE }}>
                 Manche
               </motion.h2>
             </div>
@@ -210,26 +203,25 @@ export default function Concept() {
           {/* Gauche — stats + rôle */}
           <motion.div
             className="border-b lg:border-b-0 lg:border-r px-6 sm:px-10 py-10 sm:py-14 flex flex-col justify-between gap-10"
-            style={{ borderColor: 'rgba(255,255,255,0.08)' }}
+            style={{ borderColor: 'rgba(64,85,104,0.12)' }}
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease: EASE }}>
 
             <div>
-              <p className="text-sm font-medium mb-1" style={{ color: 'rgba(244,239,234,0.45)' }}>
+              <p className="text-sm font-medium mb-1" style={{ color: 'rgba(92,64,49,0.60)' }}>
                 Barbier indépendant
               </p>
-              <p className="text-[9px] uppercase tracking-[0.5em] font-bold" style={{ color: 'rgba(255,255,255,0.25)' }}>
+              <p className="text-[9px] uppercase tracking-[0.5em] font-bold" style={{ color: 'rgba(64,85,104,0.45)' }}>
                 Wonderclub · Brie-Comte-Robert
               </p>
             </div>
 
-            {/* Stats verticales */}
             <div className="space-y-6">
               {[
-                { val: '8+',   label: "Ans d'expérience" },
-                { val: '100%', label: 'Clients satisfaits' },
+                { val: '8+',      label: "Ans d'expérience" },
+                { val: '100%',    label: 'Clients satisfaits' },
                 { val: 'Mer–Sam', label: '10h00 → 19h30' },
               ].map((s, i) => (
                 <motion.div key={s.val}
@@ -237,12 +229,12 @@ export default function Concept() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}>
-                  <p className="font-black leading-none tracking-[-0.04em] text-white"
-                     style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)' }}>
+                  <p className="font-black leading-none tracking-[-0.04em]"
+                     style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', color: '#405568' }}>
                     {s.val}
                   </p>
                   <p className="text-[9px] uppercase tracking-[0.45em] font-bold mt-1"
-                     style={{ color: 'rgba(255,255,255,0.30)' }}>
+                     style={{ color: 'rgba(64,85,104,0.50)' }}>
                     {s.label}
                   </p>
                 </motion.div>
@@ -259,31 +251,30 @@ export default function Concept() {
             transition={{ duration: 0.7, delay: 0.1, ease: EASE }}>
 
             <p className="text-sm sm:text-base leading-8 font-medium max-w-lg"
-               style={{ color: 'rgba(244,239,234,0.55)' }}>
+               style={{ color: 'rgba(92,64,49,0.65)' }}>
               Barbier indépendant depuis 2018. J'ai décroché mon CAP puis mon BP Coiffure à la CMA de Saint-Maur-des-Fossés. Aujourd'hui je loue mon siège et je travaille à mon compte pour donner le meilleur à chaque client, sans contrainte.
             </p>
 
             {/* Timeline diplômes */}
             <div className="space-y-5">
               <p className="text-[9px] uppercase tracking-[0.6em] font-bold"
-                 style={{ color: 'rgba(255,255,255,0.25)' }}>Parcours</p>
+                 style={{ color: 'rgba(64,85,104,0.40)' }}>Parcours</p>
               {[
-                { year: '2016', label: 'CAP Coiffure', sub: 'CMA Saint-Maur-des-Fossés' },
-                { year: '2018', label: 'BP Coiffure',  sub: 'CMA Saint-Maur-des-Fossés' },
+                { year: '2016', label: 'CAP Coiffure',        sub: 'CMA Saint-Maur-des-Fossés' },
+                { year: '2018', label: 'BP Coiffure',         sub: 'CMA Saint-Maur-des-Fossés' },
                 { year: '2018', label: 'Lancement Wonderclub', sub: 'Artisan indépendant · Brie-Comte-Robert', active: true },
               ].map((step, i) => (
-                <motion.div key={i}
-                  className="flex items-start gap-5"
+                <motion.div key={i} className="flex items-start gap-5"
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.55, delay: i * 0.12 }}>
-                  {/* Ligne + point */}
                   <div className="flex flex-col items-center shrink-0 mt-1.5">
-                    <div className="w-2 h-2 rounded-full" style={{ background: step.active ? '#FFFFFF' : 'rgba(255,255,255,0.30)' }} />
+                    <div className="w-2 h-2 rounded-full"
+                         style={{ background: step.active ? '#405568' : 'rgba(64,85,104,0.30)' }} />
                     {i < 2 && (
-                      <motion.div className="w-px flex-1 mt-1"
-                        style={{ background: 'rgba(255,255,255,0.12)', height: '32px' }}
+                      <motion.div className="w-px mt-1"
+                        style={{ background: 'rgba(64,85,104,0.15)', height: '32px' }}
                         initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.4, delay: 0.2 + i * 0.1 }} />
@@ -292,25 +283,22 @@ export default function Concept() {
                   <div>
                     <div className="flex items-center gap-3 mb-0.5">
                       <span className="text-[9px] font-black uppercase tracking-[0.4em]"
-                            style={{ color: step.active ? 'rgba(255,255,255,0.60)' : 'rgba(255,255,255,0.25)' }}>
+                            style={{ color: step.active ? 'rgba(64,85,104,0.70)' : 'rgba(64,85,104,0.35)' }}>
                         {step.year}
                       </span>
-                      <span className="h-px w-6" style={{ background: 'rgba(255,255,255,0.15)' }} />
+                      <span className="h-px w-6" style={{ background: 'rgba(64,85,104,0.15)' }} />
                     </div>
-                    <p className="text-sm font-black text-white">{step.label}</p>
-                    <p className="text-xs font-medium mt-0.5" style={{ color: 'rgba(244,239,234,0.40)' }}>{step.sub}</p>
+                    <p className="text-sm font-black" style={{ color: '#5C4031' }}>{step.label}</p>
+                    <p className="text-xs font-medium mt-0.5" style={{ color: 'rgba(64,85,104,0.50)' }}>{step.sub}</p>
                   </div>
                 </motion.div>
               ))}
             </div>
 
-            {/* CTA */}
-            <motion.div
-              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-              className="inline-block self-start">
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block self-start">
               <Link to="/reservation"
-                className="inline-flex items-center gap-3 px-8 py-4 text-[10px] font-black uppercase tracking-[0.4em] bg-white transition-colors duration-300 hover:bg-creamMid"
-                style={{ color: '#5C4031' }}>
+                className="inline-flex items-center gap-3 px-8 py-4 text-[10px] font-black uppercase tracking-[0.4em] transition-colors duration-300 hover:opacity-80"
+                style={{ background: '#5C4031', color: '#F4EFEA' }}>
                 <ScissorsIcon className="w-3.5 h-3.5" />
                 Prendre rendez-vous
               </Link>
@@ -435,7 +423,7 @@ export default function Concept() {
       <Marquee />
 
       {/* ══════════════════ ADRESSE ════════════════════════ */}
-      <section style={{ background: '#405568' }} className="py-10 sm:py-16">
+      <section style={{ background: '#FFFFFF' }} className="py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
 
@@ -446,57 +434,58 @@ export default function Concept() {
               transition={{ duration: 0.8, ease: EASE }}>
 
               <p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-6"
-                 style={{ color: 'rgba(255,255,255,0.35)' }}>Nous trouver</p>
+                 style={{ color: 'rgba(64,85,104,0.50)' }}>Nous trouver</p>
 
-              <h2 className="font-black uppercase tracking-[-0.03em] text-white mb-2"
-                  style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1 }}>
+              <h2 className="font-black uppercase tracking-[-0.03em] mb-2"
+                  style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, color: '#5C4031' }}>
                 1 Rue de la Madeleine
               </h2>
-              <p className="font-bold text-xl mb-10" style={{ color: 'rgba(244,239,234,0.40)' }}>
+              <p className="font-bold text-xl mb-10" style={{ color: 'rgba(64,85,104,0.55)' }}>
                 77170 Brie-Comte-Robert
               </p>
 
               <div className="space-y-4 mb-10">
                 {[
-                  { icon: '✂', label: 'Ouvert', val: 'Mercredi → Samedi' },
+                  { icon: '✂', label: 'Ouvert',   val: 'Mercredi → Samedi' },
                   { icon: '◷', label: 'Horaires', val: '10h00 – 19h30' },
-                  { icon: '✕', label: 'Fermé', val: 'Lundi, Mardi, Dimanche' },
+                  { icon: '✕', label: 'Fermé',    val: 'Lundi, Mardi, Dimanche' },
                   { icon: '◈', label: 'Paiement', val: 'Espèces ou chèque' },
                 ].map((row, i) => (
                   <motion.div key={i}
                     className="flex items-center gap-5 pb-4 border-b"
-                    style={{ borderColor: 'rgba(255,255,255,0.08)' }}
+                    style={{ borderColor: 'rgba(64,85,104,0.10)' }}
                     initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: i * 0.08 }}>
-                    <span className="text-white/25 text-sm w-4 shrink-0">{row.icon}</span>
+                    <span className="text-sm w-4 shrink-0" style={{ color: 'rgba(64,85,104,0.30)' }}>{row.icon}</span>
                     <span className="text-[9px] uppercase tracking-[0.4em] font-bold w-20 shrink-0"
-                          style={{ color: 'rgba(244,239,234,0.35)' }}>{row.label}</span>
-                    <span className="text-sm font-bold text-white">{row.val}</span>
+                          style={{ color: 'rgba(64,85,104,0.45)' }}>{row.label}</span>
+                    <span className="text-sm font-bold" style={{ color: '#405568' }}>{row.val}</span>
                   </motion.div>
                 ))}
               </div>
 
               <a href="https://www.google.com/maps/search/?api=1&query=1+Rue+de+la+Madeleine+77170+Brie-Comte-Robert"
                 target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 bg-white px-8 py-4 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-creamMid transition-colors"
-                style={{ color: '#5C4031' }}>
+                className="inline-flex items-center gap-3 px-8 py-4 text-[10px] font-black uppercase tracking-[0.35em] transition-colors hover:opacity-80"
+                style={{ background: '#5C4031', color: '#F4EFEA' }}>
                 Voir sur Google Maps →
               </a>
             </motion.div>
 
             {/* Carte */}
             <motion.div
-              className="overflow-hidden h-80 lg:h-[500px] border border-white/10"
+              className="overflow-hidden h-80 lg:h-[500px] border"
+              style={{ borderColor: 'rgba(64,85,104,0.15)' }}
               initial={{ opacity: 0, scale: 0.97 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9, ease: EASE }}>
               <iframe
-                title="Wonderclub — Brie-Comte-Robert"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2639.0!2d2.7!3d48.7!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e5ef0000000001%3A0x0!2sBrie-Comte-Robert%2C+77170!5e0!3m2!1sfr!2sfr!4v1700000000000"
-                width="100%" height="100%" style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }}
+                title="Wonderclub — 1 Rue de la Madeleine, Brie-Comte-Robert"
+                src="https://maps.google.com/maps?q=1+Rue+de+la+Madeleine,+77170+Brie-Comte-Robert,+France&hl=fr&z=16&output=embed"
+                width="100%" height="100%" style={{ border: 0 }}
                 allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
               />
             </motion.div>
