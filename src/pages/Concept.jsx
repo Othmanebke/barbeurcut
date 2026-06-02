@@ -260,9 +260,9 @@ export default function Concept() {
               <p className="text-[9px] uppercase tracking-[0.6em] font-bold"
                  style={{ color: 'rgba(64,85,104,0.40)' }}>Parcours</p>
               {[
-                { year: '2016', label: 'CAP Coiffure',        sub: 'CMA Saint-Maur-des-Fossés' },
-                { year: '2018', label: 'BP Coiffure',         sub: 'CMA Saint-Maur-des-Fossés' },
-                { year: '2018', label: 'Lancement Wonderclub', sub: 'Artisan indépendant · Brie-Comte-Robert', active: true },
+                { year: '2019', label: 'CAP Coiffure',         sub: 'CMA Saint-Maur-des-Fossés' },
+                { year: '2019', label: 'BP Coiffure',          sub: 'CMA Saint-Maur-des-Fossés' },
+                { year: '2019', label: 'Lancement Wonderclub', sub: 'Artisan indépendant · Brie-Comte-Robert', active: true },
               ].map((step, i) => (
                 <motion.div key={i} className="flex items-start gap-5"
                   initial={{ opacity: 0, x: 20 }}
