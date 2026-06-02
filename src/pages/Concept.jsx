@@ -156,124 +156,166 @@ export default function Concept() {
 
       </section>
 
-      {/* ══════════════════ PRÉSENTATION DU BARBIER ═════════ */}
-      <section className="relative overflow-hidden" style={{ background: '#F4EFEA' }}>
+      {/* ══════════════════ QUI JE SUIS ══════════════════════ */}
+      <section className="relative overflow-hidden" style={{ background: '#3D2A1E' }}>
 
-        {/* Watermark BARBIER en fond */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none">
-          <p className="font-black uppercase leading-none tracking-[-0.05em] whitespace-nowrap"
-             style={{ fontSize: 'clamp(6rem, 22vw, 18rem)', color: 'rgba(64,85,104,0.07)' }}>
-            BARBIER
-          </p>
+        {/* SM initiales en fond */}
+        <div className="absolute right-0 top-0 bottom-0 flex items-center pointer-events-none select-none overflow-hidden">
+          <span className="font-black leading-none tracking-[-0.08em]"
+                style={{ fontSize: 'clamp(14rem, 40vw, 32rem)', color: 'rgba(255,255,255,0.03)' }}>
+            SM
+          </span>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-5xl px-6 sm:px-10 py-16 sm:py-24 lg:py-32">
-          <div className="border border-denim/20 p-8 sm:p-12 lg:p-16 relative">
+        {/* Nom pleine largeur en haut */}
+        <div className="relative z-10 border-b overflow-hidden" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+          <div className="px-6 sm:px-10 pt-12 pb-8">
+            <motion.p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-4"
+              style={{ color: 'rgba(255,255,255,0.30)' }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}>
+              Qui je suis
+            </motion.p>
 
-            {/* Coins décoratifs */}
-            {[
-              'absolute -top-px -left-px w-6 h-6 border-t-2 border-l-2 border-denim/50',
-              'absolute -top-px -right-px w-6 h-6 border-t-2 border-r-2 border-denim/50',
-              'absolute -bottom-px -left-px w-6 h-6 border-b-2 border-l-2 border-denim/50',
-              'absolute -bottom-px -right-px w-6 h-6 border-b-2 border-r-2 border-denim/50',
-            ].map((cls, i) => <div key={i} className={cls} />)}
-
-            <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
-
-              {/* Gauche — stats grandes */}
-              <motion.div
-                className="grid grid-cols-2 gap-px"
-                style={{ background: 'rgba(64,85,104,0.08)' }}
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
+            <div className="overflow-hidden">
+              <motion.h2
+                className="font-black uppercase leading-[0.85] tracking-[-0.04em]"
+                style={{ fontSize: 'clamp(3rem, 11vw, 9rem)', color: '#FFFFFF' }}
+                initial={{ y: '100%' }}
+                whileInView={{ y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: EASE }}>
-                {[
-                  { val: '8+',      label: "Ans d'expérience" },
-                  { val: '100%',    label: 'Clients satisfaits' },
-                  { val: 'CAP+BP',  label: 'Diplômes coiffure' },
-                  { val: '2018',    label: 'En activité depuis' },
-                ].map((s, i) => (
-                  <motion.div key={s.val}
-                    className="p-6 sm:p-8 flex flex-col gap-2"
-                    style={{ background: '#F4EFEA' }}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: i * 0.1, ease: EASE }}>
-                    <p className="font-black leading-none tracking-[-0.04em]"
-                       style={{ fontSize: 'clamp(1.6rem, 4vw, 3rem)', color: '#5C4031' }}>
-                      {s.val}
-                    </p>
-                    <p className="text-[9px] uppercase tracking-[0.45em] font-bold"
-                       style={{ color: 'rgba(64,85,104,0.60)' }}>
-                      {s.label}
-                    </p>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              {/* Droite — qui je suis */}
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.9, ease: EASE }}>
+                Steevy
+              </motion.h2>
+            </div>
+            <div className="overflow-hidden">
+              <motion.h2
+                className="font-black uppercase leading-[0.85] tracking-[-0.04em]"
+                style={{ fontSize: 'clamp(3rem, 11vw, 9rem)', color: 'rgba(255,255,255,0.22)' }}
+                initial={{ y: '100%' }}
+                whileInView={{ y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.15, ease: EASE }}>
-
-                <p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-5"
-                   style={{ color: 'rgba(64,85,104,0.50)' }}>
-                  Qui je suis
-                </p>
-
-                <h2 className="font-black uppercase leading-[0.92] tracking-[-0.04em] mb-2"
-                    style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#5C4031' }}>
-                  Steevy Manche
-                </h2>
-                <p className="text-sm font-bold mb-6" style={{ color: 'rgba(64,85,104,0.55)' }}>
-                  Barbier indépendant · Wonderclub
-                </p>
-
-                <p className="text-sm sm:text-base leading-8 font-medium mb-8"
-                   style={{ color: 'rgba(92,64,49,0.65)' }}>
-                  Je m'appelle Steevy, barbier indépendant depuis 2018. J'ai décroché mon CAP puis mon BP Coiffure à la CMA de Saint-Maur-des-Fossés. Aujourd'hui je loue mon siège et je travaille à mon compte parce que je veux pouvoir donner le meilleur à chaque client, sans contrainte.
-                </p>
-
-                <div className="space-y-3 mb-8">
-                  {[
-                    { label: 'Diplômes',   val: 'CAP Coiffure + BP Coiffure — CMA Saint-Maur-des-Fossés' },
-                    { label: 'Adresse',    val: '1 Rue de la Madeleine, 77170 Brie-Comte-Robert' },
-                    { label: 'Horaires',   val: 'Mercredi au Samedi · 10h00 – 19h30' },
-                    { label: 'Paiement',   val: 'Espèces ou chèque uniquement' },
-                  ].map((row, i) => (
-                    <motion.div key={row.label}
-                      className="flex items-start gap-4 pb-3 border-b last:border-0 last:pb-0"
-                      style={{ borderColor: 'rgba(64,85,104,0.10)' }}
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: 0.2 + i * 0.08 }}>
-                      <span className="text-[8px] uppercase tracking-[0.45em] font-bold shrink-0 pt-0.5 w-20"
-                            style={{ color: 'rgba(64,85,104,0.45)' }}>{row.label}</span>
-                      <span className="text-sm font-medium leading-6"
-                            style={{ color: '#5C4031' }}>{row.val}</span>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <motion.div
-                  whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                  className="inline-block">
-                  <Link to="/reservation"
-                    className="inline-flex items-center gap-3 px-8 py-4 text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-300 hover:opacity-80"
-                    style={{ background: '#5C4031', color: '#F4EFEA' }}>
-                    <ScissorsIcon className="w-3.5 h-3.5" />
-                    Prendre rendez-vous
-                  </Link>
-                </motion.div>
-
-              </motion.div>
+                transition={{ duration: 0.9, delay: 0.1, ease: EASE }}>
+                Manche
+              </motion.h2>
             </div>
           </div>
+        </div>
+
+        {/* Corps — deux colonnes */}
+        <div className="relative z-10 grid lg:grid-cols-[1fr_1.4fr]">
+
+          {/* Gauche — stats + rôle */}
+          <motion.div
+            className="border-b lg:border-b-0 lg:border-r px-6 sm:px-10 py-10 sm:py-14 flex flex-col justify-between gap-10"
+            style={{ borderColor: 'rgba(255,255,255,0.08)' }}
+            initial={{ opacity: 0, x: -24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: EASE }}>
+
+            <div>
+              <p className="text-sm font-medium mb-1" style={{ color: 'rgba(244,239,234,0.45)' }}>
+                Barbier indépendant
+              </p>
+              <p className="text-[9px] uppercase tracking-[0.5em] font-bold" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                Wonderclub · Brie-Comte-Robert
+              </p>
+            </div>
+
+            {/* Stats verticales */}
+            <div className="space-y-6">
+              {[
+                { val: '8+',   label: "Ans d'expérience" },
+                { val: '100%', label: 'Clients satisfaits' },
+                { val: 'Mer–Sam', label: '10h00 → 19h30' },
+              ].map((s, i) => (
+                <motion.div key={s.val}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}>
+                  <p className="font-black leading-none tracking-[-0.04em] text-white"
+                     style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)' }}>
+                    {s.val}
+                  </p>
+                  <p className="text-[9px] uppercase tracking-[0.45em] font-bold mt-1"
+                     style={{ color: 'rgba(255,255,255,0.30)' }}>
+                    {s.label}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Droite — bio + timeline + CTA */}
+          <motion.div
+            className="px-6 sm:px-10 py-10 sm:py-14 flex flex-col gap-10"
+            initial={{ opacity: 0, x: 24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.1, ease: EASE }}>
+
+            <p className="text-sm sm:text-base leading-8 font-medium max-w-lg"
+               style={{ color: 'rgba(244,239,234,0.55)' }}>
+              Barbier indépendant depuis 2018. J'ai décroché mon CAP puis mon BP Coiffure à la CMA de Saint-Maur-des-Fossés. Aujourd'hui je loue mon siège et je travaille à mon compte pour donner le meilleur à chaque client, sans contrainte.
+            </p>
+
+            {/* Timeline diplômes */}
+            <div className="space-y-5">
+              <p className="text-[9px] uppercase tracking-[0.6em] font-bold"
+                 style={{ color: 'rgba(255,255,255,0.25)' }}>Parcours</p>
+              {[
+                { year: '2016', label: 'CAP Coiffure', sub: 'CMA Saint-Maur-des-Fossés' },
+                { year: '2018', label: 'BP Coiffure',  sub: 'CMA Saint-Maur-des-Fossés' },
+                { year: '2018', label: 'Lancement Wonderclub', sub: 'Artisan indépendant · Brie-Comte-Robert', active: true },
+              ].map((step, i) => (
+                <motion.div key={i}
+                  className="flex items-start gap-5"
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.55, delay: i * 0.12 }}>
+                  {/* Ligne + point */}
+                  <div className="flex flex-col items-center shrink-0 mt-1.5">
+                    <div className="w-2 h-2 rounded-full" style={{ background: step.active ? '#FFFFFF' : 'rgba(255,255,255,0.30)' }} />
+                    {i < 2 && (
+                      <motion.div className="w-px flex-1 mt-1"
+                        style={{ background: 'rgba(255,255,255,0.12)', height: '32px' }}
+                        initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.2 + i * 0.1 }} />
+                    )}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3 mb-0.5">
+                      <span className="text-[9px] font-black uppercase tracking-[0.4em]"
+                            style={{ color: step.active ? 'rgba(255,255,255,0.60)' : 'rgba(255,255,255,0.25)' }}>
+                        {step.year}
+                      </span>
+                      <span className="h-px w-6" style={{ background: 'rgba(255,255,255,0.15)' }} />
+                    </div>
+                    <p className="text-sm font-black text-white">{step.label}</p>
+                    <p className="text-xs font-medium mt-0.5" style={{ color: 'rgba(244,239,234,0.40)' }}>{step.sub}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <motion.div
+              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+              className="inline-block self-start">
+              <Link to="/reservation"
+                className="inline-flex items-center gap-3 px-8 py-4 text-[10px] font-black uppercase tracking-[0.4em] bg-white transition-colors duration-300 hover:bg-creamMid"
+                style={{ color: '#5C4031' }}>
+                <ScissorsIcon className="w-3.5 h-3.5" />
+                Prendre rendez-vous
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
