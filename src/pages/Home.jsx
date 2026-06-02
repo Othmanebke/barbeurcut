@@ -150,21 +150,6 @@ export default function Home() {
           transition={{ duration: 1.0, times: [0, 0.35, 0.7, 1], delay: 0.05 }}
         />
 
-        {/* ── Coins décoratifs ── */}
-        {[
-          { top: 80, left: 32, d: 1.5 },
-          { top: 80, right: 32, d: 1.7 },
-        ].map((pos, i) => (
-          <motion.div key={i}
-            className="absolute hidden lg:flex items-center justify-center pointer-events-none"
-            style={{ top: pos.top, left: pos.left, right: pos.right, width: 56, height: 56,
-                     border: '1px solid rgba(255,255,255,0.10)' }}
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: pos.d, duration: 0.5, ease: 'backOut' }}>
-            <ScissorsIcon className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.18)' }} />
-          </motion.div>
-        ))}
 
         {/* ── Contenu principal (couche parallaxe) ── */}
         <motion.div
