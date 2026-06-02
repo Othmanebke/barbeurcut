@@ -31,7 +31,7 @@ export default function SplashLoader() {
       {/* Logo sans fond */}
       <motion.img
         src={logo}
-        alt="Wonder Cut"
+        alt="Wonderclub"
         initial={{ opacity: 0, scale: 0.75 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
@@ -70,7 +70,7 @@ export default function SplashLoader() {
 
         <p className="text-[8px] uppercase tracking-[0.55em] font-bold"
            style={{ color: 'rgba(255,248,231,0.25)' }}>
-          Wonder Cut
+          Wonderclub
         </p>
       </motion.div>
     </div>

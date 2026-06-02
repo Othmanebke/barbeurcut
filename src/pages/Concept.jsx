@@ -254,7 +254,7 @@ export default function Concept() {
             {/* Google Maps embed */}
             <motion.div variants={fadeUp} className="overflow-hidden border border-beige h-72 lg:h-96">
               <iframe
-                title="Wonder Cut — Brie-Comte-Robert"
+                title="Wonderclub — Brie-Comte-Robert"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2639.0!2d2.7!3d48.7!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e5ef0000000001%3A0x0!2sBrie-Comte-Robert%2C+77170!5e0!3m2!1sfr!2sfr!4v1700000000000"
                 width="100%"
                 height="100%"

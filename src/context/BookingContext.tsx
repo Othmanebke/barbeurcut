@@ -45,7 +45,7 @@ export interface BookingContextValue {
 
 const defaultState: BookingState = {
   selectedService: null,
-  location: 'Wonder Cut',
+  location: 'Wonderclub',
   date: '',
   time: '',
   clientInfo: { name: '', phone: '', email: '' },

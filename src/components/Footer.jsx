@@ -17,7 +17,7 @@ export default function Footer() {
           <div className="space-y-3">
             <div className="flex items-center">
               <div className="h-10 w-10 bg-brand flex items-center justify-center shrink-0">
-                <img src={logo} alt="Wonder Cut" className="h-7 w-7 object-contain" style={{ filter: 'invert(1)' }} />
+                <img src={logo} alt="Wonderclub" className="h-7 w-7 object-contain" style={{ filter: 'invert(1)' }} />
               </div>
             </div>
 
@@ -88,7 +88,7 @@ export default function Footer() {
       {/* ── Copyright ── */}
       <div className="border-t border-cream/5 px-6 sm:px-10 py-4">
         <p className="text-[9px] text-cream/20 font-medium text-center tracking-[0.2em]">
-          © {new Date().getFullYear()} Wonder Cut · Barbier certifié CAP · Brie-Comte-Robert, 77170
+          © {new Date().getFullYear()} Wonderclub · Barbier certifié CAP · Brie-Comte-Robert, 77170
         </p>
       </div>
     </footer>

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import RevealText from '../components/RevealText';
 import Marquee from '../components/Marquee';
-import { ScissorsIcon, RazorIcon, CombIcon, BrushIcon, DiamondDivider } from '../components/BarberIcons';
+import { ScissorsIcon, RazorIcon, CombIcon, BrushIcon } from '../components/BarberIcons';
 
 /* ── Animation presets ─────────────────────────────────────── */
 const fadeUp = {
@@ -109,29 +109,23 @@ export default function Home() {
     <>
       {/* ═══════════════════════ HERO ═══════════════════════ */}
       <section
-        className="relative flex flex-col overflow-hidden grain"
-        style={{
-          minHeight: 'clamp(520px, 82vh, 900px)',
-          backgroundImage:
-            'linear-gradient(to bottom, rgba(74,47,26,0.75) 0%, rgba(74,47,26,0.48) 45%, rgba(74,47,26,0.92) 100%),' +
-            'url("https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1920&q=80")',
-          backgroundSize: 'cover', backgroundPosition: 'center top',
-        }}
+        className="relative flex flex-col overflow-hidden"
+        style={{ minHeight: 'clamp(520px, 82vh, 900px)', background: '#5C4031' }}
       >
         <div className="relative z-10 flex flex-1 items-center px-6 sm:px-10" style={{ paddingTop: 'var(--navbar-h, 72px)' }}>
           <div className="mx-auto w-full max-w-7xl py-8 sm:py-12 lg:py-16">
-            <motion.div initial="hidden" animate="show" variants={stagger} className="max-w-5xl">
+            <motion.div initial="hidden" animate="show" variants={stagger} className="max-w-3xl">
 
               <motion.div variants={fadeUp} className="flex items-center gap-3 mb-5 sm:mb-7">
                 <ScissorsIcon className="w-4 h-4 text-brand" />
                 <span className="block h-px w-8 bg-brand" />
                 <span className="text-[9px] uppercase tracking-[0.5em] sm:tracking-[0.6em] text-brand font-bold">
-                  Wonder Cut — Barbershop
+                  Wonderclub — Barbershop
                 </span>
               </motion.div>
 
               <div className="overflow-mask">
-                <motion.p variants={fadeUp} className="text-[clamp(2.2rem,6vw,5.5rem)] font-black uppercase tracking-[-0.03em] text-cream leading-[0.9] mb-2">
+                <motion.p variants={fadeUp} className="text-[clamp(2.2rem,6vw,5.5rem)] font-black uppercase tracking-[-0.03em] text-white leading-[0.9] mb-2">
                   L'art de la
                 </motion.p>
               </div>
@@ -141,7 +135,7 @@ export default function Home() {
                 </motion.p>
               </div>
 
-              <motion.p variants={fadeUp} className="max-w-lg text-sm sm:text-base leading-7 sm:leading-8 text-cream/65 font-medium">
+              <motion.p variants={fadeUp} className="max-w-lg text-sm sm:text-base leading-7 sm:leading-8 text-cream/70 font-medium">
                 Je coupe et je soigne la barbe depuis 2018. Prends ton créneau en ligne et reçois ta confirmation par email tout de suite.
               </motion.p>
 
@@ -151,17 +145,14 @@ export default function Home() {
                     <ScissorsIcon className="w-3.5 h-3.5" /> Réserver
                   </Link>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                  <Link to="/concept" className="inline-flex items-center justify-center border border-cream/30 px-6 sm:px-9 py-3.5 sm:py-4 text-[10px] font-semibold uppercase tracking-[0.3em] sm:tracking-[0.35em] text-cream hover:border-cream/65 transition-all">
-                    Concept
-                  </Link>
-                </motion.div>
               </motion.div>
 
-              <motion.div variants={fadeUp} className="mt-12 hidden lg:flex items-center gap-4">
-                <motion.span animate={{ y: [0, 8, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }} className="block w-px h-10 bg-gradient-to-b from-brand to-transparent" />
-                <span className="text-[9px] uppercase tracking-[0.5em] text-cream/35 font-medium">Scroll</span>
+              {/* Diplôme */}
+              <motion.div variants={fadeUp} className="mt-10 flex items-center gap-3">
+                <span className="text-brand text-sm font-black">✦</span>
+                <p className="text-[10px] uppercase tracking-[0.4em] text-white/40 font-bold">Diplôme BP obtenu à la CMA Saint-Maur-des-Fossés</p>
               </motion.div>
+
             </motion.div>
           </div>
         </div>

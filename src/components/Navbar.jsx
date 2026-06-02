@@ -41,7 +41,7 @@ export default function Navbar() {
         {/* ── Logo ── */}
         <Link to="/" className="flex items-center group">
           <div className="h-10 w-10 bg-brand flex items-center justify-center shrink-0 transition-colors duration-300 group-hover:bg-brandDark">
-            <img src={logo} alt="Wonder Cut" className="h-7 w-7 object-contain" style={{ filter: 'invert(1)' }} />
+            <img src={logo} alt="Wonderclub" className="h-7 w-7 object-contain" style={{ filter: 'invert(1)' }} />
           </div>
         </Link>
 

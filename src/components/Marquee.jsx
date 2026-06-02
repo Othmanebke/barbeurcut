@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 const ITEMS = [
-  'WONDER CUT',
+  'WONDERCLUB',
   'COUPE HOMME',
   'BARBE & RASAGE',
   'BRIE-COMTE-ROBERT',

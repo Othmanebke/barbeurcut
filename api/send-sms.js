@@ -1,4 +1,4 @@
-/* Vercel Serverless Function — notifications réservation Wonder Cut
+/* Vercel Serverless Function — notifications réservation Wonderclub
    · Email de confirmation → client (Brevo email, GRATUIT)
    · SMS de notif → barbier (Brevo SMS, payant — optionnel)
 */
@@ -21,7 +21,7 @@ async function sendEmail({ apiKey, to, toName, subject, html, senderEmail, sende
     method: 'POST',
     headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      sender:      { name: senderName ?? 'Wonder Cut', email: senderEmail },
+      sender:      { name: senderName ?? 'Wonderclub', email: senderEmail },
       to:          [{ email: to, name: toName }],
       subject,
       htmlContent: html,
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
   const BARBER_PHONE  = process.env.BARBER_PHONE;
   const BARBER_EMAIL  = process.env.BARBER_EMAIL;
   const SENDER_EMAIL  = process.env.SENDER_EMAIL;   /* email vérifié dans Brevo */
-  const SMS_SENDER    = process.env.SMS_SENDER ?? 'WonderCut';
+  const SMS_SENDER    = process.env.SMS_SENDER ?? 'Wonderclub';
 
   if (!BREVO_KEY) return res.status(500).json({ error: 'BREVO_API_KEY missing' });
 
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>Réservation confirmée — Wonder Cut</title>
+        <title>Réservation confirmée — Wonderclub</title>
       </head>
       <body style="margin:0;padding:0;background:#FFF8E7;font-family:Arial,sans-serif;">
         <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF8E7;padding:40px 16px;">
@@ -151,7 +151,7 @@ export default async function handler(req, res) {
               <tr><td style="background:#3D2710;padding:18px 36px;border-top:1px solid rgba(255,248,231,0.08);">
                 <p style="margin:0;font-size:9px;color:rgba(255,248,231,0.20);
                            text-transform:uppercase;letter-spacing:3px;font-weight:500;text-align:center;">
-                  © ${new Date().getFullYear()} Wonder Cut · Barbier indépendant · Brie-Comte-Robert 77170
+                  © ${new Date().getFullYear()} Wonderclub · Barbier indépendant · Brie-Comte-Robert 77170
                 </p>
               </td></tr>
 
@@ -167,10 +167,10 @@ export default async function handler(req, res) {
         apiKey:      BREVO_KEY,
         to:          clientEmail,
         toName:      clientName,
-        subject:     `Wonder Cut ✓ — Réservation confirmée (${confirmationNumber})`,
+        subject:     `Wonderclub ✓ — Réservation confirmée (${confirmationNumber})`,
         html,
         senderEmail: SENDER_EMAIL,
-        senderName:  'Wonder Cut',
+        senderName:  'Wonderclub',
       });
       console.log('[send-notification] email sent to', clientEmail);
     } catch (e) {
@@ -225,7 +225,7 @@ export default async function handler(req, res) {
               <tr><td style="padding:16px 32px;border-top:1px solid rgba(255,248,231,0.08);">
                 <p style="margin:0;font-size:9px;color:rgba(255,248,231,0.20);
                            text-transform:uppercase;letter-spacing:3px;text-align:center;">
-                  Wonder Cut · Barbier indépendant
+                  Wonderclub · Barbier indépendant
                 </p>
               </td></tr>
             </table>
@@ -237,11 +237,11 @@ export default async function handler(req, res) {
       await sendEmail({
         apiKey:      BREVO_KEY,
         to:          BARBER_EMAIL,
-        toName:      'Wonder Cut',
+        toName:      'Wonderclub',
         subject:     `Nouveau RDV — ${clientName} · ${formattedDate} à ${time}`,
         html:        barberHtml,
         senderEmail: SENDER_EMAIL,
-        senderName:  'Wonder Cut Réservations',
+        senderName:  'Wonderclub Réservations',
       });
       console.log('[send-notification] email sent to barber');
     } catch (e) {
@@ -253,7 +253,7 @@ export default async function handler(req, res) {
   /* ── 3. SMS CLIENT (confirmation, nécessite crédits Brevo ~0,07€/SMS) ── */
   if (clientPhone) {
     const clientMsg =
-      `Wonder Cut - RDV confirme !\n` +
+      `Wonderclub - RDV confirme !\n` +
       `${serviceTitle}\n` +
       `${formattedDate} a ${time}\n` +
       `1 Rue de la Madeleine, 77170 Brie-Comte-Robert\n` +
@@ -271,7 +271,7 @@ export default async function handler(req, res) {
   /* ── 3. SMS BARBIER (alerte nouveau RDV, nécessite crédits Brevo) ── */
   if (BARBER_PHONE) {
     const barberMsg =
-      `Nouveau RDV Wonder Cut\n` +
+      `Nouveau RDV Wonderclub\n` +
       `${clientName} - ${serviceTitle}\n` +
       `${formattedDate} a ${time}\n` +
       `Tel: ${clientPhone}`;

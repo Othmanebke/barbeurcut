@@ -150,7 +150,7 @@ export default function Services() {
               <div>
                 <div className="flex items-center gap-3 mb-4">
                   <ScissorsIcon className="w-4 h-4 text-brand" />
-                  <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">La Wonder Cut promesse</span>
+                  <span className="text-[9px] uppercase tracking-[0.55em] text-brand font-bold">La Wonderclub promesse</span>
                 </div>
                 <RevealText tag="h2" className="text-3xl font-black uppercase tracking-[-0.04em] text-dark sm:text-4xl leading-tight">
                   Nos engagements

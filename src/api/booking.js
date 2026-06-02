@@ -37,6 +37,7 @@ export async function createBooking({ service, date, time, clientName, clientPho
       service_title:        service.title,
       service_price:        service.price,
       service_price_label:  service.priceLabel,
+      service_duration:     service.duration ?? 30,
       date,
       time,
       status:               'confirmed',

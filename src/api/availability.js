@@ -1,15 +1,14 @@
-import { generateAvailableSlots, OPEN_DAYS } from '../utils/timeSlots';
+import { OPEN_DAYS } from '../utils/timeSlots';
 import { supabase, SUPABASE_READY } from '../lib/supabase';
 
 export const SALON = {
-  name:        'Wonder Cut',
+  name:        'Wonderclub',
   address:     '1 Rue de la Madeleine, 77170 Brie-Comte-Robert',
-  description: 'Barbier certifié CAP Coiffure. Ouvert mer–sam, 9h–12h et 13h–19h. Réservation en ligne, confirmation par email.',
+  description: 'Barbier indépendant certifié BP. Ouvert mer–sam, 10h–19h30. Réservation en ligne, confirmation par email et SMS.',
 };
 
 function dayKey(d) { return d.toISOString().slice(0, 10); }
 
-/* Prochains jours ouverts (Mer–Sam) */
 function openDayRange(count = 14) {
   const days = [];
   let offset = 0;
@@ -21,7 +20,7 @@ function openDayRange(count = 14) {
   return days;
 }
 
-/* ── Mode SUPABASE (production) ──────────────────────────── */
+/* ── Supabase : retourne les bookings bruts + blocs par date ─ */
 async function fetchFromSupabase() {
   const days      = openDayRange(14);
   const startDate = dayKey(days[0]);
@@ -30,13 +29,13 @@ async function fetchFromSupabase() {
   const [{ data: booked }, { data: blocks }, { data: locks }] = await Promise.all([
     supabase
       .from('appointments')
-      .select('date, time')
+      .select('date, time, service_duration')
       .eq('status', 'confirmed')
       .gte('date', startDate)
       .lte('date', endDate),
     supabase
       .from('availability_blocks')
-      .select('date, time')
+      .select('date, time, end_time')
       .gte('date', startDate)
       .lte('date', endDate),
     supabase
@@ -47,46 +46,47 @@ async function fetchFromSupabase() {
       .lte('date', endDate),
   ]);
 
-  const bookedSet      = new Set((booked ?? []).map(b => `${b.date}|${b.time}`));
-  const blockedFullDay = new Set((blocks ?? []).filter(b => !b.time).map(b => b.date));
-  const blockedSlots   = new Set((blocks ?? []).filter(b =>  b.time).map(b => `${b.date}|${b.time}`));
-  const lockedSet      = new Set((locks  ?? []).map(l => `${l.date}|${l.time}`));
+  // Organise par date
+  const dateBookings = {};
+  const dateBlocks   = {};
+  const fullDayOff   = new Set();
 
-  const availability = {};
-  for (const d of days) {
-    const key = dayKey(d);
-    if (blockedFullDay.has(key)) { availability[key] = []; continue; }
-    const allSlots = generateAvailableSlots(d);
-    availability[key] = allSlots.filter(
-      slot => !bookedSet.has(`${key}|${slot}`)
-           && !blockedSlots.has(`${key}|${slot}`)
-           && !lockedSet.has(`${key}|${slot}`)
-    );
+  for (const b of (booked ?? [])) {
+    if (!dateBookings[b.date]) dateBookings[b.date] = [];
+    dateBookings[b.date].push({ time: b.time, duration: b.service_duration ?? 30 });
   }
 
-  return { salon: SALON, availability };
+  // Verrous actifs traités comme des bookings de 30 min
+  for (const l of (locks ?? [])) {
+    if (!dateBookings[l.date]) dateBookings[l.date] = [];
+    dateBookings[l.date].push({ time: l.time, duration: 30 });
+  }
+
+  for (const bl of (blocks ?? [])) {
+    if (!bl.time) { fullDayOff.add(bl.date); continue; }
+    if (!dateBlocks[bl.date]) dateBlocks[bl.date] = [];
+    dateBlocks[bl.date].push({ time: bl.time, endTime: bl.end_time });
+  }
+
+  return { salon: SALON, days, dateBookings, dateBlocks, fullDayOff };
 }
 
-/* ── Mode MOCK (démo sans Supabase) ──────────────────────── */
+/* ── Mode mock ───────────────────────────────────────────────── */
 function fetchMock() {
   const days = openDayRange(14);
-  const availability = {};
-
-  days.forEach((d, i) => {
-    const key = dayKey(d);
-    /* Jours 2 et 5 simulés complets */
-    availability[key] = (i === 2 || i === 5) ? [] : generateAvailableSlots(d);
+  return Promise.resolve({
+    salon: SALON,
+    days,
+    dateBookings: {},
+    dateBlocks:   {},
+    fullDayOff:   new Set(),
   });
-
-  return Promise.resolve({ salon: SALON, availability });
 }
 
-/* ── Export principal ─────────────────────────────────────── */
 export async function fetchAvailability() {
   if (SUPABASE_READY) {
-    try {
-      return await fetchFromSupabase();
-    } catch (e) {
+    try { return await fetchFromSupabase(); }
+    catch (e) {
       console.warn('[availability] Supabase error, fallback mock:', e.message);
       return fetchMock();
     }
@@ -94,7 +94,6 @@ export async function fetchAvailability() {
   return fetchMock();
 }
 
-/* ── Subscription temps réel ─────────────────────────────── */
 export function subscribeToAvailability(callback) {
   if (!SUPABASE_READY) return () => {};
 
