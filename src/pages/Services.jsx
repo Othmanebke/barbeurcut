@@ -125,7 +125,7 @@ export default function Services() {
     <>
       {/* ══════════════ HERO TYPOGRAPHIQUE ════════════════════ */}
       <section className="relative flex flex-col overflow-hidden"
-               style={{ minHeight: 'clamp(380px, 68vh, 800px)', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
+               style={{ minHeight: 'clamp(320px, 60vh, 800px)', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
 
         <div className="absolute inset-0 pointer-events-none">
           {[20, 50, 80].map((pct, i) => (
@@ -136,7 +136,7 @@ export default function Services() {
           ))}
         </div>
 
-        <div className="relative z-10 flex flex-1 flex-col justify-end px-6 sm:px-10 pb-14 sm:pb-20">
+        <div className="relative z-10 flex flex-1 flex-col justify-end px-6 sm:px-10 pb-8 sm:pb-14">
 
           <motion.p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-6"
             style={{ color: 'rgba(255,255,255,0.35)' }}
@@ -255,23 +255,22 @@ export default function Services() {
                 </span>
 
                 {/* Numéro visible */}
-                <span className="text-[9px] font-black uppercase tracking-[0.6em] shrink-0 transition-colors duration-300"
-                      style={{ color: 'rgba(64,85,104,0.35)' }}
-                      aria-hidden>
+                <span className="eng-num text-[9px] font-black uppercase tracking-[0.6em] shrink-0 transition-colors duration-300"
+                      style={{ color: 'rgba(64,85,104,0.35)' }} aria-hidden>
                   {e.num}
                 </span>
 
                 {/* Icône */}
-                <e.Icon className="w-5 h-4 shrink-0 transition-colors duration-300 text-denim/40 group-hover:text-white/50 hidden sm:block" />
+                <e.Icon className="eng-icon w-5 h-4 shrink-0 transition-colors duration-300 hidden sm:block"
+                        style={{ color: 'rgba(64,85,104,0.30)' }} />
 
                 {/* Texte */}
                 <div className="flex-1 min-w-0">
-                  <p className="font-black uppercase tracking-[-0.01em] transition-colors duration-300"
-                     style={{ fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#5C4031' }}
-                     onMouseEnter={() => {}} /* color update via whileHover on parent */>
+                  <p className="eng-title font-black uppercase tracking-[-0.01em] transition-colors duration-300"
+                     style={{ fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#5C4031' }}>
                     {e.title}
                   </p>
-                  <p className="mt-1 text-sm font-medium leading-6 transition-colors duration-300"
+                  <p className="eng-desc mt-1 text-sm font-medium leading-6 transition-colors duration-300"
                      style={{ color: 'rgba(64,85,104,0.55)' }}>
                     {e.desc}
                   </p>
@@ -280,11 +279,12 @@ export default function Services() {
             ))}
           </div>
 
-          {/* Styles hover gérés en CSS via group */}
+          {/* Hover colors — !important pour écraser les inline styles */}
           <style>{`
             .group:hover .eng-title { color: #FFFFFF !important; }
-            .group:hover .eng-desc  { color: rgba(244,239,234,0.55) !important; }
-            .group:hover .eng-num   { color: rgba(255,255,255,0.25) !important; }
+            .group:hover .eng-desc  { color: rgba(244,239,234,0.65) !important; }
+            .group:hover .eng-num   { color: rgba(255,255,255,0.30) !important; }
+            .group:hover .eng-icon  { color: rgba(255,255,255,0.40) !important; }
           `}</style>
 
           <motion.div className="mt-10 text-center"

@@ -98,7 +98,7 @@ export default function Concept() {
       {/* ══════════════════════ HERO TYPOGRAPHIQUE ══════════════ */}
       <section
         className="relative flex flex-col overflow-hidden"
-        style={{ minHeight: 'clamp(480px, 88vh, 920px)', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
+        style={{ minHeight: 'clamp(420px, 75vh, 920px)', background: '#5C4031', paddingTop: 'var(--navbar-h, 72px)' }}>
 
         {/* Lignes verticales déco */}
         <div className="absolute inset-0 pointer-events-none">
