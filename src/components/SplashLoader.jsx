@@ -23,12 +23,9 @@ export default function SplashLoader() {
 
   return (
     <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center gap-10"
-         style={{ background: '#4A2F1A' }}>
+         style={{ background: '#F4EFEA' }}>
 
-      {/* Grain overlay comme le site */}
-      <div className="absolute inset-0 pointer-events-none grain opacity-60" />
-
-      {/* Logo sans fond */}
+      {/* Logo — filtre inversé pour le rendre sombre sur fond clair */}
       <motion.img
         src={logo}
         alt="Wonderclub"
@@ -38,10 +35,10 @@ export default function SplashLoader() {
         style={{
           position: 'relative',
           zIndex: 1,
-          width: 'clamp(160px, 28vw, 260px)',
-          height: 'clamp(160px, 28vw, 260px)',
+          width: 'clamp(140px, 24vw, 220px)',
+          height: 'clamp(140px, 24vw, 220px)',
           objectFit: 'contain',
-          filter: 'sepia(1) saturate(3) hue-rotate(5deg) brightness(0.85)',
+          filter: 'invert(1) sepia(0.4) saturate(2) hue-rotate(170deg) brightness(0.55)',
         }}
       />
 
@@ -51,25 +48,24 @@ export default function SplashLoader() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
         className="flex flex-col items-center gap-4"
-        style={{ width: 'clamp(220px, 40vw, 360px)', position: 'relative', zIndex: 1 }}
-      >
+        style={{ width: 'clamp(200px, 36vw, 320px)', position: 'relative', zIndex: 1 }}>
+
         {/* Chiffre */}
-        <p className="font-black tabular-nums text-cream leading-none"
-           style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)' }}>
+        <p className="font-black tabular-nums leading-none"
+           style={{ fontSize: 'clamp(3rem, 8vw, 5.5rem)', color: '#5C4031' }}>
           {String(pct).padStart(2, '0')}
-          <span className="text-brand" style={{ fontSize: '55%' }}>%</span>
+          <span style={{ fontSize: '55%', color: '#405568' }}>%</span>
         </p>
 
         {/* Barre */}
-        <div className="w-full relative overflow-hidden" style={{ height: '2px', background: 'rgba(255,248,231,0.12)' }}>
-          <div
-            className="absolute top-0 left-0 h-full bg-brand"
-            style={{ width: `${pct}%` }}
-          />
+        <div className="w-full relative overflow-hidden"
+             style={{ height: '2px', background: 'rgba(64,85,104,0.15)' }}>
+          <div className="absolute top-0 left-0 h-full"
+               style={{ width: `${pct}%`, background: '#405568', transition: 'none' }} />
         </div>
 
         <p className="text-[8px] uppercase tracking-[0.55em] font-bold"
-           style={{ color: 'rgba(255,248,231,0.25)' }}>
+           style={{ color: 'rgba(64,85,104,0.35)' }}>
           Wonderclub
         </p>
       </motion.div>

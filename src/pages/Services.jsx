@@ -212,51 +212,88 @@ export default function Services() {
       <Marquee brown />
 
       {/* ══════════════ ENGAGEMENTS ═══════════════════════════ */}
-      <section style={{ background: '#405568' }} className="py-10 sm:py-16">
+      <section style={{ background: '#F4EFEA' }} className="py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-6 sm:px-10">
-          <motion.div className="mb-12"
+
+          {/* Header */}
+          <motion.div className="flex items-end justify-between mb-10 pb-6 border-b"
+            style={{ borderColor: 'rgba(64,85,104,0.12)' }}
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <span className="text-[9px] uppercase tracking-[0.6em] font-bold"
-                  style={{ color: 'rgba(255,255,255,0.35)' }}>La promesse Wonderclub</span>
-            <h2 className="font-black uppercase tracking-[-0.04em] text-white mt-3"
-                style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
-              Mes engagements
-            </h2>
+            <div>
+              <span className="text-[9px] uppercase tracking-[0.6em] font-bold"
+                    style={{ color: 'rgba(64,85,104,0.45)' }}>La promesse Wonderclub</span>
+              <h2 className="font-black uppercase tracking-[-0.04em] mt-2"
+                  style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', color: '#5C4031' }}>
+                Mes engagements
+              </h2>
+            </div>
           </motion.div>
 
-          <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-4"
-               style={{ background: 'rgba(255,255,255,0.06)' }}>
+          {/* Rangées */}
+          <div className="space-y-px" style={{ background: 'rgba(64,85,104,0.08)' }}>
             {[
-              { Icon: ScissorsIcon, title: 'Tarifs fixes',        desc: 'Le prix affiché est le prix payé. Aucune surprise.' },
-              { Icon: CombIcon,     title: 'Espèces ou chèque',   desc: 'Paiement sur place uniquement.' },
-              { Icon: RazorIcon,    title: 'Diplômé BP',          desc: 'CMA Saint-Maur-des-Fossés. Un seul artisan.' },
-              { Icon: BrushIcon,    title: 'Satisfaction garantie', desc: 'Pas content ? Je retravaille sans frais.' },
+              { num: '01', Icon: ScissorsIcon, title: 'Tarifs fixes',         desc: 'Le prix affiché est le prix payé. Pas de frais cachés, pas de surprise.' },
+              { num: '02', Icon: CombIcon,     title: 'Espèces ou chèque',    desc: 'Paiement directement sur place. Je n\'accepte pas les paiements en ligne.' },
+              { num: '03', Icon: RazorIcon,    title: 'Diplômé BP Coiffure',  desc: 'CAP + BP obtenus à la CMA Saint-Maur-des-Fossés. Je suis le seul artisan.' },
+              { num: '04', Icon: BrushIcon,    title: 'Satisfaction garantie', desc: 'Si la coupe ne te plaît pas, je la retravaille sans te refacturer.' },
             ].map((e, i) => (
-              <motion.div key={e.title}
-                className="group p-6 sm:p-8 flex flex-col gap-4 hover:bg-white transition-colors duration-400 cursor-default"
-                style={{ background: '#405568' }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+              <motion.div key={e.num}
+                className="relative overflow-hidden flex items-center gap-6 sm:gap-10 px-6 sm:px-8 py-6 sm:py-8 group cursor-default transition-all duration-300"
+                style={{ background: '#F4EFEA' }}
+                whileHover={{ backgroundColor: '#405568' }}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}>
-                <e.Icon className="w-6 h-5 text-white/30 group-hover:text-dark/40 transition-colors duration-400" />
-                <div>
-                  <p className="text-sm font-black uppercase text-white group-hover:text-dark transition-colors duration-400">{e.title}</p>
-                  <p className="mt-2 text-xs leading-5 font-medium transition-colors duration-400 group-hover:text-dark/55"
-                     style={{ color: 'rgba(244,239,234,0.45)' }}>{e.desc}</p>
+                transition={{ duration: 0.55, delay: i * 0.1 }}>
+
+                {/* Numéro fantôme */}
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black leading-none pointer-events-none select-none transition-colors duration-300"
+                      style={{ fontSize: '5rem', color: 'rgba(64,85,104,0.06)' }}
+                      aria-hidden>
+                  {e.num}
+                </span>
+
+                {/* Numéro visible */}
+                <span className="text-[9px] font-black uppercase tracking-[0.6em] shrink-0 transition-colors duration-300"
+                      style={{ color: 'rgba(64,85,104,0.35)' }}
+                      aria-hidden>
+                  {e.num}
+                </span>
+
+                {/* Icône */}
+                <e.Icon className="w-5 h-4 shrink-0 transition-colors duration-300 text-denim/40 group-hover:text-white/50 hidden sm:block" />
+
+                {/* Texte */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-black uppercase tracking-[-0.01em] transition-colors duration-300"
+                     style={{ fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#5C4031' }}
+                     onMouseEnter={() => {}} /* color update via whileHover on parent */>
+                    {e.title}
+                  </p>
+                  <p className="mt-1 text-sm font-medium leading-6 transition-colors duration-300"
+                     style={{ color: 'rgba(64,85,104,0.55)' }}>
+                    {e.desc}
+                  </p>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          <motion.div className="mt-12 text-center"
+          {/* Styles hover gérés en CSS via group */}
+          <style>{`
+            .group:hover .eng-title { color: #FFFFFF !important; }
+            .group:hover .eng-desc  { color: rgba(244,239,234,0.55) !important; }
+            .group:hover .eng-num   { color: rgba(255,255,255,0.25) !important; }
+          `}</style>
+
+          <motion.div className="mt-10 text-center"
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
             viewport={{ once: true }} transition={{ delay: 0.3 }}>
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
               <Link to="/reservation"
-                className="inline-flex items-center gap-3 bg-white px-10 py-5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-creamMid transition-all"
-                style={{ color: '#5C4031' }}>
+                className="inline-flex items-center gap-3 px-10 py-5 text-[10px] font-black uppercase tracking-[0.35em] transition-all hover:opacity-80"
+                style={{ background: '#5C4031', color: '#F4EFEA' }}>
                 <ScissorsIcon className="w-3.5 h-3.5" /> Réserver maintenant
               </Link>
             </motion.div>
