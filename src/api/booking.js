@@ -14,7 +14,18 @@ export async function createBooking({ service, date, time, clientName, clientPho
     return confirmationNumber;
   }
 
-  /* 1. Vérifier que le créneau est encore libre (race condition protection) */
+  /* 1a. Vérifier que le barbier n'a pas bloqué ce jour ou ce créneau */
+  const { data: blocks } = await supabase
+    .from('availability_blocks')
+    .select('time')
+    .eq('date', date);
+
+  const isAdminBlocked = (blocks ?? []).some(b => !b.time || b.time === time);
+  if (isAdminBlocked) {
+    throw new Error('Ce créneau n\'est plus disponible. Le barbier a fermé cette plage horaire.');
+  }
+
+  /* 1b. Vérifier que le créneau est encore libre (race condition protection) */
   const { data: conflict } = await supabase
     .from('appointments')
     .select('id')

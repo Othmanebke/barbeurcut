@@ -133,8 +133,10 @@ export default function Booking() {
   const [loadError, setLoadError]       = useState(null);
   const [formError, setFormError]       = useState(null);
 
-  const sessionId  = useRef(crypto.randomUUID());
-  const activeLock = useRef({ date: '', time: '' });
+  const sessionId      = useRef(crypto.randomUUID());
+  const activeLock     = useRef({ date: '', time: '' });
+  const selectedDateRef = useRef('');
+  const dayScrollerRef  = useRef(null);
   const [pendingSlot, setPendingSlot] = useState('');
   const [lockExpiry, setLockExpiry]   = useState(null);
   const [timeLeft, setTimeLeft]       = useState(0);
@@ -152,6 +154,14 @@ export default function Booking() {
       if (!preserveSelection) {
         setSelectedDate(state.date || '');
         setSelectedSlot(state.time || '');
+      } else {
+        // Si le jour sélectionné vient d'être bloqué par le barbier → clear
+        const cur = selectedDateRef.current;
+        if (cur && fullDayOff.has(cur)) {
+          setSelectedDate('');
+          setSelectedSlot('');
+          setLockError('Ce jour vient d\'être fermé par le barbier. Choisis une autre date.');
+        }
       }
       setLoading(false);
     } catch {
@@ -165,6 +175,7 @@ export default function Booking() {
     const unsub = subscribeToAvailability(() => loadAvailability(true));
     return unsub;
   }, [loadAvailability]);
+  useEffect(() => { selectedDateRef.current = selectedDate; }, [selectedDate]);
   useEffect(() => { if (selectedDate) selectDate(selectedDate); }, [selectedDate]);
   useEffect(() => { if (selectedSlot) selectTime(selectedSlot); }, [selectedSlot]);
 
@@ -227,6 +238,25 @@ export default function Booking() {
     const date  = rawData.days.find(d => d.toISOString().slice(0, 10) === selectedDate) ?? new Date(selectedDate);
     return filterPastSlots(generateDynamicSlots(serviceDuration, busy), date);
   }, [rawData, selectedDate, serviceDuration]);
+
+  /* Onglets de navigation rapide par mois */
+  const months = useMemo(() => {
+    const seen = new Set();
+    return dayWindow.reduce((acc, d) => {
+      const mk = d.key.slice(0, 7);
+      if (!seen.has(mk)) {
+        seen.add(mk);
+        const label = new Date(d.key + 'T12:00:00').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        acc.push({ key: mk, label, firstDayKey: d.key });
+      }
+      return acc;
+    }, []);
+  }, [dayWindow]);
+
+  const scrollToMonth = (firstDayKey) => {
+    const target = dayScrollerRef.current?.querySelector(`[data-date="${firstDayKey}"]`);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+  };
 
   const handleSelectDate = (key) => {
     const prev = activeLock.current;
@@ -314,14 +344,30 @@ export default function Booking() {
       {/* ══ ÉTAPE 01 — JOUR ══ */}
       <div className="border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-4 mb-4">
             <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>01</span>
             <span className="block h-px flex-1 bg-white/10" />
             <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">Choisissez votre jour</h2>
           </div>
-          <div className="no-scrollbar flex gap-2 sm:gap-3 overflow-x-auto pb-2 snap-x snap-mandatory">
+
+          {/* Onglets mois — navigation rapide */}
+          {months.length > 1 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {months.map((m) => (
+                <button key={m.key} onClick={() => scrollToMonth(m.firstDayKey)}
+                  className="px-3 py-1.5 text-[9px] uppercase tracking-[0.4em] font-bold border transition-all duration-200 hover:text-white hover:border-white/50"
+                  style={{ borderColor: 'rgba(255,255,255,0.18)', color: 'rgba(255,255,255,0.45)', background: 'transparent' }}>
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div ref={dayScrollerRef} className="no-scrollbar flex gap-2 sm:gap-3 overflow-x-auto pb-2 snap-x snap-mandatory">
             {dayWindow.map((d) => (
-              <DayCard key={d.key} day={d} selected={selectedDate === d.key} onClick={() => handleSelectDate(d.key)} />
+              <div key={d.key} data-date={d.key} className="flex-shrink-0">
+                <DayCard day={d} selected={selectedDate === d.key} onClick={() => handleSelectDate(d.key)} />
+              </div>
             ))}
           </div>
         </div>
