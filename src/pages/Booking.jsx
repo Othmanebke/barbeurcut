@@ -5,6 +5,7 @@ import { useBooking } from '../context/BookingContext';
 import { fetchAvailability, subscribeToAvailability } from '../api/availability';
 import { acquireLock, releaseLock } from '../api/slotLock';
 import { buildBusyRanges, generateDynamicSlots, filterPastSlots, OPEN_DAYS } from '../utils/timeSlots';
+import { createBatchBooking } from '../api/booking';
 import { ScissorsIcon } from '../components/BarberIcons';
 
 /* ─── Day window builder ──────────────────────────────────── */
@@ -142,6 +143,11 @@ export default function Booking() {
   const [timeLeft, setTimeLeft]       = useState(0);
   const [lockError, setLockError]     = useState('');
 
+  /* ── Mode multi-réservation ── */
+  const [isMulti, setIsMulti]     = useState(false);
+  const [multiDates, setMultiDates] = useState([]);   // string[] de dateKeys
+  const [multiSlots, setMultiSlots] = useState({});   // { dateKey: slotTime }
+
   const navigate = useNavigate();
 
   const serviceDuration = state.selectedService?.duration ?? 30;
@@ -276,6 +282,47 @@ export default function Booking() {
     catch (e) { setFormError(e instanceof Error ? e.message : 'Erreur. Réessaie.'); }
   };
 
+  /* ── Mode multi : basculer une date ── */
+  const handleMultiToggleDate = (key) => {
+    if (!rawData) return;
+    setMultiDates(prev => {
+      if (prev.includes(key)) {
+        setMultiSlots(s => { const c = { ...s }; delete c[key]; return c; });
+        return prev.filter(d => d !== key);
+      }
+      if (prev.length >= 6) return prev; // max 6 dates
+      return [...prev, key];
+    });
+  };
+
+  /* ── Mode multi : soumettre tous les RDV ── */
+  const [isSubmittingMulti, setIsSubmittingMulti] = useState(false);
+  const handleMultiSubmit = async () => {
+    setFormError(null);
+    if (!state.selectedService)                             { setFormError('Choisis une prestation.'); return; }
+    if (!state.clientInfo.name || !state.clientInfo.phone) { setFormError('Renseigne ton prénom et ton téléphone.'); return; }
+    const missing = multiDates.filter(d => !multiSlots[d]);
+    if (missing.length > 0) { setFormError(`Choisis un horaire pour chaque date sélectionnée.`); return; }
+    if (multiDates.length === 0) { setFormError('Sélectionne au moins une date.'); return; }
+
+    setIsSubmittingMulti(true);
+    try {
+      const bookings = multiDates.map(d => ({ date: d, time: multiSlots[d] }));
+      const results = await createBatchBooking({
+        service:     state.selectedService,
+        bookings,
+        clientName:  state.clientInfo.name,
+        clientPhone: state.clientInfo.phone,
+        clientEmail: state.clientInfo.email,
+      });
+      navigate('/confirmation', { state: { multiBookings: results, service: state.selectedService } });
+    } catch (e) {
+      setFormError(e instanceof Error ? e.message : 'Erreur. Réessaie.');
+    } finally {
+      setIsSubmittingMulti(false);
+    }
+  };
+
   const padTop   = { paddingTop: 'var(--navbar-h, 72px)' };
   const step1done = Boolean(selectedDate && selectedSlot);
   const step2done = Boolean(state.clientInfo.name && state.clientInfo.phone);
@@ -344,10 +391,23 @@ export default function Booking() {
       {/* ══ ÉTAPE 01 — JOUR ══ */}
       <div className="border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
+          {/* Header + toggle multi */}
           <div className="flex items-center gap-4 mb-4">
             <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>01</span>
             <span className="block h-px flex-1 bg-white/10" />
             <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">Choisissez votre jour</h2>
+            {/* Toggle multi */}
+            <button
+              onClick={() => { setIsMulti(m => !m); setMultiDates([]); setMultiSlots({}); setSelectedDate(''); setSelectedSlot(''); }}
+              className="flex items-center gap-2 text-[8px] uppercase tracking-[0.35em] font-bold transition-colors ml-2"
+              style={{ color: isMulti ? '#FFFFFF' : 'rgba(255,255,255,0.35)' }}>
+              <span className="relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors"
+                    style={{ background: isMulti ? '#FFFFFF' : 'rgba(255,255,255,0.20)' }}>
+                <span className="absolute top-0.5 h-3 w-3 rounded-full transition-all"
+                      style={{ background: '#5C4031', left: isMulti ? '14px' : '2px' }} />
+              </span>
+              Multiple
+            </button>
           </div>
 
           {/* Onglets mois — navigation rapide */}
@@ -363,19 +423,105 @@ export default function Booking() {
             </div>
           )}
 
+          {/* Défileur de jours */}
           <div ref={dayScrollerRef} className="no-scrollbar flex gap-2 sm:gap-3 overflow-x-auto pb-2 snap-x snap-mandatory">
-            {dayWindow.map((d) => (
-              <div key={d.key} data-date={d.key} className="flex-shrink-0">
-                <DayCard day={d} selected={selectedDate === d.key} onClick={() => handleSelectDate(d.key)} />
-              </div>
-            ))}
+            {dayWindow.map((d) => {
+              const multiSelected = multiDates.includes(d.key);
+              if (isMulti) {
+                const ok = d.status === 'available';
+                return (
+                  <div key={d.key} data-date={d.key} className="flex-shrink-0">
+                    <motion.button
+                      type="button"
+                      onClick={ok ? () => handleMultiToggleDate(d.key) : undefined}
+                      disabled={!ok}
+                      whileHover={ok ? { y: -3 } : {}}
+                      className="relative min-w-[88px] sm:min-w-[96px] flex flex-col items-center pt-4 pb-3 px-3 select-none border transition-all duration-200"
+                      style={{
+                        background: multiSelected ? '#FFFFFF' : ok ? '#3D2A1E' : '#2A1D13',
+                        borderColor: multiSelected ? '#FFFFFF' : ok ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)',
+                        opacity: ok ? 1 : 0.3, cursor: ok ? 'pointer' : 'not-allowed',
+                      }}>
+                      <span className="text-[8px] uppercase font-black tracking-[0.45em] mb-1"
+                            style={{ color: multiSelected ? '#5C4031' : 'rgba(255,255,255,0.45)' }}>{d.dayShort}</span>
+                      <span className="text-[2rem] font-black leading-none"
+                            style={{ color: multiSelected ? '#5C4031' : '#FFFFFF' }}>{d.dayNum}</span>
+                      <span className="text-[8px] font-medium mt-0.5"
+                            style={{ color: multiSelected ? 'rgba(92,64,49,0.55)' : 'rgba(244,239,234,0.35)' }}>{d.monthShort}</span>
+                      <div className="mt-2 w-full text-center min-h-[16px]">
+                        {multiSelected
+                          ? <span className="text-[9px] font-black" style={{ color: '#5C4031' }}>✓</span>
+                          : ok ? <span className="text-[7px] font-black" style={{ color: 'rgba(255,255,255,0.40)' }}>+</span>
+                          : null}
+                      </div>
+                    </motion.button>
+                  </div>
+                );
+              }
+              return (
+                <div key={d.key} data-date={d.key} className="flex-shrink-0">
+                  <DayCard day={d} selected={selectedDate === d.key} onClick={() => handleSelectDate(d.key)} />
+                </div>
+              );
+            })}
           </div>
+
+          {/* ── Section créneaux par date (mode multi) ── */}
+          <AnimatePresence>
+            {isMulti && multiDates.length > 0 && rawData && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.35 }}
+                className="overflow-hidden mt-6">
+                <p className="text-[9px] uppercase tracking-[0.5em] font-bold mb-4"
+                   style={{ color: 'rgba(255,255,255,0.35)' }}>
+                  {multiDates.length} date{multiDates.length > 1 ? 's' : ''} sélectionnée{multiDates.length > 1 ? 's' : ''} — choisis un horaire pour chacune
+                </p>
+                <div className="space-y-4">
+                  {multiDates.map(dk => {
+                    const dayInfo = dayWindow.find(d => d.key === dk);
+                    const busy  = buildBusyRanges(rawData.dateBookings[dk] || [], rawData.dateBlocks[dk] || []);
+                    const dateObj = rawData.days.find(d => d.toISOString().slice(0, 10) === dk) ?? new Date(dk + 'T12:00:00');
+                    const slots = filterPastSlots(generateDynamicSlots(serviceDuration, busy), dateObj);
+                    const chosen = multiSlots[dk];
+                    return (
+                      <div key={dk} className="border p-4" style={{ borderColor: 'rgba(255,255,255,0.08)', background: '#3D2A1E' }}>
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-sm font-black text-white">
+                            {dayInfo ? `${dayInfo.dayShort} ${dayInfo.dayNum} ${dayInfo.monthShort}` : dk}
+                          </p>
+                          {chosen && <span className="text-[9px] font-black text-white border border-white/30 px-2 py-0.5">{chosen}</span>}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {slots.map(slot => (
+                            <button key={slot}
+                              onClick={() => setMultiSlots(prev => ({ ...prev, [dk]: slot }))}
+                              className="py-2 px-3 text-xs font-black border transition-all duration-150"
+                              style={{
+                                background: chosen === slot ? '#FFFFFF' : '#2E1F14',
+                                color: chosen === slot ? '#5C4031' : 'rgba(255,255,255,0.70)',
+                                borderColor: chosen === slot ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
+                              }}>
+                              {slot}
+                            </button>
+                          ))}
+                          {slots.length === 0 && (
+                            <p className="text-xs" style={{ color: 'rgba(244,239,234,0.40)' }}>Aucun créneau disponible</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* ══ ÉTAPE 02 — HORAIRE ══ */}
+      {/* ══ ÉTAPE 02 — HORAIRE (mode simple uniquement) ══ */}
       <AnimatePresence>
-        {selectedDate && (
+        {!isMulti && selectedDate && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden border-b" style={{ borderColor: 'rgba(255,255,255,0.06)', background: BG2 }}>
@@ -417,7 +563,7 @@ export default function Booking() {
 
       {/* ══ ÉTAPE 03 — INFOS ══ */}
       <AnimatePresence>
-        {selectedSlot && (
+        {((!isMulti && selectedSlot) || (isMulti && multiDates.length > 0 && multiDates.every(d => multiSlots[d]))) && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden">
@@ -477,25 +623,50 @@ export default function Booking() {
                 <div className="flex flex-col gap-5 border p-6 sm:p-7"
                      style={{ background: BG2, borderColor: 'rgba(255,255,255,0.08)' }}>
 
-                  <span className="text-[9px] uppercase tracking-[0.5em] font-bold text-white/40">Récapitulatif</span>
+                  <span className="text-[9px] uppercase tracking-[0.5em] font-bold text-white/40">
+                    {isMulti ? `${multiDates.length} réservations` : 'Récapitulatif'}
+                  </span>
 
                   <div className="space-y-3">
+                    {/* Prestation + tarif (communs) */}
                     {[
                       { label: 'Prestation', val: state.selectedService?.title ?? '—' },
                       { label: 'Durée',      val: state.selectedService ? `${state.selectedService.duration} min` : '—' },
-                      { label: 'Tarif',      val: state.selectedService?.priceLabel ?? '—' },
-                      { label: 'Jour', val: selectedDate
-                        ? new Date(selectedDate + 'T12:00:00+02:00').toLocaleDateString('fr-FR', { weekday:'long', day:'2-digit', month:'long' })
-                        : '—' },
-                      { label: 'Horaire', val: selectedSlot || '—' },
+                      { label: 'Tarif',      val: isMulti ? `${state.selectedService?.priceLabel ?? '—'} × ${multiDates.length}` : state.selectedService?.priceLabel ?? '—' },
                     ].map((r) => (
-                      <div key={r.label} className="flex items-start justify-between gap-3 pb-3 border-b last:border-0 last:pb-0"
+                      <div key={r.label} className="flex items-start justify-between gap-3 pb-3 border-b"
                            style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
                         <span className="text-[8px] uppercase tracking-[0.35em] font-bold shrink-0"
                               style={{ color: 'rgba(255,255,255,0.35)' }}>{r.label}</span>
                         <span className="text-xs font-bold text-white text-right capitalize">{r.val}</span>
                       </div>
                     ))}
+                    {/* Dates/horaires */}
+                    {isMulti
+                      ? multiDates.map((dk, i) => (
+                          <div key={dk} className="flex items-start justify-between gap-3 pb-3 border-b last:border-0 last:pb-0"
+                               style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                            <span className="text-[8px] uppercase tracking-[0.35em] font-bold shrink-0"
+                                  style={{ color: 'rgba(255,255,255,0.35)' }}>RDV {i + 1}</span>
+                            <span className="text-xs font-bold text-white text-right">
+                              {new Date(dk + 'T12:00:00+02:00').toLocaleDateString('fr-FR', { weekday:'short', day:'2-digit', month:'short' })} · {multiSlots[dk]}
+                            </span>
+                          </div>
+                        ))
+                      : [
+                          { label: 'Jour', val: selectedDate
+                            ? new Date(selectedDate + 'T12:00:00+02:00').toLocaleDateString('fr-FR', { weekday:'long', day:'2-digit', month:'long' })
+                            : '—' },
+                          { label: 'Horaire', val: selectedSlot || '—' },
+                        ].map((r) => (
+                          <div key={r.label} className="flex items-start justify-between gap-3 pb-3 border-b last:border-0 last:pb-0"
+                               style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                            <span className="text-[8px] uppercase tracking-[0.35em] font-bold shrink-0"
+                                  style={{ color: 'rgba(255,255,255,0.35)' }}>{r.label}</span>
+                            <span className="text-xs font-bold text-white text-right capitalize">{r.val}</span>
+                          </div>
+                        ))
+                    }
                   </div>
 
                   <div className="h-px bg-white/8" />
@@ -518,20 +689,37 @@ export default function Booking() {
                     )}
                   </AnimatePresence>
 
-                  <motion.button type="button" onClick={handleSubmit}
-                    disabled={!state.selectedService || isLoading}
-                    whileHover={state.selectedService && !isLoading ? { scale: 1.03 } : {}}
-                    whileTap={state.selectedService && !isLoading ? { scale: 0.97 } : {}}
+                  <motion.button
+                    type="button"
+                    onClick={isMulti ? handleMultiSubmit : handleSubmit}
+                    disabled={isMulti ? (!state.selectedService || isSubmittingMulti) : (!state.selectedService || isLoading)}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                     className="w-full flex items-center justify-center gap-2.5 py-5 text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-300"
                     style={{
-                      background: state.selectedService && !isLoading ? '#FFFFFF' : 'rgba(255,255,255,0.06)',
-                      color: state.selectedService && !isLoading ? '#5C4031' : 'rgba(255,255,255,0.25)',
-                      cursor: state.selectedService && !isLoading ? 'pointer' : 'not-allowed',
+                      background: '#FFFFFF',
+                      color: '#5C4031',
+                      cursor: 'pointer',
+                      opacity: (isMulti ? isSubmittingMulti : isLoading) ? 0.5 : 1,
                     }}>
-                    {isLoading
-                      ? <><motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}><ScissorsIcon className="w-4 h-4" /></motion.span> En cours…</>
-                      : <><ScissorsIcon className="w-4 h-4" /> Confirmer ma réservation</>
-                    }
+                    {(isMulti ? isSubmittingMulti : isLoading) ? (
+                      <>
+                        <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
+                          <ScissorsIcon className="w-4 h-4" />
+                        </motion.span>
+                        En cours…
+                      </>
+                    ) : isMulti ? (
+                      <>
+                        <ScissorsIcon className="w-4 h-4" />
+                        Confirmer {multiDates.length} réservation{multiDates.length > 1 ? 's' : ''}
+                      </>
+                    ) : (
+                      <>
+                        <ScissorsIcon className="w-4 h-4" />
+                        Confirmer ma réservation
+                      </>
+                    )}
                   </motion.button>
 
                   <p className="text-[9px] font-medium text-center" style={{ color: 'rgba(255,255,255,0.20)' }}>

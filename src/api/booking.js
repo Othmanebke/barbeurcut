@@ -76,6 +76,20 @@ export async function createBooking({ service, date, time, clientName, clientPho
   return confirmationNumber;
 }
 
+/* ── Création de plusieurs RDV en une seule fois ────────────── */
+export async function createBatchBooking({ service, bookings, clientName, clientPhone, clientEmail }) {
+  // bookings = [{ date, time }]
+  const results = [];
+  for (const b of bookings) {
+    const cn = await createBooking({
+      service, date: b.date, time: b.time,
+      clientName, clientPhone, clientEmail,
+    });
+    results.push({ date: b.date, time: b.time, confirmationNumber: cn });
+  }
+  return results; // [{date, time, confirmationNumber}]
+}
+
 /* ── Annuler un RDV — RPC admin (bypass RLS) ───────────────── */
 export async function cancelBooking(appointmentId) {
   if (!SUPABASE_READY) throw new Error('Supabase non configuré.');
