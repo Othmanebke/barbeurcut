@@ -22,7 +22,7 @@ function openDayRange(count = 14) {
 
 /* ── Supabase : retourne les bookings bruts + blocs par date ─ */
 async function fetchFromSupabase() {
-  const days      = openDayRange(14);
+  const days      = openDayRange(60);
   const startDate = dayKey(days[0]);
   const endDate   = dayKey(days[days.length - 1]);
 
@@ -73,7 +73,7 @@ async function fetchFromSupabase() {
 
 /* ── Mode mock ───────────────────────────────────────────────── */
 function fetchMock() {
-  const days = openDayRange(14);
+  const days = openDayRange(60);
   return Promise.resolve({
     salon: SALON,
     days,

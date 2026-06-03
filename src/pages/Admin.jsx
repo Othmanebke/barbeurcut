@@ -267,9 +267,10 @@ function Dashboard() {
                         style={{ color: 'rgba(255,255,255,0.35)' }}>
                         + Pause
                       </button>
-                      <button onClick={() => handleBlockDay(k)}
+                      <button
+                        onClick={() => full ? handleUnblock(k, null) : handleBlockDay(k)}
                         className={`text-[8px] uppercase tracking-[0.3em] font-bold transition-colors ${
-                          full ? 'text-red-400 hover:text-red-300' : 'hover:text-red-400'
+                          full ? 'text-green-400 hover:text-green-300' : 'hover:text-red-400'
                         }`}
                         style={{ color: full ? undefined : 'rgba(255,255,255,0.22)' }}>
                         {full ? 'Rouvrir' : 'Fermer'}
