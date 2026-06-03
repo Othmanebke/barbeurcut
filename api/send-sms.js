@@ -270,23 +270,8 @@ export default async function handler(req, res) {
     }
   }
 
-  /* ── 3. SMS CLIENT (confirmation, nécessite crédits Brevo ~0,07€/SMS) ── */
-  if (clientPhone) {
-    const clientMsg =
-      `Wonderclub ✓ RDV confirmé\n` +
-      `${serviceTitle}\n` +
-      `${formattedDate} à ${time}\n` +
-      `1 Rue de la Madeleine, 77170 Brie-Comte-Robert\n` +
-      `Ref: ${confirmationNumber}`;
-
-    try {
-      results.smsClient = await sendSMS(BREVO_KEY, toE164(clientPhone), clientMsg, SMS_SENDER);
-      console.log('[send-notification] SMS sent to client');
-    } catch (e) {
-      console.warn('[send-notification] client SMS skipped (no credits?):', e.message);
-      results.errors.push({ type: 'smsClient', error: e.message });
-    }
-  }
+  /* ── SMS CLIENT : envoyé 24h avant via cron /api/send-reminder ── */
+  /* (pas de SMS immédiat — le client reçoit uniquement l'email de confirmation) */
 
   /* ── 3. SMS BARBIER (alerte nouveau RDV, nécessite crédits Brevo) ── */
   if (BARBER_PHONE) {

@@ -5,6 +5,7 @@ export interface ServiceItem {
   priceLabel: string;
   description: string;
   duration: number; // minutes
+  popular?: boolean;
   cites: number[];
 }
 
@@ -54,6 +55,16 @@ export const serviceCategories: ServiceCategory[] = [
         description: 'Coupe + taille et mise en forme de la barbe, contours dessinés au rasoir.',
         duration: 30,
         cites: [],
+      },
+      {
+        id: 'coupe-barbe-traditionnelle',
+        title: 'Coupe + Barbe traditionnelle',
+        price: 35,
+        priceLabel: '35€',
+        description: 'Coupe + mousse chaude, rasage de la barbe au coupe-chou, compresse froide pour fermer les pores. La formule premium.',
+        duration: 30,
+        cites: [],
+        popular: true,
       },
     ],
   },

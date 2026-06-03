@@ -12,7 +12,8 @@ const CATEGORIES = [
     dark: true,
     services: [
       { id: 'coupe-homme',               title: 'Coupe homme',                price: 20,  priceLabel: '20€',      popular: false, desc: 'Consultation, lavage, coupe ciseaux ou tondeuse, finition au rasoir sur les contours.' },
-      { id: 'coupe-barbe',               title: 'Coupe + Barbe',              price: 30,  priceLabel: '30€',      popular: true,  desc: 'Coupe homme + taille et mise en forme de la barbe, contours dessinés au rasoir.' },
+      { id: 'coupe-barbe',               title: 'Coupe + Barbe',              price: 30,  priceLabel: '30€',      popular: false, desc: 'Coupe homme + taille et mise en forme de la barbe, contours dessinés au rasoir.' },
+      { id: 'coupe-barbe-traditionnelle', title: 'Coupe + Barbe traditionnelle', price: 35, priceLabel: '35€',    popular: true,  desc: 'Coupe + mousse chaude, rasage de la barbe au coupe-chou, compresse froide. La formule premium.' },
       { id: 'coupe-bouc',                title: 'Coupe + Bouc',               price: 25,  priceLabel: '25€',      popular: false, desc: 'Coupe homme + rasage du visage en gardant uniquement le bouc, contours nets.' },
       { id: 'coupe-rasage-traditionnel', title: 'Coupe + Rasage traditionnel',price: 35,  priceLabel: '35€',      popular: false, desc: 'Mousse chaude, rasage au coupe-chou, compresse froide pour fermer les pores.' },
       { id: 'coupe-enfant',              title: 'Coupe enfant',               price: 15,  priceLabel: '15€',      popular: false, desc: 'Moins de 15 ans — coupe douce, ciseaux ou tondeuse selon le style.' },
