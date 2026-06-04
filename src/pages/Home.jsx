@@ -156,11 +156,8 @@ export default function Home() {
           className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 sm:px-10 text-center"
           style={{ paddingTop: 'var(--navbar-h, 72px)', x: titleX, y: titleY }}
         >
-          {/* Espaceur */}
-          <div className="mb-12" />
-
           {/* WONDER — tombe du haut */}
-          <div className="overflow-hidden leading-none mb-0">
+          <div className="overflow-hidden leading-none mb-0 mt-4 sm:mt-6">
             <motion.h1
               className="font-black uppercase tracking-[-0.04em] text-white"
               style={{ fontSize: 'clamp(2.8rem, 16vw, 14rem)', lineHeight: 0.92 }}
@@ -173,7 +170,7 @@ export default function Home() {
           </div>
 
           {/* CLUB — monte du bas */}
-          <div className="overflow-hidden leading-none mb-10">
+          <div className="overflow-hidden leading-none mb-5 sm:mb-6">
             <motion.h1
               className="font-black uppercase tracking-[-0.02em]"
               style={{ fontSize: 'clamp(2.8rem, 16vw, 14rem)', lineHeight: 0.92, color: 'rgba(255,255,255,0.28)' }}
@@ -186,9 +183,9 @@ export default function Home() {
           </div>
 
           {/* Ligne centrale qui s'étend */}
-          <motion.div className="flex items-center gap-4 mb-10">
+          <motion.div className="flex items-center gap-4 mb-5 sm:mb-6">
             <motion.span className="block h-px bg-white/25"
-              initial={{ width: 0 }} animate={{ width: '5rem' }}
+              initial={{ width: 0 }} animate={{ width: '4rem' }}
               transition={{ delay: 1.4, duration: 0.9 }} />
             <motion.span
               initial={{ opacity: 0, rotate: -90, scale: 0 }}
@@ -196,13 +193,13 @@ export default function Home() {
               transition={{ delay: 1.7, duration: 0.5, ease: 'backOut' }}
               style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1rem' }}>✦</motion.span>
             <motion.span className="block h-px bg-white/25"
-              initial={{ width: 0 }} animate={{ width: '5rem' }}
+              initial={{ width: 0 }} animate={{ width: '4rem' }}
               transition={{ delay: 1.4, duration: 0.9 }} />
           </motion.div>
 
           {/* Réseaux sociaux */}
           <motion.div
-            className="flex items-center justify-center gap-5 mb-8"
+            className="flex items-center justify-center gap-5 mb-5 sm:mb-6"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ delay: 1.7, duration: 0.6 }}>
             <a href="https://www.instagram.com/teewdr/" target="_blank" rel="noopener noreferrer"
@@ -231,7 +228,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.95, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-10"
+            className="mb-5 sm:mb-6"
           >
             <motion.div
               whileHover={{ scale: 1.06, boxShadow: '0 0 60px rgba(255,255,255,0.18), 0 0 120px rgba(255,255,255,0.08)' }}
