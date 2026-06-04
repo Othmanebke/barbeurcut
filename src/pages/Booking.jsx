@@ -11,7 +11,7 @@ import { ScissorsIcon } from '../components/BarberIcons';
 /* ─── Day window builder ──────────────────────────────────── */
 function buildDayWindow(days, fullDayOff, dateBookings, dateBlocks, serviceDuration) {
   return days.map((date) => {
-    const k   = date.toISOString().slice(0, 10);
+    const k   = date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
     const dow = date.getDay();
     let status;
     if (!OPEN_DAYS.has(dow) || fullDayOff.has(k)) {
@@ -241,7 +241,8 @@ export default function Booking() {
   const activeSlots = useMemo(() => {
     if (!rawData || !selectedDate) return [];
     const busy = buildBusyRanges(rawData.dateBookings[selectedDate] || [], rawData.dateBlocks[selectedDate] || []);
-    const date  = rawData.days.find(d => d.toISOString().slice(0, 10) === selectedDate) ?? new Date(selectedDate);
+    const lk = (d) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    const date  = rawData.days.find(d => lk(d) === selectedDate) ?? new Date(selectedDate + 'T12:00:00');
     return filterPastSlots(generateDynamicSlots(serviceDuration, busy), date);
   }, [rawData, selectedDate, serviceDuration]);
 
@@ -481,7 +482,8 @@ export default function Booking() {
                   {multiDates.map(dk => {
                     const dayInfo = dayWindow.find(d => d.key === dk);
                     const busy  = buildBusyRanges(rawData.dateBookings[dk] || [], rawData.dateBlocks[dk] || []);
-                    const dateObj = rawData.days.find(d => d.toISOString().slice(0, 10) === dk) ?? new Date(dk + 'T12:00:00');
+                    const lk2 = (d) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+                    const dateObj = rawData.days.find(d => lk2(d) === dk) ?? new Date(dk + 'T12:00:00');
                     const slots = filterPastSlots(generateDynamicSlots(serviceDuration, busy), dateObj);
                     const chosen = multiSlots[dk];
                     return (

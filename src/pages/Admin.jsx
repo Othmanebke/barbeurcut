@@ -17,7 +17,11 @@ for (let m = 10 * 60; m < 19 * 60 + 30; m += 30) {
   DAY_SLOTS.push(`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`);
 }
 
-function dayKey(d) { return d.toISOString().slice(0, 10); }
+function dayKey(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
 function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
 function monday(ref = new Date()) {
   const d = new Date(ref); const dow = d.getDay();

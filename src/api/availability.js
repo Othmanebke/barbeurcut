@@ -7,7 +7,11 @@ export const SALON = {
   description: 'Barbier indépendant certifié BP. Ouvert mer–sam, 10h–19h30. Réservation en ligne, confirmation par email et SMS.',
 };
 
-function dayKey(d) { return d.toISOString().slice(0, 10); }
+function dayKey(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
 
 function openDayRange(count = 14) {
   const days = [];
