@@ -101,9 +101,12 @@ function Dashboard() {
   const [blocks, setBlocks]           = useState([]);
   const [loading, setLoading]         = useState(true);
   const [view, setView]               = useState('list');
-  const [blockModal, setBlockModal]   = useState(null);
-  const [detailModal, setDetailModal] = useState(null);
-  const [pauseModal, setPauseModal]   = useState(null); // { date }
+  const [blockModal, setBlockModal]     = useState(null);
+  const [detailModal, setDetailModal]   = useState(null);
+  const [pauseModal, setPauseModal]     = useState(null);
+  const [cancelModal, setCancelModal]   = useState(null); // { appt }
+  const [cancelMsg, setCancelMsg]       = useState('');
+  const [cancelSending, setCancelSending] = useState(false);
   const [pauseStart, setPauseStart]   = useState('12:00');
   const [pauseEnd, setPauseEnd]       = useState('13:00');
 
@@ -141,7 +144,42 @@ function Dashboard() {
 
   const handleBlock    = async ({ date, time, fullDay }) => { await blockSlot(date, fullDay ? null : time, 'Bloqué'); setBlockModal(null); load(); };
   const handleUnblock  = async (date, time) => { await unblockSlot(date, time); load(); };
-  const handleCancel   = async (appt) => { if (!confirm(`Annuler le RDV de ${appt.client_name} ?`)) return; await cancelBooking(appt.id); setDetailModal(null); load(); };
+  const handleCancel   = async (appt) => {
+    setCancelModal({ appt });
+    setCancelMsg('Votre rendez-vous a été annulé. N\'hésitez pas à reprendre rendez-vous en ligne.');
+    setDetailModal(null);
+  };
+
+  const handleConfirmCancel = async () => {
+    if (!cancelModal) return;
+    setCancelSending(true);
+    try {
+      const { appt } = cancelModal;
+      await cancelBooking(appt.id);
+      // Envoyer email d'annulation avec message
+      if (appt.client_email || appt.email) {
+        fetch('/api/send-cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clientEmail:        appt.client_email || appt.email || '',
+            clientName:         appt.client_name,
+            serviceTitle:       appt.service_title,
+            date:               appt.date,
+            time:               appt.time,
+            confirmationNumber: appt.confirmation_number,
+            barberMessage:      cancelMsg,
+          }),
+        }).catch(() => {});
+      }
+      setCancelModal(null);
+      load();
+    } catch (e) {
+      alert('Erreur : ' + e.message);
+    } finally {
+      setCancelSending(false);
+    }
+  };
   const handleBlockDay = async (date) => { if (!confirm(`Fermer le ${fmt(date, { weekday:'long', day:'2-digit', month:'long' })} ?`)) return; await blockSlot(date, null, 'Fermé'); load(); };
 
   const handleAddPause = async () => {
@@ -463,6 +501,49 @@ function Dashboard() {
                 <button onClick={() => setBlockModal(null)}
                   className="w-full text-white/40 text-[9px] uppercase tracking-[0.35em] font-bold py-2 hover:text-white transition-colors">
                   Annuler
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL — Annulation avec message */}
+      <AnimatePresence>
+        {cancelModal && (
+          <motion.div className="fixed inset-0 bg-dark/70 backdrop-blur-sm z-50 flex items-center justify-center px-6"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setCancelModal(null)}>
+            <motion.div className="bg-denim border border-white/10 w-full max-w-sm p-8 space-y-5"
+              initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }}
+              onClick={e => e.stopPropagation()}>
+              <div>
+                <p className="text-[8px] uppercase tracking-[0.5em] text-red-400 font-bold mb-1">Annuler le RDV</p>
+                <p className="text-base font-black text-white">{cancelModal.appt.client_name}</p>
+                <p className="text-xs text-white/50">{fmt(cancelModal.appt.date)} à {cancelModal.appt.time}</p>
+              </div>
+
+              <div>
+                <p className="text-[9px] uppercase tracking-[0.4em] font-bold text-white/50 mb-2">
+                  Message au client (envoyé par email)
+                </p>
+                <textarea
+                  value={cancelMsg}
+                  onChange={e => setCancelMsg(e.target.value)}
+                  rows={4}
+                  className="w-full bg-dark border border-white/10 px-4 py-3 text-white text-sm font-medium outline-none focus:border-white/40 resize-none transition-colors"
+                  placeholder="Raison de l'annulation..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <button onClick={handleConfirmCancel} disabled={cancelSending}
+                  className="w-full bg-red-500 text-white py-3.5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-red-600 transition-colors disabled:opacity-50">
+                  {cancelSending ? 'Envoi…' : 'Confirmer l\'annulation'}
+                </button>
+                <button onClick={() => setCancelModal(null)}
+                  className="w-full text-white/40 text-[9px] uppercase tracking-[0.35em] font-bold py-2 hover:text-white transition-colors">
+                  Retour
                 </button>
               </div>
             </motion.div>
