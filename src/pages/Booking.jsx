@@ -341,7 +341,7 @@ export default function Booking() {
     setFormError(null);
     const incomplete = groupPeople.filter(p => !p.name.trim() || !p.service || !p.slot);
     if (incomplete.length > 0) { setFormError('Chaque participant doit avoir un prénom, une prestation et un horaire.'); return; }
-    if (!state.clientInfo.name || !state.clientInfo.phone) { setFormError('Renseigne tes coordonnées.'); return; }
+    if (!state.clientInfo.phone) { setFormError('Renseigne ton téléphone.'); return; }
 
     setIsSubmittingGroup(true);
     try {
