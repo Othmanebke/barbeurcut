@@ -96,10 +96,14 @@ export default function Footer() {
         </p>
       </div>
 
-      {/* ── Copyright ── */}
+      {/* ── Crédit développeur ── */}
       <div className="border-t border-cream/5 px-6 sm:px-10 py-4">
-        <p className="text-[9px] text-cream/20 font-medium text-center tracking-[0.2em]">
-          © {new Date().getFullYear()} Wonderclub · Barbier certifié CAP · Brie-Comte-Robert, 77170
+        <p className="text-[9px] font-medium text-center tracking-[0.2em]" style={{ color: 'rgba(244,239,234,0.55)' }}>
+          Fait par{' '}
+          <a href="https://oldev.vercel.app/" target="_blank" rel="noopener noreferrer"
+            className="font-bold text-white hover:text-cream/80 transition-colors underline underline-offset-2">
+            Othmane Bouakline
+          </a>
         </p>
       </div>
     </footer>
