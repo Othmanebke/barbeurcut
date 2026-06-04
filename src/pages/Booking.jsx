@@ -317,17 +317,20 @@ export default function Booking() {
     setGroupPeople(prev => prev.map(p => p.id === id ? { ...p, ...patch, slot: patch.service ? '' : p.slot } : p));
 
   /* Créneaux dispo pour un participant — tient compte des slots déjà pris par les précédents */
-  const getGroupSlots = (index) => {
+  const getGroupSlots = useCallback((index) => {
     if (!rawData || !groupDate || !groupPeople[index]?.service) return [];
     const baseBusy = buildBusyRanges(rawData.dateBookings[groupDate] || [], rawData.dateBlocks[groupDate] || []);
-    const prevBusy = buildBusyRanges(
-      groupPeople.slice(0, index).filter(p => p.slot && p.service).map(p => ({ time: p.slot, duration: p.service.duration })),
-      []
-    );
+    const prevParticipants = groupPeople.slice(0, index).filter(p => p.slot && p.service);
+    const prevBusy = prevParticipants.length > 0 
+      ? buildBusyRanges(
+          prevParticipants.map(p => ({ time: p.slot, duration: p.service.duration })),
+          []
+        )
+      : [];
     const allBusy = [...baseBusy, ...prevBusy].sort((a, b) => a.start - b.start);
     const dateObj = rawData.days.find(d => ldk(d) === groupDate) ?? new Date(groupDate + 'T12:00:00');
     return filterPastSlots(generateDynamicSlots(groupPeople[index].service.duration, allBusy), dateObj);
-  };
+  }, [rawData, groupDate, groupPeople]);
 
   const handleGroupSubmit = async () => {
     setFormError(null);
@@ -551,7 +554,10 @@ export default function Booking() {
         </div>
       </div>
 
-      {/* ══ ÉTAPE 01 — JOUR ══ */}
+      {/* ══ ÉTAPE 01 — JOUR (mode solo & multi uniquement) ══ */}
+      <AnimatePresence>
+        {!isGroup && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
       <div className="border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
           {/* Header step 01 */}
@@ -672,6 +678,9 @@ export default function Booking() {
           </AnimatePresence>
         </div>
       </div>
+        </motion.div>
+      )}
+      </AnimatePresence>
 
       {/* ══ MODE GROUPE ════════════════════════════════════════ */}
       <AnimatePresence>
