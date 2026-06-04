@@ -142,6 +142,12 @@ function Dashboard() {
   const isFullDay  = (d)    => blocks.some(b => b.date === d && !b.time);
   const isPause    = (d, t) => blocks.some(b => b.date === d && b.time && b.reason === 'Pause' && b.time === t);
 
+  /* Créneaux calendrier = slots fixes 30min + horaires réels des RDV (pour les durées dynamiques) */
+  const calendarSlots = [...new Set([
+    ...DAY_SLOTS,
+    ...appointments.map(a => a.time),
+  ])].sort();
+
   const handleBlock    = async ({ date, time, fullDay }) => { await blockSlot(date, fullDay ? null : time, 'Bloqué'); setBlockModal(null); load(); };
   const handleUnblock  = async (date, time) => { await unblockSlot(date, time); load(); };
   const handleCancel   = async (appt) => {
@@ -389,7 +395,7 @@ function Dashboard() {
                   })}
                 </div>
                 <div className="divide-y divide-white/5">
-                  {DAY_SLOTS.map(slot => (
+                  {calendarSlots.map(slot => (
                     <div key={slot} className="grid gap-px bg-white/5" style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}>
                       <div className="bg-darkMid py-3 px-3 flex items-center">
                         <span className="text-[9px] font-bold text-white/30">{slot}</span>
