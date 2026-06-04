@@ -269,6 +269,12 @@ export default function Booking() {
     return filterPastSlots(generateDynamicSlots(serviceDuration, busy), date);
   }, [rawData, selectedDate, serviceDuration]);
 
+  /* Slots pré-calculés pour chaque participant du groupe */
+  const allGroupSlots = useMemo(() => {
+    if (!rawData || !groupDate) return groupPeople.map(() => []);
+    return groupPeople.map((_, i) => getGroupSlots(i));
+  }, [rawData, groupDate, groupPeople, getGroupSlots]);
+
   /* Onglets de navigation rapide par mois */
   const months = useMemo(() => {
     const seen = new Set();
@@ -437,121 +443,71 @@ export default function Booking() {
   return (
     <div style={{ ...padTop, background: BG }} className="min-h-screen">
 
-      {/* ══ SÉLECTION DU MODE (affiché en premier si pas encore choisi) ══ */}
-      <AnimatePresence>
-        {!bookingMode && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.45 }}
-            className="mx-auto max-w-5xl px-6 sm:px-10 py-16 sm:py-20">
+      {/* ══ SÉLECTION DU MODE ══════════════════════════════════ */}
+      {!bookingMode && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="mx-auto max-w-4xl px-6 sm:px-10 py-14 sm:py-20">
 
-            <motion.p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-2 text-center"
-              style={{ color: 'rgba(255,255,255,0.40)' }}>
-              Je réserve pour…
-            </motion.p>
-            <motion.h2 className="font-black uppercase text-white text-center mb-12 sm:mb-16 tracking-[-0.02em]"
-              style={{ fontSize: 'clamp(1.8rem, 5vw, 3.2rem)' }}>
-              Choisissez votre type de réservation
-            </motion.h2>
+          <p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-3"
+             style={{ color: 'rgba(255,255,255,0.35)' }}>
+            Je réserve pour…
+          </p>
+          <h2 className="font-black uppercase text-white mb-10 tracking-[-0.03em]"
+              style={{ fontSize: 'clamp(1.6rem, 4vw, 2.8rem)' }}>
+            Choisissez votre type de réservation
+          </h2>
 
-            <div className="grid gap-5 sm:grid-cols-3">
-              {[
-                {
-                  mode: 'solo',
-                  icon: '✂',
-                  title: 'Moi seul',
-                  desc: 'Je réserve un créneau pour une prestation.',
-                  sub: 'Un seul RDV',
-                  bgColor: '#405568',
-                  accentColor: '#FFFFFF',
-                },
-                {
-                  mode: 'multi',
-                  icon: '☰',
-                  title: 'Plusieurs dates',
-                  desc: 'Je veux réserver le même service sur plusieurs semaines.',
-                  sub: 'Jusqu\'à 6 dates',
-                  bgColor: '#3D2A1E',
-                  accentColor: '#405568',
-                },
-                {
-                  mode: 'group',
-                  icon: '◉',
-                  title: 'En groupe',
-                  desc: 'Famille, amis — chacun choisit sa prestation et son horaire.',
-                  sub: 'Jusqu\'à 8 personnes',
-                  bgColor: '#405568',
-                  accentColor: '#F4EFEA',
-                },
-              ].map((opt, i) => (
-                <motion.button key={opt.mode} type="button"
-                  onClick={() => setBookingMode(opt.mode)}
-                  className="relative overflow-hidden flex flex-col items-start gap-5 p-7 sm:p-8 border text-left group transition-all duration-300"
-                  style={{
-                    background: opt.bgColor,
-                    borderColor: 'rgba(255,255,255,0.15)',
-                    borderWidth: '1px',
-                  }}
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                  whileHover={{
-                    borderColor: '#FFFFFF',
-                    boxShadow: '0 20px 40px rgba(64, 85, 104, 0.25)',
-                    y: -4,
-                  }}>
-                  
-                  {/* Background accent */}
-                  <div className="absolute top-0 right-0 opacity-5 text-[120px] pointer-events-none"
-                       style={{ color: opt.accentColor }}>
-                    {opt.icon}
-                  </div>
+          {/* Rangées style Engagements */}
+          <div className="border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+            {[
+              { num: '01', mode: 'solo',  title: 'Pour moi seul',   desc: 'Un seul créneau pour une prestation.',                                        tag: 'Solo' },
+              { num: '02', mode: 'multi', title: 'Plusieurs dates',  desc: 'Même service réservé sur plusieurs semaines à venir.',                       tag: 'Jusqu\'à 6 dates' },
+              { num: '03', mode: 'group', title: 'En groupe',        desc: 'Famille, amis — chacun choisit son service et son horaire le même jour.', tag: 'Jusqu\'à 8 personnes' },
+            ].map((opt, i) => (
+              <motion.button key={opt.mode} type="button"
+                onClick={() => setBookingMode(opt.mode)}
+                className="group relative flex items-center gap-6 sm:gap-10 py-8 sm:py-10 w-full text-left border-b transition-all duration-300"
+                style={{ borderColor: 'rgba(255,255,255,0.06)', background: '#3D2A1E' }}
+                whileHover={{ backgroundColor: '#2E1F14' }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.55, delay: i * 0.1 }}>
 
-                  {/* Icon */}
-                  <div className="flex items-center justify-center w-12 h-12 border-2 relative z-10" style={{ borderColor: opt.accentColor, color: opt.accentColor }}>
-                    <span className="text-2xl font-black">{opt.icon}</span>
-                  </div>
+                {/* Barre gauche au hover */}
+                <motion.div className="absolute left-0 top-0 bottom-0 w-[3px] bg-white origin-top"
+                  initial={{ scaleY: 0 }}
+                  whileHover={{ scaleY: 1 }}
+                  transition={{ duration: 0.3 }} />
 
-                  {/* Content */}
-                  <div className="relative z-10 flex-1">
-                    <p className="font-black uppercase text-base sm:text-lg tracking-[-0.01em] mb-2 transition-colors duration-300"
-                       style={{ color: opt.accentColor }}>
-                      {opt.title}
-                    </p>
-                    <p className="text-sm leading-relaxed font-medium transition-colors duration-300"
-                       style={{ color: 'rgba(255,255,255,0.60)' }}>
-                      {opt.desc}
-                    </p>
-                  </div>
+                <span className="text-[9px] font-black uppercase tracking-[0.6em] shrink-0 pl-4 sm:pl-6"
+                      style={{ color: 'rgba(255,255,255,0.22)' }}>
+                  {opt.num}
+                </span>
 
-                  {/* Badge */}
-                  <div className="flex items-center gap-2 text-[9px] uppercase tracking-[0.45em] font-black px-3 py-1.5 border transition-all duration-300 relative z-10"
-                       style={{
-                         color: opt.accentColor,
-                         borderColor: opt.accentColor,
-                         background: `${opt.accentColor}11`,
-                       }}>
-                    <span>●</span>
-                    {opt.sub}
-                  </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-black uppercase text-white tracking-[-0.02em] group-hover:text-white/80 transition-colors"
+                     style={{ fontSize: 'clamp(1.1rem, 3vw, 1.8rem)' }}>
+                    {opt.title}
+                  </p>
+                  <p className="text-sm font-medium mt-1 leading-6"
+                     style={{ color: 'rgba(244,239,234,0.45)' }}>
+                    {opt.desc}
+                  </p>
+                </div>
 
-                  {/* Hover line */}
-                  <div className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-500"
-                       style={{ background: opt.accentColor }} />
-                </motion.button>
-              ))}
-            </div>
+                <span className="text-[8px] font-bold uppercase tracking-[0.4em] border px-3 py-1 shrink-0 hidden sm:block mr-2"
+                      style={{ color: 'rgba(255,255,255,0.30)', borderColor: 'rgba(255,255,255,0.12)' }}>
+                  {opt.tag}
+                </span>
 
-            {/* Info footer */}
-            <div className="mt-12 sm:mt-16 pt-8 border-t border-white/10">
-              <p className="text-center text-[9px] uppercase tracking-[0.4em] font-bold"
-                 style={{ color: 'rgba(255,255,255,0.30)' }}>
-                Chaque option offre une expérience de réservation adaptée à vos besoins
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <span className="text-white/25 group-hover:text-white transition-colors text-base shrink-0 pr-4 sm:pr-6">→</span>
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       {/* ══ HEADER — steps + prestation (affiché après sélection du mode) ══ */}
       <AnimatePresence>
@@ -875,33 +831,30 @@ export default function Booking() {
                           </div>
 
                           {/* Créneau */}
-                          {groupDate && person.service && (() => {
-                            const slots = getGroupSlots(i);
-                            return (
-                              <div>
-                                <p className="text-[7px] uppercase tracking-[0.35em] font-bold mb-1.5"
-                                   style={{ color: 'rgba(255,255,255,0.25)' }}>Horaire</p>
-                                {slots.length > 0 ? (
-                                  <div className="flex flex-wrap gap-1">
-                                    {slots.map(slot => (
-                                      <button key={slot}
-                                        onClick={() => updateGroupPerson(person.id, { slot })}
-                                        className="px-2 py-1.5 text-[7px] font-black border transition-all"
-                                        style={{
-                                          background: person.slot === slot ? '#FFFFFF' : '#2E1F14',
-                                          color: person.slot === slot ? '#5C4031' : 'rgba(255,255,255,0.60)',
-                                          borderColor: person.slot === slot ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
-                                        }}>
-                                        {slot}
-                                      </button>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <p className="text-[7px]" style={{ color: 'rgba(244,239,234,0.30)' }}>Pas de créneau</p>
-                                )}
-                              </div>
-                            );
-                          })()}
+                          {groupDate && person.service && (
+                            <div>
+                              <p className="text-[7px] uppercase tracking-[0.35em] font-bold mb-1.5"
+                                 style={{ color: 'rgba(255,255,255,0.25)' }}>Horaire</p>
+                              {allGroupSlots[i]?.length > 0 ? (
+                                <div className="flex flex-wrap gap-1">
+                                  {allGroupSlots[i].map(slot => (
+                                    <button key={slot} type="button"
+                                      onClick={() => updateGroupPerson(person.id, { slot })}
+                                      className="px-2 py-1.5 text-[7px] font-black border transition-all"
+                                      style={{
+                                        background: person.slot === slot ? '#FFFFFF' : '#2E1F14',
+                                        color: person.slot === slot ? '#5C4031' : 'rgba(255,255,255,0.60)',
+                                        borderColor: person.slot === slot ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
+                                      }}>
+                                      {slot}
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-[7px]" style={{ color: 'rgba(244,239,234,0.30)' }}>Aucun créneau ce jour</p>
+                              )}
+                            </div>
+                          )}
                         </div>
 
                         {/* Progress bar */}
