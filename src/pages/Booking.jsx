@@ -314,7 +314,12 @@ export default function Booking() {
     setGroupPeople(prev => prev.filter(p => p.id !== id));
 
   const updateGroupPerson = (id, patch) =>
-    setGroupPeople(prev => prev.map(p => p.id === id ? { ...p, ...patch, slot: patch.service ? '' : p.slot } : p));
+    setGroupPeople(prev => prev.map(p => {
+      if (p.id !== id) return p;
+      const updated = { ...p, ...patch };
+      if (patch.service) updated.slot = ''; // Reset slot when service changes
+      return updated;
+    }));
 
   /* Créneaux dispo pour un participant — tient compte des slots déjà pris par les précédents */
   const getGroupSlots = useCallback((index) => {
@@ -690,6 +695,29 @@ export default function Booking() {
             className="overflow-hidden">
             <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 space-y-6">
 
+              {/* Choisir le jour (EN HAUT) */}
+              <div>
+                <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white mb-3">Jour du rendez-vous</p>
+                <div className="no-scrollbar flex gap-2 overflow-x-auto pb-2">
+                  {dayWindow.filter(d => d.status === 'available').map(d => (
+                    <motion.button key={d.key} type="button"
+                      onClick={() => { setGroupDate(d.key); setGroupPeople(prev => prev.map(p => ({ ...p, slot: '' }))); }}
+                      whileHover={{ y: -3 }}
+                      className="flex-shrink-0 flex flex-col items-center pt-3 pb-2 px-3 border transition-all"
+                      style={{
+                        minWidth: '80px',
+                        background: groupDate === d.key ? '#FFFFFF' : '#3D2A1E',
+                        borderColor: groupDate === d.key ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
+                        color: groupDate === d.key ? '#5C4031' : '#FFFFFF',
+                      }}>
+                      <span className="text-[8px] font-black tracking-widest">{d.dayShort}</span>
+                      <span className="text-2xl font-black leading-none my-0.5">{d.dayNum}</span>
+                      <span className="text-[8px]">{d.monthShort}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
               {/* Participants */}
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -771,29 +799,6 @@ export default function Booking() {
                         );
                       })()}
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Choisir le jour */}
-              <div>
-                <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white mb-3">Jour du rendez-vous</p>
-                <div className="no-scrollbar flex gap-2 overflow-x-auto pb-2">
-                  {dayWindow.filter(d => d.status === 'available').map(d => (
-                    <motion.button key={d.key} type="button"
-                      onClick={() => { setGroupDate(d.key); setGroupPeople(prev => prev.map(p => ({ ...p, slot: '' }))); }}
-                      whileHover={{ y: -3 }}
-                      className="flex-shrink-0 flex flex-col items-center pt-3 pb-2 px-3 border transition-all"
-                      style={{
-                        minWidth: '80px',
-                        background: groupDate === d.key ? '#FFFFFF' : '#3D2A1E',
-                        borderColor: groupDate === d.key ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
-                        color: groupDate === d.key ? '#5C4031' : '#FFFFFF',
-                      }}>
-                      <span className="text-[8px] font-black tracking-widest">{d.dayShort}</span>
-                      <span className="text-2xl font-black leading-none my-0.5">{d.dayNum}</span>
-                      <span className="text-[8px]">{d.monthShort}</span>
-                    </motion.button>
                   ))}
                 </div>
               </div>
