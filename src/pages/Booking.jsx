@@ -5,7 +5,8 @@ import { useBooking } from '../context/BookingContext';
 import { fetchAvailability, subscribeToAvailability } from '../api/availability';
 import { acquireLock, releaseLock } from '../api/slotLock';
 import { buildBusyRanges, generateDynamicSlots, filterPastSlots, OPEN_DAYS } from '../utils/timeSlots';
-import { createBatchBooking } from '../api/booking';
+import { createBatchBooking, createBooking } from '../api/booking';
+import { serviceCategories } from '../data/services';
 import { ScissorsIcon } from '../components/BarberIcons';
 
 /* ─── Day window builder ──────────────────────────────────── */
@@ -145,8 +146,18 @@ export default function Booking() {
 
   /* ── Mode multi-réservation ── */
   const [isMulti, setIsMulti]     = useState(false);
-  const [multiDates, setMultiDates] = useState([]);   // string[] de dateKeys
-  const [multiSlots, setMultiSlots] = useState({});   // { dateKey: slotTime }
+  const [multiDates, setMultiDates] = useState([]);
+  const [multiSlots, setMultiSlots] = useState({});
+
+  /* ── Mode groupe (famille / amis) ── */
+  const [isGroup, setIsGroup]   = useState(false);
+  const [groupDate, setGroupDate] = useState('');
+  const [groupPeople, setGroupPeople] = useState([
+    { id: 0, name: '', service: null, slot: '' }, // leader
+  ]);
+  const [isSubmittingGroup, setIsSubmittingGroup] = useState(false);
+  const ldk = (d) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  const allServices = serviceCategories.flatMap(c => c.services);
 
   const navigate = useNavigate();
 
@@ -283,6 +294,57 @@ export default function Booking() {
     catch (e) { setFormError(e instanceof Error ? e.message : 'Erreur. Réessaie.'); }
   };
 
+  /* ── Mode groupe : helpers ── */
+  const addGroupPerson = () =>
+    setGroupPeople(prev => [...prev, { id: Date.now(), name: '', service: null, slot: '' }]);
+
+  const removeGroupPerson = (id) =>
+    setGroupPeople(prev => prev.filter(p => p.id !== id));
+
+  const updateGroupPerson = (id, patch) =>
+    setGroupPeople(prev => prev.map(p => p.id === id ? { ...p, ...patch, slot: patch.service ? '' : p.slot } : p));
+
+  /* Créneaux dispo pour un participant — tient compte des slots déjà pris par les précédents */
+  const getGroupSlots = (index) => {
+    if (!rawData || !groupDate || !groupPeople[index]?.service) return [];
+    const baseBusy = buildBusyRanges(rawData.dateBookings[groupDate] || [], rawData.dateBlocks[groupDate] || []);
+    const prevBusy = buildBusyRanges(
+      groupPeople.slice(0, index).filter(p => p.slot && p.service).map(p => ({ time: p.slot, duration: p.service.duration })),
+      []
+    );
+    const allBusy = [...baseBusy, ...prevBusy].sort((a, b) => a.start - b.start);
+    const dateObj = rawData.days.find(d => ldk(d) === groupDate) ?? new Date(groupDate + 'T12:00:00');
+    return filterPastSlots(generateDynamicSlots(groupPeople[index].service.duration, allBusy), dateObj);
+  };
+
+  const handleGroupSubmit = async () => {
+    setFormError(null);
+    const incomplete = groupPeople.filter(p => !p.name.trim() || !p.service || !p.slot);
+    if (incomplete.length > 0) { setFormError('Chaque participant doit avoir un prénom, une prestation et un horaire.'); return; }
+    if (!state.clientInfo.name || !state.clientInfo.phone) { setFormError('Renseigne tes coordonnées.'); return; }
+
+    setIsSubmittingGroup(true);
+    try {
+      const results = [];
+      for (const p of groupPeople) {
+        const cn = await createBooking({
+          service:     p.service,
+          date:        groupDate,
+          time:        p.slot,
+          clientName:  p.name.trim(),
+          clientPhone: state.clientInfo.phone,
+          clientEmail: state.clientInfo.email,
+        });
+        results.push({ name: p.name, service: p.service.title, date: groupDate, time: p.slot, confirmationNumber: cn });
+      }
+      navigate('/confirmation', { state: { multiBookings: results, isGroup: true } });
+    } catch (e) {
+      setFormError(e instanceof Error ? e.message : 'Erreur. Réessaie.');
+    } finally {
+      setIsSubmittingGroup(false);
+    }
+  };
+
   /* ── Mode multi : basculer une date ── */
   const handleMultiToggleDate = (key) => {
     if (!rawData) return;
@@ -355,11 +417,29 @@ export default function Booking() {
   return (
     <div style={{ ...padTop, background: BG }} className="min-h-screen">
 
-      {/* ══ HEADER — steps + prestation ══ */}
+      {/* ══ HEADER — steps + prestation + toggles mode ══ */}
       <div className="border-b" style={{ background: BG2, borderColor: 'rgba(255,255,255,0.06)' }}>
         <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
           <div className="flex items-start justify-between mb-8">
             <Steps serviceOk={Boolean(state.selectedService)} dateOk={step1done} infoOk={step2done && step1done} />
+            {/* Toggles Solo / Multiple / Groupe */}
+            <div className="flex gap-1 shrink-0 ml-4">
+              {[
+                { label: 'Solo',     active: !isMulti && !isGroup, action: () => { setIsMulti(false); setIsGroup(false); setMultiDates([]); setMultiSlots({}); setGroupPeople([{id:0,name:'',service:null,slot:''}]); setGroupDate(''); }},
+                { label: 'Multiple', active: isMulti && !isGroup,  action: () => { setIsGroup(false); setIsMulti(true); setGroupDate(''); }},
+                { label: 'Groupe',   active: isGroup,               action: () => { setIsMulti(false); setIsGroup(true); setSelectedDate(''); setSelectedSlot(''); }},
+              ].map(t => (
+                <button key={t.label} onClick={t.action}
+                  className="px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.35em] border transition-all"
+                  style={{
+                    background: t.active ? '#FFFFFF' : 'transparent',
+                    color: t.active ? '#5C4031' : 'rgba(255,255,255,0.35)',
+                    borderColor: t.active ? '#FFFFFF' : 'rgba(255,255,255,0.15)',
+                  }}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
           <AnimatePresence mode="wait">
             {state.selectedService ? (
@@ -520,6 +600,169 @@ export default function Booking() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* ══ MODE GROUPE ════════════════════════════════════════ */}
+      <AnimatePresence>
+        {isGroup && rawData && (
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.4 }}
+            className="overflow-hidden">
+            <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 space-y-6">
+
+              {/* Participants */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white">Participants</p>
+                  {groupPeople.length < 8 && (
+                    <button onClick={addGroupPerson}
+                      className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.4em] border border-white/25 px-3 py-1.5 text-white hover:border-white/60 transition-colors">
+                      + Ajouter
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  {groupPeople.map((person, i) => (
+                    <div key={person.id} className="border p-4 relative"
+                         style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.08)' }}>
+                      {i > 0 && (
+                        <button onClick={() => removeGroupPerson(person.id)}
+                          className="absolute top-3 right-3 text-white/25 hover:text-red-400 transition-colors text-sm">✕</button>
+                      )}
+                      <p className="text-[8px] uppercase tracking-[0.5em] font-bold mb-3"
+                         style={{ color: 'rgba(255,255,255,0.30)' }}>
+                        {i === 0 ? 'Responsable' : `Participant ${i}`}
+                      </p>
+
+                      {/* Prénom */}
+                      <input
+                        value={person.name}
+                        onChange={e => updateGroupPerson(person.id, { name: e.target.value })}
+                        placeholder={i === 0 ? 'Prénom & nom' : 'Prénom'}
+                        className="w-full border px-4 py-2.5 text-white text-sm font-medium outline-none mb-3 transition-colors"
+                        style={{ background: '#2E1F14', borderColor: 'rgba(255,255,255,0.12)', placeholderColor: 'rgba(255,255,255,0.25)' }}
+                        onFocus={e => e.target.style.borderColor='rgba(255,255,255,0.45)'}
+                        onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'}
+                      />
+
+                      {/* Choix prestation */}
+                      <p className="text-[8px] uppercase tracking-[0.45em] font-bold mb-2"
+                         style={{ color: 'rgba(255,255,255,0.25)' }}>Prestation</p>
+                      <div className="flex flex-wrap gap-1.5 mb-3">
+                        {allServices.map(s => (
+                          <button key={s.id}
+                            onClick={() => updateGroupPerson(person.id, { service: s })}
+                            className="px-2.5 py-1 text-[9px] font-bold border transition-all"
+                            style={{
+                              background: person.service?.id === s.id ? '#FFFFFF' : 'transparent',
+                              color: person.service?.id === s.id ? '#5C4031' : 'rgba(255,255,255,0.55)',
+                              borderColor: person.service?.id === s.id ? '#FFFFFF' : 'rgba(255,255,255,0.18)',
+                            }}>
+                            {s.title} · {s.priceLabel}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Créneau (affiché après sélection de jour et prestation) */}
+                      {groupDate && person.service && (() => {
+                        const slots = getGroupSlots(i);
+                        return slots.length > 0 ? (
+                          <div>
+                            <p className="text-[8px] uppercase tracking-[0.45em] font-bold mb-2"
+                               style={{ color: 'rgba(255,255,255,0.25)' }}>Horaire</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {slots.map(slot => (
+                                <button key={slot}
+                                  onClick={() => updateGroupPerson(person.id, { slot })}
+                                  className="px-2.5 py-1.5 text-xs font-black border transition-all"
+                                  style={{
+                                    background: person.slot === slot ? '#FFFFFF' : '#2E1F14',
+                                    color: person.slot === slot ? '#5C4031' : 'rgba(255,255,255,0.65)',
+                                    borderColor: person.slot === slot ? '#FFFFFF' : 'rgba(255,255,255,0.15)',
+                                  }}>
+                                  {slot}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-xs" style={{ color: 'rgba(244,239,234,0.35)' }}>Aucun créneau disponible pour ce service ce jour-là.</p>
+                        );
+                      })()}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Choisir le jour */}
+              <div>
+                <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white mb-3">Jour du rendez-vous</p>
+                <div className="no-scrollbar flex gap-2 overflow-x-auto pb-2">
+                  {dayWindow.filter(d => d.status === 'available').map(d => (
+                    <motion.button key={d.key} type="button"
+                      onClick={() => { setGroupDate(d.key); setGroupPeople(prev => prev.map(p => ({ ...p, slot: '' }))); }}
+                      whileHover={{ y: -3 }}
+                      className="flex-shrink-0 flex flex-col items-center pt-3 pb-2 px-3 border transition-all"
+                      style={{
+                        minWidth: '80px',
+                        background: groupDate === d.key ? '#FFFFFF' : '#3D2A1E',
+                        borderColor: groupDate === d.key ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
+                        color: groupDate === d.key ? '#5C4031' : '#FFFFFF',
+                      }}>
+                      <span className="text-[8px] font-black tracking-widest">{d.dayShort}</span>
+                      <span className="text-2xl font-black leading-none my-0.5">{d.dayNum}</span>
+                      <span className="text-[8px]">{d.monthShort}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Formulaire contact */}
+              <div className="space-y-4">
+                <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white">Coordonnées du responsable</p>
+                {[
+                  { field: 'phone', type: 'tel',   label: 'Téléphone', placeholder: '06 12 34 56 78', val: state.clientInfo.phone },
+                  { field: 'email', type: 'email', label: 'Email',     placeholder: 'jean@example.com', val: state.clientInfo.email },
+                ].map(({ field, type, label, placeholder, val }) => (
+                  <label key={field} className="block">
+                    <span className="block text-[9px] uppercase tracking-[0.45em] text-white font-black mb-2">{label}</span>
+                    <input type={type} value={val}
+                      onChange={e => setClientInfo({ ...state.clientInfo, [field]: e.target.value })}
+                      placeholder={placeholder}
+                      className="w-full border px-5 py-4 text-white text-sm font-medium outline-none transition-colors"
+                      style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.12)' }}
+                      onFocus={e => e.target.style.borderColor='rgba(255,255,255,0.50)'}
+                      onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'}
+                    />
+                  </label>
+                ))}
+
+                {formError && (
+                  <div className="flex items-start gap-3 border-l-4 border-red-500 bg-red-500/10 px-4 py-3">
+                    <span className="text-red-400 font-black">!</span>
+                    <p className="text-sm text-red-300 font-medium">{formError}</p>
+                  </div>
+                )}
+
+                <div className="border p-4 text-sm font-medium" style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(244,239,234,0.50)' }}>
+                  Paiement sur place · Espèces ou chèque · Confirmation par email et SMS
+                </div>
+
+                <motion.button type="button" onClick={handleGroupSubmit}
+                  disabled={isSubmittingGroup}
+                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                  className="w-full py-5 text-[10px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-2.5 transition-all"
+                  style={{ background: isSubmittingGroup ? 'rgba(255,255,255,0.06)' : '#FFFFFF', color: '#5C4031' }}>
+                  {isSubmittingGroup
+                    ? <><motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}><ScissorsIcon className="w-4 h-4" /></motion.span> En cours…</>
+                    : <><ScissorsIcon className="w-4 h-4" /> Confirmer {groupPeople.length} réservation{groupPeople.length > 1 ? 's' : ''}</>
+                  }
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ══ ÉTAPE 02 — HORAIRE (mode simple uniquement) ══ */}
       <AnimatePresence>
