@@ -144,13 +144,25 @@ export default function Booking() {
   const [timeLeft, setTimeLeft]       = useState(0);
   const [lockError, setLockError]     = useState('');
 
+  /* ── Choix du mode (null = pas encore choisi) ── */
+  const [bookingMode, setBookingMode] = useState(null); // 'solo' | 'multi' | 'group'
+
+  const isMulti = bookingMode === 'multi';
+  const isGroup = bookingMode === 'group';
+
+  const resetMode = () => {
+    setBookingMode(null);
+    setMultiDates([]); setMultiSlots({});
+    setGroupPeople([{id:0,name:'',service:null,slot:''}]); setGroupDate('');
+    setSelectedDate(''); setSelectedSlot('');
+    setFormError(null);
+  };
+
   /* ── Mode multi-réservation ── */
-  const [isMulti, setIsMulti]     = useState(false);
   const [multiDates, setMultiDates] = useState([]);
   const [multiSlots, setMultiSlots] = useState({});
 
   /* ── Mode groupe (famille / amis) ── */
-  const [isGroup, setIsGroup]   = useState(false);
   const [groupDate, setGroupDate] = useState('');
   const [groupPeople, setGroupPeople] = useState([
     { id: 0, name: '', service: null, slot: '' }, // leader
@@ -417,29 +429,99 @@ export default function Booking() {
   return (
     <div style={{ ...padTop, background: BG }} className="min-h-screen">
 
-      {/* ══ HEADER — steps + prestation + toggles mode ══ */}
-      <div className="border-b" style={{ background: BG2, borderColor: 'rgba(255,255,255,0.06)' }}>
-        <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
-          <div className="flex items-start justify-between mb-8">
-            <Steps serviceOk={Boolean(state.selectedService)} dateOk={step1done} infoOk={step2done && step1done} />
-            {/* Toggles Solo / Multiple / Groupe */}
-            <div className="flex gap-1 shrink-0 ml-4">
+      {/* ══ SÉLECTION DU MODE (affiché en premier si pas encore choisi) ══ */}
+      <AnimatePresence>
+        {!bookingMode && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.45 }}
+            className="mx-auto max-w-4xl px-6 sm:px-10 py-12 sm:py-16">
+
+            <motion.p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-3 text-center"
+              style={{ color: 'rgba(255,255,255,0.35)' }}>
+              Je réserve pour…
+            </motion.p>
+            <motion.h2 className="font-black uppercase text-white text-center mb-10 tracking-[-0.02em]"
+              style={{ fontSize: 'clamp(1.6rem, 4vw, 2.8rem)' }}>
+              Choisissez votre type de réservation
+            </motion.h2>
+
+            <div className="grid gap-4 sm:grid-cols-3">
               {[
-                { label: 'Solo',     active: !isMulti && !isGroup, action: () => { setIsMulti(false); setIsGroup(false); setMultiDates([]); setMultiSlots({}); setGroupPeople([{id:0,name:'',service:null,slot:''}]); setGroupDate(''); }},
-                { label: 'Multiple', active: isMulti && !isGroup,  action: () => { setIsGroup(false); setIsMulti(true); setGroupDate(''); }},
-                { label: 'Groupe',   active: isGroup,               action: () => { setIsMulti(false); setIsGroup(true); setSelectedDate(''); setSelectedSlot(''); }},
-              ].map(t => (
-                <button key={t.label} onClick={t.action}
-                  className="px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.35em] border transition-all"
-                  style={{
-                    background: t.active ? '#FFFFFF' : 'transparent',
-                    color: t.active ? '#5C4031' : 'rgba(255,255,255,0.35)',
-                    borderColor: t.active ? '#FFFFFF' : 'rgba(255,255,255,0.15)',
-                  }}>
-                  {t.label}
-                </button>
+                {
+                  mode: 'solo',
+                  icon: '✂',
+                  title: 'Moi seul',
+                  desc: 'Je réserve un créneau pour une prestation.',
+                  sub: 'Un seul RDV',
+                },
+                {
+                  mode: 'multi',
+                  icon: '📅',
+                  title: 'Plusieurs dates',
+                  desc: 'Je veux réserver le même service sur plusieurs semaines.',
+                  sub: 'Jusqu\'à 6 dates',
+                },
+                {
+                  mode: 'group',
+                  icon: '👥',
+                  title: 'En groupe',
+                  desc: 'Famille, amis — chacun choisit sa prestation et son horaire.',
+                  sub: 'Jusqu\'à 8 personnes',
+                },
+              ].map((opt, i) => (
+                <motion.button key={opt.mode} type="button"
+                  onClick={() => setBookingMode(opt.mode)}
+                  className="flex flex-col items-start gap-4 p-6 sm:p-8 border text-left group transition-all duration-300 hover:bg-white"
+                  style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.10)' }}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  whileHover={{ borderColor: '#FFFFFF' }}>
+                  <span className="text-2xl">{opt.icon}</span>
+                  <div>
+                    <p className="font-black uppercase text-white text-base tracking-[-0.01em] group-hover:text-dark transition-colors duration-300">
+                      {opt.title}
+                    </p>
+                    <p className="text-sm mt-1 leading-6 font-medium transition-colors duration-300 group-hover:text-dark/60"
+                       style={{ color: 'rgba(244,239,234,0.50)' }}>
+                      {opt.desc}
+                    </p>
+                  </div>
+                  <span className="text-[9px] uppercase tracking-[0.45em] font-bold px-2 py-1 border transition-colors duration-300 group-hover:border-dark/20 group-hover:text-dark/50"
+                        style={{ color: 'rgba(255,255,255,0.35)', borderColor: 'rgba(255,255,255,0.15)' }}>
+                    {opt.sub}
+                  </span>
+                </motion.button>
               ))}
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ══ HEADER — steps + prestation (affiché après sélection du mode) ══ */}
+      <AnimatePresence>
+        {bookingMode && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <div className="border-b" style={{ background: BG2, borderColor: 'rgba(255,255,255,0.06)' }}>
+        <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
+          <div className="flex items-start justify-between mb-6">
+            {bookingMode !== 'group' && (
+              <Steps serviceOk={Boolean(state.selectedService)} dateOk={step1done} infoOk={step2done && step1done} />
+            )}
+            {bookingMode === 'group' && (
+              <div>
+                <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white/40">Mode groupe</p>
+                <p className="text-sm font-black text-white mt-0.5">Réservation familiale / amis</p>
+              </div>
+            )}
+            <button onClick={resetMode}
+              className="text-[8px] uppercase tracking-[0.4em] font-bold transition-colors shrink-0 ml-4"
+              style={{ color: 'rgba(255,255,255,0.35)' }}
+              onMouseEnter={e => e.target.style.color='#FFFFFF'}
+              onMouseLeave={e => e.target.style.color='rgba(255,255,255,0.35)'}>
+              ← Changer
+            </button>
           </div>
           <AnimatePresence mode="wait">
             {state.selectedService ? (
@@ -472,23 +554,13 @@ export default function Booking() {
       {/* ══ ÉTAPE 01 — JOUR ══ */}
       <div className="border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
-          {/* Header + toggle multi */}
+          {/* Header step 01 */}
           <div className="flex items-center gap-4 mb-4">
             <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>01</span>
             <span className="block h-px flex-1 bg-white/10" />
-            <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">Choisissez votre jour</h2>
-            {/* Toggle multi */}
-            <button
-              onClick={() => { setIsMulti(m => !m); setMultiDates([]); setMultiSlots({}); setSelectedDate(''); setSelectedSlot(''); }}
-              className="flex items-center gap-2 text-[8px] uppercase tracking-[0.35em] font-bold transition-colors ml-2"
-              style={{ color: isMulti ? '#FFFFFF' : 'rgba(255,255,255,0.35)' }}>
-              <span className="relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors"
-                    style={{ background: isMulti ? '#FFFFFF' : 'rgba(255,255,255,0.20)' }}>
-                <span className="absolute top-0.5 h-3 w-3 rounded-full transition-all"
-                      style={{ background: '#5C4031', left: isMulti ? '14px' : '2px' }} />
-              </span>
-              Multiple
-            </button>
+            <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">
+              {isMulti ? 'Choisissez vos jours' : 'Choisissez votre jour'}
+            </h2>
           </div>
 
           {/* Onglets mois — navigation rapide */}
@@ -998,6 +1070,9 @@ export default function Booking() {
           </div>
         </div>
       </div>
+        </motion.div>
+      )}
+      </AnimatePresence>
     </div>
   );
 }
