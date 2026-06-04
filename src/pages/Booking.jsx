@@ -416,21 +416,24 @@ export default function Booking() {
   const step1done = Boolean(selectedDate && selectedSlot);
   const step2done = Boolean(state.clientInfo.name && state.clientInfo.phone);
 
-  if (loading) return (
-    <div className="min-h-screen bg-dark flex flex-col items-center justify-center gap-5" style={padTop}>
+  /* Ne bloquer sur le loading/error QUE si le client a déjà choisi un mode.
+     La sélection de mode s'affiche immédiatement sans attendre les dispo. */
+  if (bookingMode && loading) return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-5" style={{ ...padTop, background: '#5C4031' }}>
       <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
-        <ScissorsIcon className="w-10 h-10 text-brand" />
+        <ScissorsIcon className="w-10 h-10 text-white/60" />
       </motion.div>
       <p className="text-[9px] font-bold uppercase tracking-[0.5em] text-white/40">Chargement des créneaux…</p>
     </div>
   );
 
-  if (loadError) return (
-    <div className="min-h-screen bg-dark flex items-center justify-center px-6" style={padTop}>
+  if (bookingMode && loadError) return (
+    <div className="min-h-screen flex items-center justify-center px-6" style={{ ...padTop, background: '#5C4031' }}>
       <div className="text-center max-w-sm">
         <p className="text-lg font-black text-white mb-2">Impossible de charger les disponibilités</p>
-        <button onClick={() => window.location.reload()}
-          className="mt-6 inline-flex items-center gap-2 bg-brand px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.35em] text-dark">
+        <button type="button" onClick={() => window.location.reload()}
+          className="mt-6 inline-flex items-center gap-2 bg-white px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.35em]"
+          style={{ color: '#5C4031' }}>
           Réessayer
         </button>
       </div>
