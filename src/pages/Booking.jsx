@@ -443,25 +443,27 @@ export default function Booking() {
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.45 }}
-            className="mx-auto max-w-4xl px-6 sm:px-10 py-12 sm:py-16">
+            className="mx-auto max-w-5xl px-6 sm:px-10 py-16 sm:py-20">
 
-            <motion.p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-3 text-center"
-              style={{ color: 'rgba(255,255,255,0.35)' }}>
+            <motion.p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-2 text-center"
+              style={{ color: 'rgba(255,255,255,0.40)' }}>
               Je réserve pour…
             </motion.p>
-            <motion.h2 className="font-black uppercase text-white text-center mb-10 tracking-[-0.02em]"
-              style={{ fontSize: 'clamp(1.6rem, 4vw, 2.8rem)' }}>
+            <motion.h2 className="font-black uppercase text-white text-center mb-12 sm:mb-16 tracking-[-0.02em]"
+              style={{ fontSize: 'clamp(1.8rem, 5vw, 3.2rem)' }}>
               Choisissez votre type de réservation
             </motion.h2>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-3">
               {[
                 {
                   mode: 'solo',
-                  icon: '✂',
+                  icon: '✂️',
                   title: 'Moi seul',
                   desc: 'Je réserve un créneau pour une prestation.',
                   sub: 'Un seul RDV',
+                  bgColor: '#405568',
+                  accentColor: '#FFFFFF',
                 },
                 {
                   mode: 'multi',
@@ -469,6 +471,8 @@ export default function Booking() {
                   title: 'Plusieurs dates',
                   desc: 'Je veux réserver le même service sur plusieurs semaines.',
                   sub: 'Jusqu\'à 6 dates',
+                  bgColor: '#3D2A1E',
+                  accentColor: '#405568',
                 },
                 {
                   mode: 'group',
@@ -476,32 +480,72 @@ export default function Booking() {
                   title: 'En groupe',
                   desc: 'Famille, amis — chacun choisit sa prestation et son horaire.',
                   sub: 'Jusqu\'à 8 personnes',
+                  bgColor: '#405568',
+                  accentColor: '#F4EFEA',
                 },
               ].map((opt, i) => (
                 <motion.button key={opt.mode} type="button"
                   onClick={() => setBookingMode(opt.mode)}
-                  className="flex flex-col items-start gap-4 p-6 sm:p-8 border text-left group transition-all duration-300 hover:bg-white"
-                  style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.10)' }}
+                  className="relative overflow-hidden flex flex-col items-start gap-5 p-7 sm:p-8 border text-left group transition-all duration-300"
+                  style={{
+                    background: opt.bgColor,
+                    borderColor: 'rgba(255,255,255,0.15)',
+                    borderWidth: '1px',
+                  }}
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  whileHover={{ borderColor: '#FFFFFF' }}>
-                  <span className="text-2xl">{opt.icon}</span>
-                  <div>
-                    <p className="font-black uppercase text-white text-base tracking-[-0.01em] group-hover:text-dark transition-colors duration-300">
+                  whileHover={{
+                    borderColor: '#FFFFFF',
+                    boxShadow: '0 20px 40px rgba(64, 85, 104, 0.25)',
+                    y: -4,
+                  }}>
+                  
+                  {/* Background accent */}
+                  <div className="absolute top-0 right-0 opacity-5 text-[120px] pointer-events-none"
+                       style={{ color: opt.accentColor }}>
+                    {opt.icon}
+                  </div>
+
+                  {/* Icon */}
+                  <span className="text-3xl sm:text-4xl relative z-10">{opt.icon}</span>
+
+                  {/* Content */}
+                  <div className="relative z-10 flex-1">
+                    <p className="font-black uppercase text-base sm:text-lg tracking-[-0.01em] mb-2 transition-colors duration-300"
+                       style={{ color: opt.accentColor }}>
                       {opt.title}
                     </p>
-                    <p className="text-sm mt-1 leading-6 font-medium transition-colors duration-300 group-hover:text-dark/60"
-                       style={{ color: 'rgba(244,239,234,0.50)' }}>
+                    <p className="text-sm leading-relaxed font-medium transition-colors duration-300"
+                       style={{ color: 'rgba(255,255,255,0.60)' }}>
                       {opt.desc}
                     </p>
                   </div>
-                  <span className="text-[9px] uppercase tracking-[0.45em] font-bold px-2 py-1 border transition-colors duration-300 group-hover:border-dark/20 group-hover:text-dark/50"
-                        style={{ color: 'rgba(255,255,255,0.35)', borderColor: 'rgba(255,255,255,0.15)' }}>
+
+                  {/* Badge */}
+                  <div className="flex items-center gap-2 text-[9px] uppercase tracking-[0.45em] font-black px-3 py-1.5 border transition-all duration-300 relative z-10"
+                       style={{
+                         color: opt.accentColor,
+                         borderColor: opt.accentColor,
+                         background: `${opt.accentColor}11`,
+                       }}>
+                    <span>✓</span>
                     {opt.sub}
-                  </span>
+                  </div>
+
+                  {/* Hover line */}
+                  <div className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-500"
+                       style={{ background: opt.accentColor }} />
                 </motion.button>
               ))}
+            </div>
+
+            {/* Info footer */}
+            <div className="mt-12 sm:mt-16 pt-8 border-t border-white/10">
+              <p className="text-center text-[9px] uppercase tracking-[0.4em] font-bold"
+                 style={{ color: 'rgba(255,255,255,0.30)' }}>
+                Chaque option offre une expérience de réservation adaptée à vos besoins
+              </p>
             </div>
           </motion.div>
         )}
