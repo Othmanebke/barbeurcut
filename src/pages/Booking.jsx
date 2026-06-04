@@ -693,157 +693,248 @@ export default function Booking() {
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.4 }}
             className="overflow-hidden">
-            <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 space-y-6">
+            <div className="mx-auto max-w-5xl px-6 sm:px-10 py-8 sm:py-10">
 
-              {/* Choisir le jour (EN HAUT) */}
-              <div>
-                <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white mb-3">Jour du rendez-vous</p>
-                <div className="no-scrollbar flex gap-2 overflow-x-auto pb-2">
-                  {dayWindow.filter(d => d.status === 'available').map(d => (
-                    <motion.button key={d.key} type="button"
-                      onClick={() => { setGroupDate(d.key); setGroupPeople(prev => prev.map(p => ({ ...p, slot: '' }))); }}
-                      whileHover={{ y: -3 }}
-                      className="flex-shrink-0 flex flex-col items-center pt-3 pb-2 px-3 border transition-all"
-                      style={{
-                        minWidth: '80px',
-                        background: groupDate === d.key ? '#FFFFFF' : '#3D2A1E',
-                        borderColor: groupDate === d.key ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
-                        color: groupDate === d.key ? '#5C4031' : '#FFFFFF',
-                      }}>
-                      <span className="text-[8px] font-black tracking-widest">{d.dayShort}</span>
-                      <span className="text-2xl font-black leading-none my-0.5">{d.dayNum}</span>
-                      <span className="text-[8px]">{d.monthShort}</span>
-                    </motion.button>
-                  ))}
+              {/* Header Groupe */}
+              <div className="mb-8">
+                <p className="text-[9px] uppercase tracking-[0.6em] font-bold text-white/40 mb-2">Mode groupe</p>
+                <h2 className="text-[1.8rem] sm:text-[2.2rem] font-black text-white tracking-[-0.02em] mb-6">
+                  Réservation familiale / amis
+                </h2>
+
+                {/* Jour du rendez-vous */}
+                <div>
+                  <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white mb-3">Sélectionnez la date</p>
+                  <div className="no-scrollbar flex gap-2 overflow-x-auto pb-3">
+                    {dayWindow.filter(d => d.status === 'available').map(d => (
+                      <motion.button key={d.key} type="button"
+                        onClick={() => { setGroupDate(d.key); setGroupPeople(prev => prev.map(p => ({ ...p, slot: '' }))); }}
+                        whileHover={{ y: -4 }}
+                        whileTap={{ scale: 0.96 }}
+                        className="flex-shrink-0 flex flex-col items-center gap-1 p-3 border transition-all"
+                        style={{
+                          minWidth: '88px',
+                          background: groupDate === d.key ? '#FFFFFF' : '#3D2A1E',
+                          borderColor: groupDate === d.key ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
+                        }}>
+                        <span className="text-[7px] font-black tracking-[0.4em]" style={{ color: groupDate === d.key ? '#5C4031' : 'rgba(255,255,255,0.50)' }}>
+                          {d.dayShort}
+                        </span>
+                        <span className="text-[1.8rem] font-black leading-none" style={{ color: groupDate === d.key ? '#5C4031' : '#FFFFFF' }}>
+                          {d.dayNum}
+                        </span>
+                        <span className="text-[7px] font-medium" style={{ color: groupDate === d.key ? 'rgba(92,64,49,0.60)' : 'rgba(244,239,234,0.40)' }}>
+                          {d.monthShort}
+                        </span>
+                      </motion.button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Participants */}
+              {/* Participants Section */}
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white">Participants</p>
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <p className="text-[9px] uppercase tracking-[0.6em] font-bold text-white/40 mb-1">Participants</p>
+                    <p className="text-sm font-black text-white">{groupPeople.length} / 8</p>
+                  </div>
                   {groupPeople.length < 8 && (
-                    <button onClick={addGroupPerson}
-                      className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.4em] border border-white/25 px-3 py-1.5 text-white hover:border-white/60 transition-colors">
-                      + Ajouter
-                    </button>
+                    <motion.button onClick={addGroupPerson}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] border border-white/30 px-4 py-2.5 text-white hover:border-white/70 transition-colors"
+                      style={{ background: 'rgba(255,255,255,0.04)' }}>
+                      ✚ Ajouter
+                    </motion.button>
                   )}
                 </div>
 
-                <div className="space-y-3">
-                  {groupPeople.map((person, i) => (
-                    <div key={person.id} className="border p-4 relative"
-                         style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.08)' }}>
-                      {i > 0 && (
-                        <button onClick={() => removeGroupPerson(person.id)}
-                          className="absolute top-3 right-3 text-white/25 hover:text-red-400 transition-colors text-sm">✕</button>
-                      )}
-                      <p className="text-[8px] uppercase tracking-[0.5em] font-bold mb-3"
-                         style={{ color: 'rgba(255,255,255,0.30)' }}>
-                        {i === 0 ? 'Responsable' : `Participant ${i}`}
-                      </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {groupPeople.map((person, i) => {
+                    const isComplete = person.name.trim() && person.service && person.slot;
+                    const progress = [person.name.trim(), person.service, person.slot].filter(Boolean).length;
+                    return (
+                      <motion.div 
+                        key={person.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="relative overflow-hidden border group transition-all"
+                        style={{
+                          background: isComplete ? 'rgba(255,255,255,0.04)' : '#3D2A1E',
+                          borderColor: isComplete ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.08)',
+                          borderLeft: isComplete ? '3px solid #FFFFFF' : '3px solid transparent',
+                        }}>
+                        
+                        {/* Number badge */}
+                        <div className="absolute top-3 left-3 flex h-6 w-6 items-center justify-center text-[9px] font-black"
+                             style={{ background: '#FFFFFF', color: '#5C4031' }}>
+                          {i + 1}
+                        </div>
 
-                      {/* Prénom */}
-                      <input
-                        value={person.name}
-                        onChange={e => updateGroupPerson(person.id, { name: e.target.value })}
-                        placeholder={i === 0 ? 'Prénom & nom' : 'Prénom'}
-                        className="w-full border px-4 py-2.5 text-white text-sm font-medium outline-none mb-3 transition-colors"
-                        style={{ background: '#2E1F14', borderColor: 'rgba(255,255,255,0.12)', placeholderColor: 'rgba(255,255,255,0.25)' }}
-                        onFocus={e => e.target.style.borderColor='rgba(255,255,255,0.45)'}
-                        onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'}
-                      />
-
-                      {/* Choix prestation */}
-                      <p className="text-[8px] uppercase tracking-[0.45em] font-bold mb-2"
-                         style={{ color: 'rgba(255,255,255,0.25)' }}>Prestation</p>
-                      <div className="flex flex-wrap gap-1.5 mb-3">
-                        {allServices.map(s => (
-                          <button key={s.id}
-                            onClick={() => updateGroupPerson(person.id, { service: s })}
-                            className="px-2.5 py-1 text-[9px] font-bold border transition-all"
-                            style={{
-                              background: person.service?.id === s.id ? '#FFFFFF' : 'transparent',
-                              color: person.service?.id === s.id ? '#5C4031' : 'rgba(255,255,255,0.55)',
-                              borderColor: person.service?.id === s.id ? '#FFFFFF' : 'rgba(255,255,255,0.18)',
-                            }}>
-                            {s.title} · {s.priceLabel}
+                        {/* Remove button */}
+                        {i > 0 && (
+                          <button onClick={() => removeGroupPerson(person.id)}
+                            className="absolute top-3 right-3 text-white/25 hover:text-red-400 transition-colors font-black text-lg">
+                            ✕
                           </button>
-                        ))}
-                      </div>
+                        )}
 
-                      {/* Créneau (affiché après sélection de jour et prestation) */}
-                      {groupDate && person.service && (() => {
-                        const slots = getGroupSlots(i);
-                        return slots.length > 0 ? (
+                        {/* Label */}
+                        <p className="text-[7px] uppercase tracking-[0.4em] font-black px-3 pt-3 pb-2"
+                           style={{ color: 'rgba(255,255,255,0.30)' }}>
+                          {i === 0 ? '🔑 Responsable' : `👤 Invité ${i}`}
+                        </p>
+
+                        <div className="px-3 pb-3 space-y-2">
+                          {/* Prénom */}
                           <div>
-                            <p className="text-[8px] uppercase tracking-[0.45em] font-bold mb-2"
-                               style={{ color: 'rgba(255,255,255,0.25)' }}>Horaire</p>
-                            <div className="flex flex-wrap gap-1.5">
-                              {slots.map(slot => (
-                                <button key={slot}
-                                  onClick={() => updateGroupPerson(person.id, { slot })}
-                                  className="px-2.5 py-1.5 text-xs font-black border transition-all"
+                            <label className="block text-[7px] uppercase tracking-[0.35em] font-bold mb-1"
+                                   style={{ color: 'rgba(255,255,255,0.25)' }}>Prénom</label>
+                            <input
+                              value={person.name}
+                              onChange={e => updateGroupPerson(person.id, { name: e.target.value })}
+                              placeholder={i === 0 ? 'Jean Dupont' : 'Marie'}
+                              className="w-full text-sm border px-2.5 py-2 outline-none font-medium transition-all"
+                              style={{
+                                background: '#2E1F14',
+                                borderColor: person.name.trim() ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.08)',
+                                color: '#FFFFFF',
+                              }}
+                              onFocus={e => e.target.style.borderColor='rgba(255,255,255,0.50)'}
+                              onBlur={e => e.target.style.borderColor = person.name.trim() ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.08)'}
+                            />
+                          </div>
+
+                          {/* Prestation */}
+                          <div>
+                            <p className="text-[7px] uppercase tracking-[0.35em] font-bold mb-1.5"
+                               style={{ color: 'rgba(255,255,255,0.25)' }}>Service</p>
+                            <div className="flex flex-wrap gap-1">
+                              {allServices.map(s => (
+                                <button key={s.id}
+                                  onClick={() => updateGroupPerson(person.id, { service: s })}
+                                  className="px-2 py-1.5 text-[7px] font-black border transition-all truncate"
                                   style={{
-                                    background: person.slot === slot ? '#FFFFFF' : '#2E1F14',
-                                    color: person.slot === slot ? '#5C4031' : 'rgba(255,255,255,0.65)',
-                                    borderColor: person.slot === slot ? '#FFFFFF' : 'rgba(255,255,255,0.15)',
+                                    background: person.service?.id === s.id ? '#FFFFFF' : 'transparent',
+                                    color: person.service?.id === s.id ? '#5C4031' : 'rgba(255,255,255,0.50)',
+                                    borderColor: person.service?.id === s.id ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
                                   }}>
-                                  {slot}
+                                  {s.title}
                                 </button>
                               ))}
                             </div>
                           </div>
-                        ) : (
-                          <p className="text-xs" style={{ color: 'rgba(244,239,234,0.35)' }}>Aucun créneau disponible pour ce service ce jour-là.</p>
-                        );
-                      })()}
-                    </div>
-                  ))}
+
+                          {/* Créneau */}
+                          {groupDate && person.service && (() => {
+                            const slots = getGroupSlots(i);
+                            return (
+                              <div>
+                                <p className="text-[7px] uppercase tracking-[0.35em] font-bold mb-1.5"
+                                   style={{ color: 'rgba(255,255,255,0.25)' }}>Horaire</p>
+                                {slots.length > 0 ? (
+                                  <div className="flex flex-wrap gap-1">
+                                    {slots.map(slot => (
+                                      <button key={slot}
+                                        onClick={() => updateGroupPerson(person.id, { slot })}
+                                        className="px-2 py-1.5 text-[7px] font-black border transition-all"
+                                        style={{
+                                          background: person.slot === slot ? '#FFFFFF' : '#2E1F14',
+                                          color: person.slot === slot ? '#5C4031' : 'rgba(255,255,255,0.60)',
+                                          borderColor: person.slot === slot ? '#FFFFFF' : 'rgba(255,255,255,0.12)',
+                                        }}>
+                                        {slot}
+                                      </button>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <p className="text-[7px]" style={{ color: 'rgba(244,239,234,0.30)' }}>Pas de créneau</p>
+                                )}
+                              </div>
+                            );
+                          })()}
+                        </div>
+
+                        {/* Progress bar */}
+                        <div className="h-1 bg-white/10 w-full mt-2">
+                          <motion.div
+                            animate={{ width: `${(progress / 3) * 100}%` }}
+                            transition={{ duration: 0.3 }}
+                            className="h-full"
+                            style={{ background: isComplete ? '#FFFFFF' : 'rgba(255,255,255,0.30)' }}
+                          />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Formulaire contact */}
-              <div className="space-y-4">
-                <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white">Coordonnées du responsable</p>
-                {[
-                  { field: 'phone', type: 'tel',   label: 'Téléphone', placeholder: '06 12 34 56 78', val: state.clientInfo.phone },
-                  { field: 'email', type: 'email', label: 'Email',     placeholder: 'jean@example.com', val: state.clientInfo.email },
-                ].map(({ field, type, label, placeholder, val }) => (
-                  <label key={field} className="block">
-                    <span className="block text-[9px] uppercase tracking-[0.45em] text-white font-black mb-2">{label}</span>
-                    <input type={type} value={val}
-                      onChange={e => setClientInfo({ ...state.clientInfo, [field]: e.target.value })}
-                      placeholder={placeholder}
-                      className="w-full border px-5 py-4 text-white text-sm font-medium outline-none transition-colors"
-                      style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.12)' }}
-                      onFocus={e => e.target.style.borderColor='rgba(255,255,255,0.50)'}
-                      onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'}
-                    />
-                  </label>
-                ))}
+              {/* Coordonnées + Submit */}
+              <div className="mt-8 border-t border-white/10 pt-8">
+                <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+                  
+                  {/* Contact Info */}
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-[9px] uppercase tracking-[0.55em] font-bold text-white mb-3">Coordonnées du responsable</p>
+                      <div className="space-y-3">
+                        {[
+                          { field: 'phone', type: 'tel',   label: 'Téléphone', placeholder: '06 12 34 56 78', val: state.clientInfo.phone },
+                          { field: 'email', type: 'email', label: 'Email',     placeholder: 'jean@example.com', val: state.clientInfo.email },
+                        ].map(({ field, type, label, placeholder, val }) => (
+                          <label key={field} className="block">
+                            <span className="block text-[9px] uppercase tracking-[0.4em] text-white/50 font-bold mb-2">{label}</span>
+                            <input type={type} value={val}
+                              onChange={e => setClientInfo({ ...state.clientInfo, [field]: e.target.value })}
+                              placeholder={placeholder}
+                              className="w-full border px-4 py-3 text-white text-sm font-medium outline-none transition-colors"
+                              style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.12)' }}
+                              onFocus={e => e.target.style.borderColor='rgba(255,255,255,0.50)'}
+                              onBlur={e => e.target.style.borderColor='rgba(255,255,255,0.12)'}
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    </div>
 
-                {formError && (
-                  <div className="flex items-start gap-3 border-l-4 border-red-500 bg-red-500/10 px-4 py-3">
-                    <span className="text-red-400 font-black">!</span>
-                    <p className="text-sm text-red-300 font-medium">{formError}</p>
+                    {formError && (
+                      <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                        className="flex items-start gap-3 border-l-4 border-red-500 bg-red-500/10 px-4 py-3">
+                        <span className="text-red-400 font-black shrink-0">!</span>
+                        <p className="text-sm text-red-300 font-medium">{formError}</p>
+                      </motion.div>
+                    )}
+
+                    <div className="border p-3 text-xs font-medium" style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(244,239,234,0.50)' }}>
+                      💳 Paiement sur place · 💰 Espèces ou chèque · 📧 Confirmation par email et SMS
+                    </div>
                   </div>
-                )}
 
-                <div className="border p-4 text-sm font-medium" style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(244,239,234,0.50)' }}>
-                  Paiement sur place · Espèces ou chèque · Confirmation par email et SMS
+                  {/* Submit Button */}
+                  <div className="flex flex-col gap-3 lg:justify-end">
+                    <motion.button type="button" onClick={handleGroupSubmit}
+                      disabled={isSubmittingGroup}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="w-full py-4 text-[10px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-2 transition-all"
+                      style={{
+                        background: isSubmittingGroup ? 'rgba(255,255,255,0.06)' : '#FFFFFF',
+                        color: '#5C4031',
+                      }}>
+                      {isSubmittingGroup
+                        ? <><motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}><ScissorsIcon className="w-4 h-4" /></motion.span> En cours…</>
+                        : <><ScissorsIcon className="w-4 h-4" /> Confirmer {groupPeople.length} réservation{groupPeople.length > 1 ? 's' : ''}</>
+                      }
+                    </motion.button>
+                    <p className="text-[8px] text-center font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                      Chaque personne doit être complète
+                    </p>
+                  </div>
                 </div>
-
-                <motion.button type="button" onClick={handleGroupSubmit}
-                  disabled={isSubmittingGroup}
-                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                  className="w-full py-5 text-[10px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-2.5 transition-all"
-                  style={{ background: isSubmittingGroup ? 'rgba(255,255,255,0.06)' : '#FFFFFF', color: '#5C4031' }}>
-                  {isSubmittingGroup
-                    ? <><motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}><ScissorsIcon className="w-4 h-4" /></motion.span> En cours…</>
-                    : <><ScissorsIcon className="w-4 h-4" /> Confirmer {groupPeople.length} réservation{groupPeople.length > 1 ? 's' : ''}</>
-                  }
-                </motion.button>
               </div>
             </div>
           </motion.div>
