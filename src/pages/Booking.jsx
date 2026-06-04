@@ -269,12 +269,6 @@ export default function Booking() {
     return filterPastSlots(generateDynamicSlots(serviceDuration, busy), date);
   }, [rawData, selectedDate, serviceDuration]);
 
-  /* Slots pré-calculés pour chaque participant du groupe */
-  const allGroupSlots = useMemo(() => {
-    if (!rawData || !groupDate) return groupPeople.map(() => []);
-    return groupPeople.map((_, i) => getGroupSlots(i));
-  }, [rawData, groupDate, groupPeople, getGroupSlots]);
-
   /* Onglets de navigation rapide par mois */
   const months = useMemo(() => {
     const seen = new Set();
@@ -342,6 +336,12 @@ export default function Booking() {
     const dateObj = rawData.days.find(d => ldk(d) === groupDate) ?? new Date(groupDate + 'T12:00:00');
     return filterPastSlots(generateDynamicSlots(groupPeople[index].service.duration, allBusy), dateObj);
   }, [rawData, groupDate, groupPeople]);
+
+  /* allGroupSlots — déclaré APRÈS getGroupSlots pour éviter la TDZ */
+  const allGroupSlots = useMemo(() => {
+    if (!rawData || !groupDate) return groupPeople.map(() => []);
+    return groupPeople.map((_, i) => getGroupSlots(i));
+  }, [rawData, groupDate, groupPeople, getGroupSlots]);
 
   const handleGroupSubmit = async () => {
     setFormError(null);
