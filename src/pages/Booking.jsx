@@ -451,61 +451,127 @@ export default function Booking() {
         <motion.div
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
-          className="mx-auto max-w-4xl px-6 sm:px-10 py-14 sm:py-20">
+          className="relative mx-auto max-w-5xl px-6 sm:px-10 py-14 sm:py-20 overflow-hidden">
 
-          <p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-3"
-             style={{ color: 'rgba(255,255,255,0.35)' }}>
-            Je réserve pour…
-          </p>
-          <h2 className="font-black uppercase text-white mb-10 tracking-[-0.03em]"
-              style={{ fontSize: 'clamp(1.6rem, 4vw, 2.8rem)' }}>
-            Choisissez votre type de réservation
-          </h2>
+          {/* Watermark WONDER */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+            <p className="font-black uppercase leading-none tracking-[-0.05em]"
+               style={{ fontSize: 'clamp(12rem, 50vw, 36rem)', color: 'rgba(244,239,234,0.028)' }}>
+              WONDER
+            </p>
+          </div>
 
-          {/* Rangées style Engagements */}
-          <div className="border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+          {/* Header */}
+          <div className="relative z-10 mb-10 sm:mb-14">
+            <motion.p className="text-[9px] uppercase tracking-[0.6em] font-bold mb-3"
+              style={{ color: 'rgba(255,255,255,0.35)' }}
+              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}>
+              Je réserve pour…
+            </motion.p>
+            <div className="overflow-hidden">
+              <motion.h2 className="font-black uppercase text-white tracking-[-0.04em] leading-none"
+                style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)' }}
+                initial={{ y: '100%' }} animate={{ y: 0 }}
+                transition={{ duration: 0.8, delay: 0.15, ease: [0.22,1,0.36,1] }}>
+                Choisissez votre
+              </motion.h2>
+            </div>
+            <div className="overflow-hidden">
+              <motion.h2 className="font-black uppercase tracking-[-0.04em] leading-none"
+                style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)', color: 'rgba(255,255,255,0.25)' }}
+                initial={{ y: '100%' }} animate={{ y: 0 }}
+                transition={{ duration: 0.8, delay: 0.25, ease: [0.22,1,0.36,1] }}>
+                réservation
+              </motion.h2>
+            </div>
+          </div>
+
+          {/* 3 cartes couleur */}
+          <div className="relative z-10 grid gap-4 sm:grid-cols-3">
             {[
-              { num: '01', mode: 'solo',  title: 'Pour moi seul',   desc: 'Un seul créneau pour une prestation.',                                        tag: 'Solo' },
-              { num: '02', mode: 'multi', title: 'Plusieurs dates',  desc: 'Même service réservé sur plusieurs semaines à venir.',                       tag: 'Jusqu\'à 6 dates' },
-              { num: '03', mode: 'group', title: 'En groupe',        desc: 'Famille, amis — chacun choisit son service et son horaire le même jour.', tag: 'Jusqu\'à 8 personnes' },
+              {
+                num: '01', mode: 'solo',
+                title: 'Pour moi seul',
+                desc: 'Un créneau, une prestation. Simple et rapide.',
+                tag: 'Solo',
+                bg: '#F4EFEA', textColor: '#5C4031', descColor: 'rgba(92,64,49,0.55)',
+                numColor: 'rgba(92,64,49,0.12)', tagBg: 'rgba(92,64,49,0.10)', tagBorder: 'rgba(92,64,49,0.20)', tagColor: 'rgba(92,64,49,0.55)',
+                arrowColor: 'rgba(92,64,49,0.30)', hoverBg: '#E8E0D8',
+              },
+              {
+                num: '02', mode: 'multi',
+                title: 'Plusieurs dates',
+                desc: 'Le même service réservé sur plusieurs semaines.',
+                tag: 'Jusqu\'à 6 dates',
+                bg: '#405568', textColor: '#FFFFFF', descColor: 'rgba(244,239,234,0.60)',
+                numColor: 'rgba(255,255,255,0.08)', tagBg: 'rgba(255,255,255,0.08)', tagBorder: 'rgba(255,255,255,0.15)', tagColor: 'rgba(255,255,255,0.55)',
+                arrowColor: 'rgba(255,255,255,0.30)', hoverBg: '#344558',
+              },
+              {
+                num: '03', mode: 'group',
+                title: 'En groupe',
+                desc: 'Famille, amis — chacun son service et son horaire.',
+                tag: 'Jusqu\'à 8 personnes',
+                bg: '#3D2A1E', textColor: '#FFFFFF', descColor: 'rgba(244,239,234,0.55)',
+                numColor: 'rgba(255,255,255,0.05)', tagBg: 'rgba(255,255,255,0.06)', tagBorder: 'rgba(255,255,255,0.12)', tagColor: 'rgba(255,255,255,0.45)',
+                arrowColor: 'rgba(255,255,255,0.25)', hoverBg: '#2E1F14',
+              },
             ].map((opt, i) => (
               <motion.button key={opt.mode} type="button"
                 onClick={() => setBookingMode(opt.mode)}
-                className="group relative flex items-center gap-6 sm:gap-10 py-8 sm:py-10 w-full text-left border-b transition-all duration-300"
-                style={{ borderColor: 'rgba(255,255,255,0.06)', background: '#3D2A1E' }}
-                whileHover={{ backgroundColor: '#2E1F14' }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.55, delay: i * 0.1 }}>
+                className="group relative overflow-hidden flex flex-col justify-between text-left transition-all duration-300"
+                style={{ background: opt.bg, minHeight: '260px', padding: '28px' }}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 + i * 0.12, ease: [0.22,1,0.36,1] }}
+                whileHover={{ backgroundColor: opt.hoverBg, y: -6, boxShadow: '0 20px 50px rgba(0,0,0,0.25)' }}>
 
-                {/* Barre gauche au hover */}
-                <motion.div className="absolute left-0 top-0 bottom-0 w-[3px] bg-white origin-top"
-                  initial={{ scaleY: 0 }}
-                  whileHover={{ scaleY: 1 }}
-                  transition={{ duration: 0.3 }} />
-
-                <span className="text-[9px] font-black uppercase tracking-[0.6em] shrink-0 pl-4 sm:pl-6"
-                      style={{ color: 'rgba(255,255,255,0.22)' }}>
+                {/* Numéro fantôme */}
+                <div className="absolute right-2 bottom-0 font-black leading-none pointer-events-none select-none"
+                     style={{ fontSize: '9rem', color: opt.numColor }}>
                   {opt.num}
-                </span>
+                </div>
 
-                <div className="flex-1 min-w-0">
-                  <p className="font-black uppercase text-white tracking-[-0.02em] group-hover:text-white/80 transition-colors"
-                     style={{ fontSize: 'clamp(1.1rem, 3vw, 1.8rem)' }}>
+                {/* Top: numéro + flèche */}
+                <div className="flex items-start justify-between mb-6">
+                  <span className="text-[9px] font-black uppercase tracking-[0.6em]"
+                        style={{ color: opt.arrowColor }}>
+                    {opt.num}
+                  </span>
+                  <motion.span className="text-lg transition-all duration-300"
+                    style={{ color: opt.arrowColor }}
+                    whileHover={{ x: 4 }}>
+                    →
+                  </motion.span>
+                </div>
+
+                {/* Titre + desc */}
+                <div className="flex-1 relative z-10">
+                  <h3 className="font-black uppercase tracking-[-0.03em] leading-tight mb-3"
+                      style={{ fontSize: 'clamp(1.3rem, 3vw, 1.7rem)', color: opt.textColor }}>
                     {opt.title}
-                  </p>
-                  <p className="text-sm font-medium mt-1 leading-6"
-                     style={{ color: 'rgba(244,239,234,0.45)' }}>
+                  </h3>
+                  <p className="text-sm font-medium leading-6"
+                     style={{ color: opt.descColor }}>
                     {opt.desc}
                   </p>
                 </div>
 
-                <span className="text-[8px] font-bold uppercase tracking-[0.4em] border px-3 py-1 shrink-0 hidden sm:block mr-2"
-                      style={{ color: 'rgba(255,255,255,0.30)', borderColor: 'rgba(255,255,255,0.12)' }}>
-                  {opt.tag}
-                </span>
+                {/* Badge bas */}
+                <div className="mt-6 relative z-10">
+                  <span className="inline-flex text-[8px] font-bold uppercase tracking-[0.4em] border px-3 py-1.5"
+                        style={{ background: opt.tagBg, borderColor: opt.tagBorder, color: opt.tagColor }}>
+                    {opt.tag}
+                  </span>
+                </div>
 
-                <span className="text-white/25 group-hover:text-white transition-colors text-base shrink-0 pr-4 sm:pr-6">→</span>
+                {/* Ligne bas au hover */}
+                <motion.div className="absolute bottom-0 left-0 right-0 h-[3px] origin-left"
+                  style={{ background: opt.textColor }}
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.35 }} />
               </motion.button>
             ))}
           </div>
