@@ -164,6 +164,7 @@ export default function Booking() {
 
   /* ── Mode groupe (famille / amis) ── */
   const [groupDate, setGroupDate] = useState('');
+  const [collapsedIds, setCollapsedIds] = useState(new Set()); // IDs des participants "classés"
   const [groupPeople, setGroupPeople] = useState([
     { id: 0, name: '', service: null, slot: '' }, // leader
   ]);
@@ -337,6 +338,18 @@ export default function Booking() {
     return filterPastSlots(generateDynamicSlots(groupPeople[index].service.duration, allBusy), dateObj);
   }, [rawData, groupDate, groupPeople]);
 
+  /* Auto-collapse quand un participant est complet */
+  useEffect(() => {
+    groupPeople.forEach(p => {
+      if (p.name.trim() && p.service && p.slot && !collapsedIds.has(p.id)) {
+        const timer = setTimeout(() => {
+          setCollapsedIds(prev => new Set([...prev, p.id]));
+        }, 800);
+        return () => clearTimeout(timer);
+      }
+    });
+  }, [groupPeople]);
+
   /* allGroupSlots — déclaré APRÈS getGroupSlots pour éviter la TDZ */
   const allGroupSlots = useMemo(() => {
     if (!rawData || !groupDate) return groupPeople.map(() => []);
@@ -444,22 +457,25 @@ export default function Booking() {
   const BG2 = '#3D2A1E';
 
   return (
-    <div style={{ ...padTop, background: BG }} className="min-h-screen">
+    <div style={{ ...padTop, background: BG }} className="min-h-screen relative">
+
+      {/* ══ WONDER watermark — PLEINE PAGE, hors conteneur max-width ══ */}
+      {!bookingMode && (
+        <div className="fixed inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden" style={{ zIndex: 0 }}>
+          <p className="font-black uppercase leading-none tracking-[-0.05em]"
+             style={{ fontSize: 'clamp(18rem, 65vw, 55rem)', color: 'rgba(244,239,234,0.025)' }}>
+            WONDER
+          </p>
+        </div>
+      )}
 
       {/* ══ SÉLECTION DU MODE ══════════════════════════════════ */}
       {!bookingMode && (
         <motion.div
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
-          className="relative mx-auto max-w-5xl px-6 sm:px-10 py-14 sm:py-20 overflow-hidden">
-
-          {/* Watermark WONDER */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-            <p className="font-black uppercase leading-none tracking-[-0.05em]"
-               style={{ fontSize: 'clamp(12rem, 50vw, 36rem)', color: 'rgba(244,239,234,0.028)' }}>
-              WONDER
-            </p>
-          </div>
+          className="relative mx-auto max-w-5xl px-6 sm:px-10 py-14 sm:py-20"
+          style={{ zIndex: 1 }}>
 
           {/* Header */}
           <div className="relative z-10 mb-10 sm:mb-14">
@@ -634,12 +650,12 @@ export default function Booking() {
       <AnimatePresence>
         {!isGroup && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-      <div className="border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+      {/* ÉTAPE 01 — fond denim */}
+      <div className="border-b" style={{ background: '#405568', borderColor: 'rgba(255,255,255,0.08)' }}>
         <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
-          {/* Header step 01 */}
           <div className="flex items-center gap-4 mb-4">
-            <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>01</span>
-            <span className="block h-px flex-1 bg-white/10" />
+            <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.45)' }}>01</span>
+            <span className="block h-px flex-1 bg-white/15" />
             <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">
               {isMulti ? 'Choisissez vos jours' : 'Choisissez votre jour'}
             </h2>
@@ -821,12 +837,58 @@ export default function Booking() {
                   )}
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-2">
                   {groupPeople.map((person, i) => {
-                    const isComplete = person.name.trim() && person.service && person.slot;
+                    const isComplete = Boolean(person.name.trim() && person.service && person.slot);
+                    const isCollapsed = collapsedIds.has(person.id) && isComplete;
                     const progress = [person.name.trim(), person.service, person.slot].filter(Boolean).length;
+
+                    /* ── VUE CLASSÉE (collapsed) ── */
+                    if (isCollapsed) return (
+                      <motion.div key={person.id} layout
+                        initial={{ opacity: 0, x: 60 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+                        className="relative flex items-center gap-4 px-5 py-4 cursor-pointer"
+                        style={{
+                          background: i === 0 ? '#405568' : '#3D2A1E',
+                          borderLeft: '3px solid #FFFFFF',
+                          border: `1px solid rgba(255,255,255,${i === 0 ? '0.25' : '0.12'})`,
+                        }}
+                        onClick={() => setCollapsedIds(prev => { const n = new Set(prev); n.delete(person.id); return n; })}>
+
+                        {/* Numéro */}
+                        <div className="flex items-center justify-center shrink-0 font-black text-[9px]"
+                             style={{ width: 32, height: 32, background: '#FFFFFF', color: '#5C4031' }}>
+                          {String(i + 1).padStart(2, '0')}
+                        </div>
+
+                        {/* Infos */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-black text-white text-sm truncate">{person.name}</p>
+                          <p className="text-xs font-medium truncate" style={{ color: 'rgba(244,239,234,0.50)' }}>
+                            {person.service?.title} · {person.slot}
+                          </p>
+                        </div>
+
+                        {/* Coche + modifier */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <motion.div
+                            className="flex items-center justify-center border border-white/40"
+                            style={{ width: 24, height: 24 }}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}>
+                            <span className="text-white text-xs font-black">✓</span>
+                          </motion.div>
+                          <span className="text-white/30 text-[9px] font-bold uppercase tracking-widest">✎</span>
+                        </div>
+                      </motion.div>
+                    );
+
+                    /* ── VUE ÉTENDUE (normal) ── */
                     return (
-                      <motion.div 
+                      <motion.div
                         key={person.id}
                         layout
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -834,9 +896,9 @@ export default function Booking() {
                         exit={{ opacity: 0, scale: 0.95 }}
                         className="relative overflow-hidden border group transition-all"
                         style={{
-                          background: isComplete ? 'rgba(255,255,255,0.04)' : '#3D2A1E',
-                          borderColor: isComplete ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.08)',
-                          borderLeft: isComplete ? '3px solid #FFFFFF' : '3px solid transparent',
+                          background: '#3D2A1E',
+                          borderColor: 'rgba(255,255,255,0.08)',
+                          borderLeft: '3px solid transparent',
                         }}>
                         
                         {/* Number badge */}
@@ -1014,7 +1076,7 @@ export default function Booking() {
         {!isMulti && selectedDate && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-b" style={{ borderColor: 'rgba(255,255,255,0.06)', background: BG2 }}>
+            className="overflow-hidden border-b" style={{ borderColor: 'rgba(255,255,255,0.06)', background: '#3D2A1E' }}>
             <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
               <div className="flex items-center gap-4 mb-6">
                 <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>02</span>
@@ -1056,11 +1118,11 @@ export default function Booking() {
         {((!isMulti && selectedSlot) || (isMulti && multiDates.length > 0 && multiDates.every(d => multiSlots[d]))) && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden">
+            className="overflow-hidden" style={{ background: '#405568' }}>
             <div className="mx-auto max-w-4xl px-6 sm:px-10 py-8 sm:py-10">
               <div className="flex items-center gap-4 mb-8">
-                <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.35)' }}>03</span>
-                <span className="block h-px flex-1 bg-white/10" />
+                <span className="text-[9px] uppercase tracking-[0.6em] font-bold" style={{ color: 'rgba(255,255,255,0.45)' }}>03</span>
+                <span className="block h-px flex-1 bg-white/15" />
                 <h2 className="text-[10px] font-black uppercase tracking-[0.45em] text-white">Tes informations</h2>
               </div>
 
