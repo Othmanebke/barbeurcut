@@ -458,7 +458,7 @@ export default function Booking() {
               {[
                 {
                   mode: 'solo',
-                  icon: '✂️',
+                  icon: '✂',
                   title: 'Moi seul',
                   desc: 'Je réserve un créneau pour une prestation.',
                   sub: 'Un seul RDV',
@@ -467,7 +467,7 @@ export default function Booking() {
                 },
                 {
                   mode: 'multi',
-                  icon: '📅',
+                  icon: '☰',
                   title: 'Plusieurs dates',
                   desc: 'Je veux réserver le même service sur plusieurs semaines.',
                   sub: 'Jusqu\'à 6 dates',
@@ -476,7 +476,7 @@ export default function Booking() {
                 },
                 {
                   mode: 'group',
-                  icon: '👥',
+                  icon: '◉',
                   title: 'En groupe',
                   desc: 'Famille, amis — chacun choisit sa prestation et son horaire.',
                   sub: 'Jusqu\'à 8 personnes',
@@ -508,7 +508,9 @@ export default function Booking() {
                   </div>
 
                   {/* Icon */}
-                  <span className="text-3xl sm:text-4xl relative z-10">{opt.icon}</span>
+                  <div className="flex items-center justify-center w-12 h-12 border-2 relative z-10" style={{ borderColor: opt.accentColor, color: opt.accentColor }}>
+                    <span className="text-2xl font-black">{opt.icon}</span>
+                  </div>
 
                   {/* Content */}
                   <div className="relative z-10 flex-1">
@@ -529,7 +531,7 @@ export default function Booking() {
                          borderColor: opt.accentColor,
                          background: `${opt.accentColor}11`,
                        }}>
-                    <span>✓</span>
+                    <span>●</span>
                     {opt.sub}
                   </div>
 
@@ -789,7 +791,7 @@ export default function Booking() {
                       whileTap={{ scale: 0.95 }}
                       className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] border border-white/30 px-4 py-2.5 text-white hover:border-white/70 transition-colors"
                       style={{ background: 'rgba(255,255,255,0.04)' }}>
-                      ✚ Ajouter
+                      + Ajouter
                     </motion.button>
                   )}
                 </div>
@@ -822,14 +824,14 @@ export default function Booking() {
                         {i > 0 && (
                           <button onClick={() => removeGroupPerson(person.id)}
                             className="absolute top-3 right-3 text-white/25 hover:text-red-400 transition-colors font-black text-lg">
-                            ✕
+                            ×
                           </button>
                         )}
 
                         {/* Label */}
                         <p className="text-[7px] uppercase tracking-[0.4em] font-black px-3 pt-3 pb-2"
                            style={{ color: 'rgba(255,255,255,0.30)' }}>
-                          {i === 0 ? '🔑 Responsable' : `👤 Invité ${i}`}
+                          {i === 0 ? '◆ Responsable' : `◇ Invité ${i}`}
                         </p>
 
                         <div className="px-3 pb-3 space-y-2">
@@ -954,7 +956,7 @@ export default function Booking() {
                     )}
 
                     <div className="border p-3 text-xs font-medium" style={{ background: '#3D2A1E', borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(244,239,234,0.50)' }}>
-                      💳 Paiement sur place · 💰 Espèces ou chèque · 📧 Confirmation par email et SMS
+                      ◆ Paiement sur place · ◊ Espèces ou chèque · ◯ Confirmation par email et SMS
                     </div>
                   </div>
 
