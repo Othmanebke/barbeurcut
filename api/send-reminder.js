@@ -44,10 +44,13 @@ export default async function handler(req, res) {
     process.env.SUPABASE_SERVICE_ROLE_KEY,
   );
 
-  /* Date de demain */
+  /* Date de demain — heure locale (même fix que Booking.jsx pour éviter le décalage UTC) */
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+  const tomorrowStr =
+    tomorrow.getFullYear() + '-' +
+    String(tomorrow.getMonth() + 1).padStart(2, '0') + '-' +
+    String(tomorrow.getDate()).padStart(2, '0');
 
   /* Récupérer les RDV confirmés pour demain */
   const { data: appts, error } = await supabase
