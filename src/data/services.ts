@@ -26,7 +26,7 @@ export const serviceCategories: ServiceCategory[] = [
         price: 20,
         priceLabel: '20€',
         description: 'Consultation, lavage, coupe ciseaux ou tondeuse, finition au rasoir sur les contours.',
-        duration: 25,
+        duration: 20,
         cites: [],
       },
       {
@@ -44,7 +44,7 @@ export const serviceCategories: ServiceCategory[] = [
         price: 25,
         priceLabel: '25€',
         description: 'Coupe + rasage du visage en gardant uniquement le bouc, contours nets au rasoir.',
-        duration: 25,
+        duration: 30,
         cites: [],
       },
       {
@@ -78,7 +78,7 @@ export const serviceCategories: ServiceCategory[] = [
         price: 13,
         priceLabel: '13€',
         description: 'Peignage, taille à la longueur voulue, contours définis au rasoir ou tondeuse.',
-        duration: 15,
+        duration: 20,
         cites: [],
       },
       {
