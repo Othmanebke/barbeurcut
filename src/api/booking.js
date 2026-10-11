@@ -57,21 +57,26 @@ export async function createBooking({ service, date, time, clientName, clientPho
 
   if (insertError) throw new Error(insertError.message);
 
-  /* 3. Envoyer les SMS via Vercel API route (non-bloquant) */
+  /* 3. Emails + SMS via Vercel API route (non-bloquant).
+        keepalive : la requête survit à la navigation / mise en arrière-plan sur mobile */
   fetch('/api/send-sms', {
     method: 'POST',
+    keepalive: true,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       clientPhone,
-      clientEmail,
+      clientEmail:       clientEmail?.trim() || undefined,
       clientName,
       serviceTitle:      service.title,
       servicePriceLabel: service.priceLabel,
+      serviceDuration:   service.duration ?? 30,
       date,
       time,
       confirmationNumber,
     }),
-  }).catch(err => console.warn('Notification non-critical:', err));
+  })
+    .then(async r => { if (!r.ok) console.warn('Notification failed:', await r.text()); })
+    .catch(err => console.warn('Notification non-critical:', err));
 
   return confirmationNumber;
 }
