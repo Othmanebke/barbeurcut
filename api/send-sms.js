@@ -8,7 +8,7 @@
 
 const ADDRESS_LINE1 = '1 Rue de la Madeleine';
 const ADDRESS_LINE2 = '77170 Brie-Comte-Robert';
-const SITE_URL      = 'https://barbeurcut.vercel.app';
+const SITE_URL      = 'https://s-wonder.vercel.app';
 const MAPS_URL      = 'https://www.google.com/maps/search/?api=1&query=' +
                       encodeURIComponent(`${ADDRESS_LINE1}, ${ADDRESS_LINE2}`);
 
@@ -274,16 +274,6 @@ export default async function handler(req, res) {
         const match = senders.find(s => s.email?.toLowerCase() === SENDER_EMAIL?.toLowerCase());
         out.sender = match ? { found: true, active: match.active } : { found: false, count: senders.length };
       } catch (e) { out.sender = { error: e.message }; }
-      out.senderDomain = SENDER_EMAIL?.split('@')[1];
-      try {
-        const { events = [] } = await brevo(BREVO_KEY, '/smtp/statistics/events?limit=30&days=7');
-        out.events = events.map(e => ({
-          date:   e.date,
-          event:  e.event,
-          reason: e.reason,
-          to:     e.email?.replace(/^(.{2}).*@/, '$1***@'),
-        }));
-      } catch (e) { out.events = { error: e.message }; }
     }
     return res.status(200).json(out);
   }
