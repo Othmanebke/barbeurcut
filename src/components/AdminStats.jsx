@@ -20,6 +20,18 @@ function addMonths(d, n) { return new Date(d.getFullYear(), d.getMonth() + n, 1)
 function monthLabel(d, opts = { month: 'long', year: 'numeric' }) {
   return d.toLocaleDateString('fr-FR', opts);
 }
+/* RDV de test ignorés dans les stats :
+   - les tests du lancement (mai 2026), par identifiant exact ;
+   - à l'avenir, tout RDV dont le nom contient « test ». */
+const TEST_BOOKING_IDS = new Set([
+  'fe3b516e-7970-4867-b4a2-0059262c4a0e', '65acf397-6dca-4e19-89f4-24f82fe295d8',
+  'ef33fd6e-a364-47fd-b80c-8605a0c60fb6', 'f8bf2c7e-19ac-4059-996a-01c286087b4a',
+  'ee3144ba-1a11-42d8-809a-baf29d089f64', '318085d6-d7c0-4419-aaca-313252b92931',
+  'd2e36684-9be7-4a29-8d02-f60edd4ec023', 'cc9b3a71-8a7d-4ef7-9463-f65ce26a41ec',
+  'fc1eb90d-30d1-4710-82de-90d0a69ad87d', '8f3c2db8-80e3-40fd-89ed-26e3e2187cc5',
+]);
+const isTestBooking = (a) => TEST_BOOKING_IDS.has(a.id) || /test/i.test(a.client_name ?? '');
+
 const euro = (n) => `${Math.round(n).toLocaleString('fr-FR')} €`;
 const price = (a) => a.service_price ?? 0;
 
@@ -78,7 +90,10 @@ export default function AdminStats() {
 
   const load = useCallback(async () => {
     setError('');
-    try { setAppts(await fetchAppointmentsRange({ from: rangeFrom, to: rangeTo })); }
+    try {
+      const all = await fetchAppointmentsRange({ from: rangeFrom, to: rangeTo });
+      setAppts(all.filter(a => !isTestBooking(a)));
+    }
     catch (e) { setError(e.message); }
     finally { setLoading(false); }
   }, [rangeFrom, rangeTo]);
