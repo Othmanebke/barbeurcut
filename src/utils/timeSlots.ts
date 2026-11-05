@@ -2,6 +2,14 @@
 
 export const OPEN_DAYS = new Set([3, 4, 5, 6]); // mer jeu ven sam
 
+/* Jours « sur demande » : fermés par défaut, réservables uniquement
+   quand le barbier les ouvre depuis le dashboard (mardi). */
+export const ON_DEMAND_DAYS = new Set([2]);
+
+/* Raison d'un bloc journée entière qui OUVRE un jour sur demande
+   (au lieu de le fermer). */
+export const OPEN_REASON = 'Ouvert';
+
 const OPEN_MINUTES  = 10 * 60;       // 10:00
 const CLOSE_MINUTES = 19 * 60 + 30;  // 19:30
 

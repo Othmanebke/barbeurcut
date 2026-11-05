@@ -16,6 +16,13 @@ export default {
         muted:     'rgba(244,239,234,0.50)',
         beige:     '#6A5A4E',   // bordures subtiles
         white:     '#FFFFFF',
+        /* Dashboard clair (beige) */
+        sand:      '#F4EFEA',   // fond dashboard
+        paper:     '#FAF6F1',   // en-têtes de cartes
+        line:      '#E4D9CD',   // bordures
+        ink:       '#2E1F14',   // texte principal
+        inkSoft:   '#6A5A4E',   // texte secondaire
+        bark:      '#5C4031',   // accent marron (boutons)
       },
       borderRadius: {
         none:    '0',

@@ -1,4 +1,4 @@
-import { OPEN_DAYS } from '../utils/timeSlots';
+import { OPEN_DAYS, ON_DEMAND_DAYS, OPEN_REASON } from '../utils/timeSlots';
 import { supabase, SUPABASE_READY } from '../lib/supabase';
 
 export const SALON = {
@@ -26,9 +26,9 @@ function openDayRange(count = 14) {
 
 /* ── Supabase : retourne les bookings bruts + blocs par date ─ */
 async function fetchFromSupabase() {
-  const days      = openDayRange(60);
-  const startDate = dayKey(days[0]);
-  const endDate   = dayKey(days[days.length - 1]);
+  const baseDays  = openDayRange(60);
+  const startDate = dayKey(baseDays[0]);
+  const endDate   = dayKey(baseDays[baseDays.length - 1]);
 
   const [{ data: booked }, { data: blocks }, { data: locks }] = await Promise.all([
     supabase
@@ -39,7 +39,7 @@ async function fetchFromSupabase() {
       .lte('date', endDate),
     supabase
       .from('availability_blocks')
-      .select('date, time, end_time')
+      .select('date, time, end_time, reason')
       .gte('date', startDate)
       .lte('date', endDate),
     supabase
@@ -54,6 +54,7 @@ async function fetchFromSupabase() {
   const dateBookings = {};
   const dateBlocks   = {};
   const fullDayOff   = new Set();
+  const openedDays   = new Set(); // jours sur demande ouverts par le barbier
 
   for (const b of (booked ?? [])) {
     if (!dateBookings[b.date]) dateBookings[b.date] = [];
@@ -67,10 +68,24 @@ async function fetchFromSupabase() {
   }
 
   for (const bl of (blocks ?? [])) {
-    if (!bl.time) { fullDayOff.add(bl.date); continue; }
+    if (!bl.time) {
+      if (bl.reason === OPEN_REASON) openedDays.add(bl.date);
+      else fullDayOff.add(bl.date);
+      continue;
+    }
     if (!dateBlocks[bl.date]) dateBlocks[bl.date] = [];
     dateBlocks[bl.date].push({ time: bl.time, endTime: bl.end_time });
   }
+
+  // Ajoute les jours sur demande (mardi) que le barbier a ouverts
+  const extraDays = [];
+  for (const d = new Date(baseDays[0]); dayKey(d) <= endDate; d.setDate(d.getDate() + 1)) {
+    const k = dayKey(d);
+    if (ON_DEMAND_DAYS.has(d.getDay()) && openedDays.has(k) && !fullDayOff.has(k)) {
+      extraDays.push(new Date(d));
+    }
+  }
+  const days = [...baseDays, ...extraDays].sort((a, b) => a - b);
 
   return { salon: SALON, days, dateBookings, dateBlocks, fullDayOff };
 }

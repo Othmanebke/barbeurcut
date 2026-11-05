@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBooking } from '../context/BookingContext';
 import { fetchAvailability, subscribeToAvailability } from '../api/availability';
 import { acquireLock, releaseLock } from '../api/slotLock';
-import { buildBusyRanges, generateDynamicSlots, filterPastSlots, OPEN_DAYS } from '../utils/timeSlots';
+import { buildBusyRanges, generateDynamicSlots, filterPastSlots } from '../utils/timeSlots';
 import { createBatchBooking, createBooking } from '../api/booking';
 import { serviceCategories } from '../data/services';
 import { ScissorsIcon } from '../components/BarberIcons';
@@ -13,9 +13,9 @@ import { ScissorsIcon } from '../components/BarberIcons';
 function buildDayWindow(days, fullDayOff, dateBookings, dateBlocks, serviceDuration) {
   return days.map((date) => {
     const k   = date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
-    const dow = date.getDay();
     let status;
-    if (!OPEN_DAYS.has(dow) || fullDayOff.has(k)) {
+    // `days` ne contient que les jours ouverts (mer–sam + mardis ouverts par le barbier)
+    if (fullDayOff.has(k)) {
       status = 'ferme';
     } else {
       const busy  = buildBusyRanges(dateBookings[k] || [], dateBlocks[k] || []);
@@ -187,7 +187,7 @@ export default function Booking() {
       } else {
         // Si le jour sélectionné vient d'être bloqué par le barbier → clear
         const cur = selectedDateRef.current;
-        if (cur && fullDayOff.has(cur)) {
+        if (cur && (fullDayOff.has(cur) || !days.some(d => ldk(d) === cur))) {
           setSelectedDate('');
           setSelectedSlot('');
           setLockError('Ce jour vient d\'être fermé par le barbier. Choisis une autre date.');

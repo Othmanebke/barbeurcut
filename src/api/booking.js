@@ -1,4 +1,5 @@
 import { supabase, SUPABASE_READY } from '../lib/supabase';
+import { ON_DEMAND_DAYS, OPEN_REASON } from '../utils/timeSlots';
 
 function generateConfirmationNumber() {
   return `WC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -17,11 +18,14 @@ export async function createBooking({ service, date, time, clientName, clientPho
   /* 1a. Vérifier que le barbier n'a pas bloqué ce jour ou ce créneau */
   const { data: blocks } = await supabase
     .from('availability_blocks')
-    .select('time')
+    .select('time, reason')
     .eq('date', date);
 
-  const isAdminBlocked = (blocks ?? []).some(b => !b.time || b.time === time);
-  if (isAdminBlocked) {
+  const dayBlocks        = blocks ?? [];
+  const isOpenedByBarber = dayBlocks.some(b => !b.time && b.reason === OPEN_REASON);
+  const isAdminBlocked   = dayBlocks.some(b => (!b.time && b.reason !== OPEN_REASON) || b.time === time);
+  const isOnDemandDay    = ON_DEMAND_DAYS.has(new Date(date + 'T12:00:00').getDay());
+  if (isAdminBlocked || (isOnDemandDay && !isOpenedByBarber)) {
     throw new Error('Ce créneau n\'est plus disponible. Le barbier a fermé cette plage horaire.');
   }
 
@@ -115,6 +119,28 @@ export async function fetchAppointments({ from, to }) {
     .order('time');
   if (error) throw new Error(error.message);
   return data ?? [];
+}
+
+/* ── RDV sur une période longue (stats) — pagine au-delà de 1000 lignes ── */
+export async function fetchAppointmentsRange({ from, to }) {
+  if (!SUPABASE_READY) return [];
+  const PAGE = 1000;
+  const all = [];
+  for (let offset = 0; ; offset += PAGE) {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select('id, client_name, client_phone, service_id, service_title, service_price, service_price_label, service_duration, date, time, confirmation_number, created_at')
+      .gte('date', from)
+      .lte('date', to)
+      .eq('status', 'confirmed')
+      .order('date')
+      .order('time')
+      .range(offset, offset + PAGE - 1);
+    if (error) throw new Error(error.message);
+    all.push(...(data ?? []));
+    if (!data || data.length < PAGE) break;
+  }
+  return all;
 }
 
 /* ── Bloquer un créneau / journée — RPC admin ───────────────── */
