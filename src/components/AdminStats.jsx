@@ -183,7 +183,7 @@ export default function AdminStats() {
               sub={<DeltaBadge value={delta(stats.count, stats.prevCount)} />} />
             <Kpi label="Panier moyen" value={euro(stats.avg)}
               sub={<span className="text-[10px] font-bold text-cream/50">par RDV avec tarif</span>} />
-            <Kpi label={isCurrentMonth ? 'Encaissé / à venir' : 'Réalisé'}
+            <Kpi label={isCurrentMonth ? 'Réalisé / à venir' : 'Réalisé'}
               value={euro(stats.doneRev)}
               sub={<span className="text-[10px] font-bold text-cream/50">
                 {stats.upcomingRev > 0 ? `+ ${euro(stats.upcomingRev)} à venir` : 'tous RDV passés'}

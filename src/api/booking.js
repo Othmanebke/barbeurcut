@@ -135,6 +135,7 @@ export async function fetchAppointmentsRange({ from, to }) {
       .eq('status', 'confirmed')
       .order('date')
       .order('time')
+      .order('id')
       .range(offset, offset + PAGE - 1);
     if (error) throw new Error(error.message);
     all.push(...(data ?? []));

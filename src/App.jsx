@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import Layout from './components/Layout';
-import CustomCursor from './components/CustomCursor';
 import CookieBanner from './components/CookieBanner';
 import SplashLoader from './components/SplashLoader';
 import { BookingProvider } from './context/BookingContext';
@@ -24,7 +23,6 @@ export default function App() {
   return (
     <BrowserRouter>
       <BookingProvider>
-        <CustomCursor />
         <CookieBanner />
         <Suspense fallback={<SplashLoader />}>
           <Routes>

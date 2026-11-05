@@ -36,11 +36,6 @@ button, input, select, textarea { font: inherit; }
 
 #root { min-height: 100vh; }
 
-/* ── Custom cursor — desktop only ── */
-@media (pointer: fine) {
-  *, *::before, *::after { cursor: none !important; }
-}
-
 .cursor-dot {
   position: fixed;
   top: -5px;
