@@ -45,26 +45,26 @@ function PinScreen({ onSuccess }) {
   return (
     <div className="min-h-screen bg-sand flex items-center justify-center px-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-        className="w-full max-w-[380px] bg-white border border-line p-8 sm:p-10 shadow-[0_12px_40px_rgba(46,31,20,0.08)]">
+        className="w-full max-w-[380px] bg-dark border border-white/10 p-8 sm:p-10 shadow-[0_12px_40px_rgba(46,31,20,0.08)]">
         <div className="flex items-center gap-3 mb-10">
           <div className="h-10 w-10 bg-black flex items-center justify-center shrink-0">
             <img src={logo} alt="Wonderclub" className="h-7 w-7 object-contain" />
           </div>
-          <span className="text-[10px] font-black uppercase tracking-[0.45em] text-ink">Wonderclub</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.45em] text-cream">Wonderclub</span>
         </div>
-        <h1 className="text-4xl font-black uppercase tracking-[-0.03em] text-ink mb-1">Dashboard</h1>
-        <p className="text-sm text-inkSoft font-medium mb-8">Espace réservé au barbier.</p>
+        <h1 className="text-4xl font-black uppercase tracking-[-0.03em] text-cream mb-1">Dashboard</h1>
+        <p className="text-sm text-cream/60 font-medium mb-8">Espace réservé au barbier.</p>
         <form onSubmit={submit} className="space-y-3">
           <motion.input type="password" value={val} onChange={e => setVal(e.target.value)}
             placeholder="Mot de passe" autoFocus
             animate={err ? { x: [0,-8,8,-8,0] } : {}}
-            className={`w-full border-2 bg-sand px-5 py-4 text-ink text-sm font-medium outline-none transition-colors placeholder:text-inkSoft/50 ${
-              err ? 'border-red-500' : 'border-line focus:border-bark'
+            className={`w-full border-2 bg-darkMid px-5 py-4 text-cream text-sm font-medium outline-none transition-colors placeholder:text-cream/40 ${
+              err ? 'border-red-500' : 'border-white/10 focus:border-sky'
             }`}
           />
-          {err && <p className="text-xs text-red-700 font-medium">Mot de passe incorrect</p>}
+          {err && <p className="text-xs text-red-300 font-medium">Mot de passe incorrect</p>}
           <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            className="w-full flex items-center justify-center gap-2 bg-bark py-4 text-[10px] font-black uppercase tracking-[0.4em] text-white hover:bg-ink transition-colors">
+            className="w-full flex items-center justify-center gap-2 bg-denim py-4 text-[10px] font-black uppercase tracking-[0.4em] text-white hover:bg-denimDark transition-colors">
             <ScissorsIcon className="w-3.5 h-3.5" /> Connexion
           </motion.button>
         </form>
@@ -76,21 +76,21 @@ function PinScreen({ onSuccess }) {
 /* ══ STAT CARD ══ */
 function StatCard({ label, value, sub }) {
   return (
-    <div className="bg-white border border-line p-5 sm:p-7 flex flex-col justify-between min-h-[110px] shadow-[0_1px_2px_rgba(46,31,20,0.04)]">
-      <p className="text-[9px] uppercase tracking-[0.4em] font-bold text-inkSoft">{label}</p>
+    <div className="bg-dark border border-white/10 p-5 sm:p-7 flex flex-col justify-between min-h-[110px] shadow-[0_1px_2px_rgba(46,31,20,0.04)]">
+      <p className="text-[9px] uppercase tracking-[0.4em] font-bold text-cream/60">{label}</p>
       <div>
-        <p className="font-black text-ink leading-none text-4xl tabular-nums">{value}</p>
-        {sub && <p className="text-xs font-semibold mt-1.5 text-inkSoft">{sub}</p>}
+        <p className="font-black text-cream leading-none text-4xl tabular-nums">{value}</p>
+        {sub && <p className="text-xs font-semibold mt-1.5 text-cream/60">{sub}</p>}
       </div>
     </div>
   );
 }
 
 const MODAL_BACKDROP = 'fixed inset-0 bg-ink/40 backdrop-blur-sm z-50 flex items-center justify-center px-6';
-const MODAL_BOX      = 'bg-white border border-line shadow-xl w-full max-w-sm p-8';
-const INPUT          = 'w-full bg-sand border border-line px-3 py-2.5 text-ink text-sm font-medium outline-none focus:border-bark';
-const BTN_PRIMARY    = 'w-full bg-bark text-white py-3.5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-ink transition-colors disabled:opacity-50';
-const BTN_GHOST      = 'w-full text-inkSoft text-[9px] uppercase tracking-[0.35em] font-bold py-2 hover:text-ink transition-colors';
+const MODAL_BOX      = 'bg-dark border border-white/10 shadow-xl w-full max-w-sm p-8';
+const INPUT          = 'w-full bg-darkMid border border-white/10 px-3 py-2.5 text-cream text-sm font-medium outline-none focus:border-sky';
+const BTN_PRIMARY    = 'w-full bg-denim text-white py-3.5 text-[10px] font-black uppercase tracking-[0.35em] hover:bg-denimDark transition-colors disabled:opacity-50';
+const BTN_GHOST      = 'w-full text-cream/60 text-[9px] uppercase tracking-[0.35em] font-bold py-2 hover:text-white transition-colors';
 
 /* ══ DASHBOARD ══ */
 function Dashboard() {
@@ -216,23 +216,23 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-sand text-ink">
+    <div className="min-h-screen bg-sand text-cream">
 
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-white border-b border-line">
-        <div className="h-[3px] w-full bg-bark" />
+      <div className="sticky top-0 z-40 bg-dark border-b border-white/10">
+        <div className="h-[3px] w-full bg-denim" />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <div className="h-8 w-8 bg-black flex items-center justify-center shrink-0">
               <img src={logo} alt="Wonderclub" className="h-5 w-5 object-contain" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-ink">Dashboard</span>
-            <span className="hidden md:block text-[9px] uppercase tracking-[0.3em] font-bold ml-2 text-inkSoft/70 truncate">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cream">Dashboard</span>
+            <span className="hidden md:block text-[9px] uppercase tracking-[0.3em] font-bold ml-2 text-cream/50 truncate">
               Wonderclub · {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })}
             </span>
           </div>
           <button onClick={() => { sessionStorage.removeItem(AUTH_KEY); window.location.reload(); }}
-            className="text-[9px] uppercase tracking-[0.35em] text-inkSoft hover:text-ink font-bold transition-colors shrink-0">
+            className="text-[9px] uppercase tracking-[0.35em] text-cream/60 hover:text-white font-bold transition-colors shrink-0">
             Déconnexion
           </button>
         </div>
@@ -241,10 +241,10 @@ function Dashboard() {
           {[['planning', 'Planning'], ['stats', 'Statistiques']].map(([k, l]) => (
             <button key={k} onClick={() => setTab(k)}
               className={`relative pb-3 pt-1 text-[10px] font-black uppercase tracking-[0.35em] transition-colors ${
-                tab === k ? 'text-ink' : 'text-inkSoft/60 hover:text-ink'
+                tab === k ? 'text-cream' : 'text-cream/40 hover:text-white'
               }`}>
               {l}
-              {tab === k && <motion.span layoutId="admin-tab" className="absolute left-0 right-0 -bottom-px h-[3px] bg-bark" />}
+              {tab === k && <motion.span layoutId="admin-tab" className="absolute left-0 right-0 -bottom-px h-[3px] bg-denim" />}
             </button>
           ))}
         </div>
@@ -270,22 +270,22 @@ function Dashboard() {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-5">
           <div className="flex items-center gap-2">
             <button onClick={() => setWeekStart(w => addDays(w, -7))} aria-label="Semaine précédente"
-              className="h-9 w-9 bg-white border border-line text-ink font-bold text-sm hover:border-bark transition-colors flex items-center justify-center">←</button>
+              className="h-9 w-9 bg-dark border border-white/10 text-cream font-bold text-sm hover:border-sky transition-colors flex items-center justify-center">←</button>
             <span className="text-sm font-black text-ink px-2">
               {fmt(from, { day:'2-digit', month:'short' })} — {fmt(to, { day:'2-digit', month:'short', year:'numeric' })}
             </span>
             <button onClick={() => setWeekStart(w => addDays(w, 7))} aria-label="Semaine suivante"
-              className="h-9 w-9 bg-white border border-line text-ink font-bold text-sm hover:border-bark transition-colors flex items-center justify-center">→</button>
+              className="h-9 w-9 bg-dark border border-white/10 text-cream font-bold text-sm hover:border-sky transition-colors flex items-center justify-center">→</button>
             <button onClick={() => setWeekStart(monday())}
-              className="h-9 px-3 border border-bark text-bark text-[9px] font-black uppercase tracking-[0.3em] hover:bg-bark hover:text-white transition-colors">
+              className="h-9 px-3 border border-denim text-denim text-[9px] font-black uppercase tracking-[0.3em] hover:bg-denim hover:text-white transition-colors">
               Auj.
             </button>
           </div>
-          <div className="flex border border-line overflow-hidden">
+          <div className="flex border border-white/10 overflow-hidden">
             {[['list','Liste'],['week','Calendrier']].map(([v, l]) => (
               <button key={v} onClick={() => setView(v)}
                 className={`px-4 py-2 text-[9px] uppercase tracking-[0.35em] font-black transition-colors ${
-                  view === v ? 'bg-bark text-white' : 'bg-white text-inkSoft hover:text-ink'
+                  view === v ? 'bg-denim text-white' : 'bg-dark text-cream/60 hover:text-white'
                 }`}>{l}</button>
             ))}
           </div>
@@ -293,9 +293,9 @@ function Dashboard() {
 
         {/* Contenu */}
         {loading ? (
-          <div className="bg-white border border-line p-16 flex justify-center">
+          <div className="bg-dark border border-white/10 p-16 flex justify-center">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
-              <ScissorsIcon className="w-7 h-7 text-bark" />
+              <ScissorsIcon className="w-7 h-7 text-sky" />
             </motion.div>
           </div>
         ) : view === 'list' ? (
@@ -312,20 +312,20 @@ function Dashboard() {
 
               return (
                 <div key={k}
-                  className={`overflow-hidden border bg-white ${isToday ? 'border-bark/40' : 'border-line'}`}
-                  style={{ borderLeft: `4px solid ${isToday ? '#5C4031' : full ? '#CBBBA9' : '#E4D9CD'}` }}>
-                  <div className={`px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-2 border-b border-line ${isToday ? 'bg-[#F1E8DE]' : 'bg-paper'}`}>
+                  className={`overflow-hidden border bg-dark ${isToday ? 'border-sky/40' : 'border-white/10'}`}
+                  style={{ borderLeft: `4px solid ${isToday ? '#A9C1D6' : full ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)'}` }}>
+                  <div className={`px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-2 border-b border-white/10 ${isToday ? 'bg-denim' : 'bg-darkMid'}`}>
                     <div className="flex items-center gap-3 flex-wrap">
-                      <div className={`h-2 w-2 rounded-full ${dayAppts.length ? 'bg-bark' : 'bg-line'}`} />
-                      <p className={`text-sm font-black uppercase ${full && !dayAppts.length ? 'text-inkSoft' : 'text-ink'}`}>
+                      <div className={`h-2 w-2 rounded-full ${dayAppts.length ? 'bg-denim' : 'bg-white/10'}`} />
+                      <p className={`text-sm font-black uppercase ${full && !dayAppts.length ? 'text-cream/60' : 'text-cream'}`}>
                         {fmt(k, { weekday:'long', day:'2-digit', month:'long' })}
                       </p>
                       {isToday && (
-                        <span className="text-[8px] font-black uppercase tracking-[0.35em] px-2 py-0.5 bg-bark text-white">Auj.</span>
+                        <span className="text-[8px] font-black uppercase tracking-[0.35em] px-2 py-0.5 bg-denim text-white">Auj.</span>
                       )}
                       {onDemand && (
                         <span className={`text-[8px] font-black uppercase tracking-[0.3em] px-2 py-0.5 border ${
-                          full ? 'border-line text-inkSoft bg-white' : 'border-emerald-300 text-emerald-800 bg-emerald-50'
+                          full ? 'border-white/10 text-cream/60 bg-dark' : 'border-emerald-400/40 text-emerald-300 bg-emerald-500/15'
                         }`}>
                           {full ? 'Sur demande · fermé' : 'Ouvert en ligne'}
                         </span>
@@ -333,18 +333,18 @@ function Dashboard() {
                     </div>
                     <div className="flex items-center gap-1 sm:gap-3">
                       {dayAppts.length > 0 && (
-                        <span className="text-[10px] font-bold text-inkSoft mr-1">{dayAppts.length} RDV</span>
+                        <span className="text-[10px] font-bold text-cream/60 mr-1">{dayAppts.length} RDV</span>
                       )}
                       {!full && (
                         <button onClick={() => setPauseModal({ date: k })}
-                          className="text-[9px] uppercase tracking-[0.25em] font-bold text-inkSoft hover:text-ink px-2 py-1 transition-colors">
+                          className="text-[9px] uppercase tracking-[0.25em] font-bold text-cream/60 hover:text-white px-2 py-1 transition-colors">
                           + Pause
                         </button>
                       )}
                       {onDemand ? (
                         <button onClick={() => handleToggleOnDemand(k)}
                           className={`text-[9px] uppercase tracking-[0.25em] font-black px-3 py-1.5 transition-colors ${
-                            full ? 'bg-emerald-700 text-white hover:bg-emerald-800' : 'border border-red-300 text-red-700 hover:bg-red-50'
+                            full ? 'bg-emerald-700 text-white hover:bg-emerald-800' : 'border border-red-400/50 text-red-300 hover:bg-red-500/150/10'
                           }`}>
                           {full ? 'Ouvrir ce mardi' : 'Fermer'}
                         </button>
@@ -352,7 +352,7 @@ function Dashboard() {
                         <button
                           onClick={() => full ? handleUnblock(k, null) : handleBlockDay(k)}
                           className={`text-[9px] uppercase tracking-[0.25em] font-bold px-2 py-1 transition-colors ${
-                            full ? 'text-emerald-700 hover:text-emerald-900' : 'text-inkSoft hover:text-red-700'
+                            full ? 'text-emerald-300 hover:text-emerald-200' : 'text-cream/60 hover:text-red-200'
                           }`}>
                           {full ? 'Rouvrir' : 'Fermer'}
                         </button>
@@ -362,34 +362,34 @@ function Dashboard() {
 
                   {/* Pauses du jour */}
                   {pauses.length > 0 && (
-                    <div className="px-4 sm:px-6 py-2 flex flex-wrap gap-2 border-b border-line">
+                    <div className="px-4 sm:px-6 py-2 flex flex-wrap gap-2 border-b border-white/10">
                       {pauses.map((p, i) => (
-                        <div key={i} className="flex items-center gap-2 bg-amber-50 border border-amber-300 px-3 py-1">
-                          <span className="text-[10px] font-bold text-amber-900">Pause {p.time}{p.end_time ? ` → ${p.end_time}` : ''}</span>
+                        <div key={i} className="flex items-center gap-2 bg-amber-500/15 border border-amber-400/40 px-3 py-1">
+                          <span className="text-[10px] font-bold text-amber-200">Pause {p.time}{p.end_time ? ` → ${p.end_time}` : ''}</span>
                           <button onClick={() => handleUnblock(p.date, p.time)} aria-label="Supprimer la pause"
-                            className="text-amber-700 hover:text-amber-950 text-xs">✕</button>
+                            className="text-amber-300 hover:text-amber-100 text-xs">✕</button>
                         </div>
                       ))}
                     </div>
                   )}
 
                   {dayAppts.length > 0 ? (
-                    <div className="divide-y divide-line">
+                    <div className="divide-y divide-white/10">
                       {dayAppts.map(a => (
                         <div key={a.id}
-                          className="px-4 sm:px-6 py-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-paper transition-colors"
+                          className="px-4 sm:px-6 py-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-darkMid transition-colors"
                           onClick={() => setDetailModal(a)}>
                           <div className="flex items-center gap-4 min-w-0">
-                            <span className="text-xl font-black text-bark w-16 shrink-0 tabular-nums">{a.time}</span>
+                            <span className="text-xl font-black text-sky w-16 shrink-0 tabular-nums">{a.time}</span>
                             <div className="min-w-0">
-                              <p className="text-sm font-black text-ink truncate">{a.client_name}</p>
-                              <p className="text-xs text-inkSoft font-medium truncate">{a.service_title}{a.service_duration ? ` · ${a.service_duration}min` : ''}</p>
+                              <p className="text-sm font-black text-cream truncate">{a.client_name}</p>
+                              <p className="text-xs text-cream/60 font-medium truncate">{a.service_title}{a.service_duration ? ` · ${a.service_duration}min` : ''}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-3 shrink-0">
-                            <span className="text-sm font-black text-ink">{a.service_price_label}</span>
+                            <span className="text-sm font-black text-cream">{a.service_price_label}</span>
                             <a href={`tel:${a.client_phone}`} onClick={e => e.stopPropagation()}
-                              className="hidden sm:inline-block text-[9px] border border-line px-3 py-1.5 text-inkSoft hover:border-bark hover:text-bark transition-colors font-bold">
+                              className="hidden sm:inline-block text-[9px] border border-white/10 px-3 py-1.5 text-cream/60 hover:border-sky hover:text-sky transition-colors font-bold">
                               Appeler
                             </a>
                           </div>
@@ -397,7 +397,7 @@ function Dashboard() {
                       ))}
                     </div>
                   ) : (
-                    <div className="px-4 sm:px-6 py-5 text-sm text-inkSoft/80 font-medium italic">
+                    <div className="px-4 sm:px-6 py-5 text-sm text-cream/60 font-medium italic">
                       {onDemand && full
                         ? 'Mardi fermé — clique sur « Ouvrir ce mardi » pour le rendre réservable sur le site.'
                         : full ? 'Journée fermée' : 'Aucun rendez-vous'}
@@ -411,40 +411,40 @@ function Dashboard() {
         ) : (
 
           /* VUE CALENDRIER */
-          <div className="bg-white border border-line overflow-hidden">
+          <div className="bg-dark border border-white/10 overflow-hidden">
             <div className="overflow-x-auto">
               <div className="min-w-[680px]">
-                <div className="grid gap-px bg-line" style={{ gridTemplateColumns: `72px repeat(${weekDays.length}, 1fr)` }}>
-                  <div className="bg-paper py-3" />
+                <div className="grid gap-px bg-white/10" style={{ gridTemplateColumns: `72px repeat(${weekDays.length}, 1fr)` }}>
+                  <div className="bg-darkMid py-3" />
                   {weekDays.map(d => {
                     const k = dayKey(d); const isToday = k === todayKey;
                     const cnt = appointments.filter(a => a.date === k).length;
                     const full = isFullDay(k);
                     const onDemand = isOnDemand(k);
                     return (
-                      <div key={k} className={`px-2 py-3 text-center ${isToday ? 'bg-[#F1E8DE]' : 'bg-paper'}`}>
-                        <p className={`text-[9px] uppercase tracking-[0.35em] font-bold ${isToday ? 'text-bark' : 'text-inkSoft'}`}>
+                      <div key={k} className={`px-2 py-3 text-center ${isToday ? 'bg-denim' : 'bg-darkMid'}`}>
+                        <p className={`text-[9px] uppercase tracking-[0.35em] font-bold ${isToday ? 'text-sky' : 'text-cream/60'}`}>
                           {fmt(k, { weekday:'short' })}
                         </p>
-                        <p className="text-xl font-black text-ink">{d.getDate()}</p>
-                        {cnt > 0 && <p className="text-[8px] text-bark font-black mt-0.5">{cnt} RDV</p>}
+                        <p className="text-xl font-black text-cream">{d.getDate()}</p>
+                        {cnt > 0 && <p className="text-[8px] text-sky font-black mt-0.5">{cnt} RDV</p>}
                         {onDemand ? (
                           <button onClick={() => handleToggleOnDemand(k)}
-                            className={`mt-1 text-[8px] font-black uppercase tracking-[0.15em] ${full ? 'text-emerald-700 hover:text-emerald-900' : 'text-red-700 hover:text-red-900'}`}>
+                            className={`mt-1 text-[8px] font-black uppercase tracking-[0.15em] ${full ? 'text-emerald-300 hover:text-emerald-200' : 'text-red-300 hover:text-red-200'}`}>
                             {full ? 'Ouvrir' : 'Fermer'}
                           </button>
                         ) : !full && (
-                          <button onClick={() => setPauseModal({ date: k })} className="mt-1 text-[8px] font-bold text-inkSoft hover:text-ink transition-colors">+ Pause</button>
+                          <button onClick={() => setPauseModal({ date: k })} className="mt-1 text-[8px] font-bold text-cream/60 hover:text-white transition-colors">+ Pause</button>
                         )}
                       </div>
                     );
                   })}
                 </div>
-                <div className="divide-y divide-line">
+                <div className="divide-y divide-white/10">
                   {calendarSlots.map(slot => (
-                    <div key={slot} className="grid gap-px bg-line" style={{ gridTemplateColumns: `72px repeat(${weekDays.length}, 1fr)` }}>
-                      <div className="bg-paper py-3 px-3 flex items-center">
-                        <span className="text-[10px] font-bold text-inkSoft tabular-nums">{slot}</span>
+                    <div key={slot} className="grid gap-px bg-white/10" style={{ gridTemplateColumns: `72px repeat(${weekDays.length}, 1fr)` }}>
+                      <div className="bg-darkMid py-3 px-3 flex items-center">
+                        <span className="text-[10px] font-bold text-cream/60 tabular-nums">{slot}</span>
                       </div>
                       {weekDays.map(d => {
                         const k = dayKey(d);
@@ -455,24 +455,24 @@ function Dashboard() {
                         return (
                           <div key={k} onClick={() => !full && !appt && setBlockModal({ date: k, time: slot })}
                             className={`relative min-h-[44px] px-2 py-1.5 flex flex-col justify-center transition-colors ${
-                              appt   ? 'bg-[#E9DED2] border-l-[3px] border-bark cursor-pointer hover:bg-[#E0D2C3]'
-                              : full ? 'bg-[repeating-linear-gradient(135deg,#F4EFEA_0,#F4EFEA_6px,#ECE4DB_6px,#ECE4DB_12px)] cursor-not-allowed'
-                              : pause? 'bg-amber-50 cursor-pointer'
-                              : blocked?'bg-red-50 cursor-pointer'
-                              :        'bg-white cursor-pointer hover:bg-paper'
+                              appt   ? 'bg-denim border-l-[3px] border-sky cursor-pointer hover:bg-denimDark'
+                              : full ? 'bg-[repeating-linear-gradient(135deg,#4A3225_0,#4A3225_6px,#553A2B_6px,#553A2B_12px)] cursor-not-allowed'
+                              : pause? 'bg-amber-500/15 cursor-pointer'
+                              : blocked?'bg-red-500/15 cursor-pointer'
+                              :        'bg-dark cursor-pointer hover:bg-darkMid'
                             }`}>
                             {appt && (
                               <div onClick={e => { e.stopPropagation(); setDetailModal(appt); }}>
-                                <p className="text-[10px] font-black text-ink truncate">{appt.client_name.split(' ')[0]}</p>
-                                <p className="text-[8px] text-inkSoft truncate">{appt.service_title}</p>
+                                <p className="text-[10px] font-black text-cream truncate">{appt.client_name.split(' ')[0]}</p>
+                                <p className="text-[8px] text-cream/60 truncate">{appt.service_title}</p>
                               </div>
                             )}
-                            {pause && !appt && <span className="text-[9px] text-amber-800 font-bold">Pause</span>}
+                            {pause && !appt && <span className="text-[9px] text-amber-200 font-bold">Pause</span>}
                             {blocked && !appt && !pause && (
                               <div className="flex items-center justify-between">
-                                <span className="text-[9px] text-red-700 font-bold">Bloqué</span>
+                                <span className="text-[9px] text-red-300 font-bold">Bloqué</span>
                                 <button onClick={e => { e.stopPropagation(); handleUnblock(k, slot); }} aria-label="Débloquer"
-                                  className="text-[9px] text-red-500 hover:text-red-800">✕</button>
+                                  className="text-[9px] text-red-300 hover:text-red-200">✕</button>
                               </div>
                             )}
                           </div>
@@ -498,16 +498,16 @@ function Dashboard() {
               initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }}
               onClick={e => e.stopPropagation()}>
               <div>
-                <p className="text-[9px] uppercase tracking-[0.45em] text-bark font-black mb-1">Bloquer une pause</p>
-                <p className="text-lg font-black text-ink capitalize">{fmt(pauseModal.date)}</p>
+                <p className="text-[9px] uppercase tracking-[0.45em] text-sky font-black mb-1">Bloquer une pause</p>
+                <p className="text-lg font-black text-cream capitalize">{fmt(pauseModal.date)}</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <label className="block">
-                  <span className="text-[9px] uppercase tracking-[0.35em] text-inkSoft font-bold block mb-1">Début</span>
+                  <span className="text-[9px] uppercase tracking-[0.35em] text-cream/60 font-bold block mb-1">Début</span>
                   <input type="time" value={pauseStart} onChange={e => setPauseStart(e.target.value)} className={INPUT} />
                 </label>
                 <label className="block">
-                  <span className="text-[9px] uppercase tracking-[0.35em] text-inkSoft font-bold block mb-1">Fin</span>
+                  <span className="text-[9px] uppercase tracking-[0.35em] text-cream/60 font-bold block mb-1">Fin</span>
                   <input type="time" value={pauseEnd} onChange={e => setPauseEnd(e.target.value)} className={INPUT} />
                 </label>
               </div>
@@ -530,18 +530,18 @@ function Dashboard() {
               initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }}
               onClick={e => e.stopPropagation()}>
               <div>
-                <p className="text-[9px] uppercase tracking-[0.45em] text-bark font-black mb-1">Bloquer</p>
-                <p className="text-lg font-black text-ink capitalize">{fmt(blockModal.date)}</p>
-                <p className="text-2xl font-black text-bark">{blockModal.time}</p>
+                <p className="text-[9px] uppercase tracking-[0.45em] text-sky font-black mb-1">Bloquer</p>
+                <p className="text-lg font-black text-cream capitalize">{fmt(blockModal.date)}</p>
+                <p className="text-2xl font-black text-sky">{blockModal.time}</p>
               </div>
-              <DiamondDivider className="text-line" />
+              <DiamondDivider className="text-white/20" />
               <div className="space-y-2">
                 <button onClick={() => handleBlock({ date: blockModal.date, time: blockModal.time, fullDay: false })} className={BTN_PRIMARY}>
                   Bloquer {blockModal.time}
                 </button>
                 {!isOnDemand(blockModal.date) && (
                   <button onClick={() => handleBlock({ date: blockModal.date, fullDay: true })}
-                    className="w-full border border-line text-ink py-3.5 text-[10px] font-black uppercase tracking-[0.35em] hover:border-bark transition-colors">
+                    className="w-full border border-white/10 text-cream py-3.5 text-[10px] font-black uppercase tracking-[0.35em] hover:border-sky transition-colors">
                     Bloquer toute la journée
                   </button>
                 )}
@@ -562,12 +562,12 @@ function Dashboard() {
               initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }}
               onClick={e => e.stopPropagation()}>
               <div>
-                <p className="text-[9px] uppercase tracking-[0.45em] text-red-700 font-black mb-1">Annuler le RDV</p>
-                <p className="text-base font-black text-ink">{cancelModal.appt.client_name}</p>
-                <p className="text-xs text-inkSoft">{fmt(cancelModal.appt.date)} à {cancelModal.appt.time}</p>
+                <p className="text-[9px] uppercase tracking-[0.45em] text-red-300 font-black mb-1">Annuler le RDV</p>
+                <p className="text-base font-black text-cream">{cancelModal.appt.client_name}</p>
+                <p className="text-xs text-cream/60">{fmt(cancelModal.appt.date)} à {cancelModal.appt.time}</p>
               </div>
               <div>
-                <p className="text-[9px] uppercase tracking-[0.35em] font-bold text-inkSoft mb-2">Message au client (envoyé par email)</p>
+                <p className="text-[9px] uppercase tracking-[0.35em] font-bold text-cream/60 mb-2">Message au client (envoyé par email)</p>
                 <textarea value={cancelMsg} onChange={e => setCancelMsg(e.target.value)} rows={4}
                   className={`${INPUT} px-4 py-3 resize-none`} placeholder="Raison de l'annulation..." />
               </div>
@@ -592,7 +592,7 @@ function Dashboard() {
             <motion.div className={MODAL_BOX}
               initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }}
               onClick={e => e.stopPropagation()}>
-              <p className="text-[9px] uppercase tracking-[0.45em] text-bark font-black mb-5">Rendez-vous</p>
+              <p className="text-[9px] uppercase tracking-[0.45em] text-sky font-black mb-5">Rendez-vous</p>
               <div className="space-y-3 mb-6">
                 {[
                   { l: 'Client',      v: detailModal.client_name },
@@ -604,19 +604,19 @@ function Dashboard() {
                   { l: 'Horaire',     v: detailModal.time },
                   { l: 'Réf.',        v: detailModal.confirmation_number },
                 ].map(r => (
-                  <div key={r.l} className="flex justify-between gap-4 border-b border-line pb-3 last:border-0 last:pb-0">
-                    <span className="text-[9px] uppercase tracking-[0.35em] text-inkSoft font-bold shrink-0">{r.l}</span>
-                    <span className="text-sm font-bold text-ink text-right capitalize">{r.v}</span>
+                  <div key={r.l} className="flex justify-between gap-4 border-b border-white/10 pb-3 last:border-0 last:pb-0">
+                    <span className="text-[9px] uppercase tracking-[0.35em] text-cream/60 font-bold shrink-0">{r.l}</span>
+                    <span className="text-sm font-bold text-cream text-right capitalize">{r.v}</span>
                   </div>
                 ))}
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <a href={`tel:${detailModal.client_phone}`}
-                  className="flex items-center justify-center bg-bark text-white py-3 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-ink transition-colors">
+                  className="flex items-center justify-center bg-denim text-white py-3 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-denimDark transition-colors">
                   Appeler
                 </a>
                 <button onClick={() => handleCancel(detailModal)}
-                  className="border border-red-300 text-red-700 py-3 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-red-700 hover:text-white transition-colors">
+                  className="border border-red-400/50 text-red-300 py-3 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-red-700 hover:text-white transition-colors">
                   Annuler RDV
                 </button>
               </div>

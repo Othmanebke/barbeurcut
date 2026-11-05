@@ -30,21 +30,21 @@ function delta(cur, prev) {
 }
 
 function DeltaBadge({ value }) {
-  if (value === null) return <span className="text-[10px] font-bold text-inkSoft/60">— vs mois préc.</span>;
+  if (value === null) return <span className="text-[10px] font-bold text-cream/40">— vs mois préc.</span>;
   const up = value >= 0;
   return (
-    <span className={`text-[10px] font-black ${up ? 'text-emerald-700' : 'text-red-700'}`}>
-      {up ? '▲' : '▼'} {Math.abs(value)} % <span className="font-bold text-inkSoft/60">vs mois préc.</span>
+    <span className={`text-[10px] font-black ${up ? 'text-emerald-300' : 'text-red-300'}`}>
+      {up ? '▲' : '▼'} {Math.abs(value)} % <span className="font-bold text-cream/40">vs mois préc.</span>
     </span>
   );
 }
 
 function Kpi({ label, value, sub }) {
   return (
-    <div className="bg-white border border-line p-5 sm:p-6 flex flex-col justify-between min-h-[120px] shadow-[0_1px_2px_rgba(46,31,20,0.04)]">
-      <p className="text-[9px] uppercase tracking-[0.4em] font-bold text-inkSoft">{label}</p>
+    <div className="bg-dark border border-white/10 p-5 sm:p-6 flex flex-col justify-between min-h-[120px] shadow-[0_1px_2px_rgba(46,31,20,0.04)]">
+      <p className="text-[9px] uppercase tracking-[0.4em] font-bold text-cream/60">{label}</p>
       <div>
-        <p className="font-black text-ink leading-none text-3xl sm:text-4xl tabular-nums">{value}</p>
+        <p className="font-black text-cream leading-none text-3xl sm:text-4xl tabular-nums">{value}</p>
         {sub && <div className="mt-2">{sub}</div>}
       </div>
     </div>
@@ -53,9 +53,9 @@ function Kpi({ label, value, sub }) {
 
 function Card({ title, right, children }) {
   return (
-    <section className="bg-white border border-line">
-      <header className="px-5 sm:px-6 py-4 border-b border-line bg-paper flex items-center justify-between gap-3">
-        <h2 className="text-[10px] uppercase tracking-[0.4em] font-black text-ink">{title}</h2>
+    <section className="bg-dark border border-white/10">
+      <header className="px-5 sm:px-6 py-4 border-b border-white/10 bg-darkMid flex items-center justify-between gap-3">
+        <h2 className="text-[10px] uppercase tracking-[0.4em] font-black text-cream">{title}</h2>
         {right}
       </header>
       <div className="p-5 sm:p-6">{children}</div>
@@ -150,13 +150,13 @@ export default function AdminStats() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <button onClick={() => setMonth(m => addMonths(m, -1))} aria-label="Mois précédent"
-            className="h-9 w-9 bg-white border border-line text-ink font-bold hover:border-bark transition-colors">←</button>
+            className="h-9 w-9 bg-dark border border-white/10 text-cream font-bold hover:border-sky transition-colors">←</button>
           <span className="text-base font-black text-ink px-2 capitalize min-w-[150px] text-center">{monthLabel(month)}</span>
           <button onClick={() => setMonth(m => addMonths(m, 1))} aria-label="Mois suivant"
-            className="h-9 w-9 bg-white border border-line text-ink font-bold hover:border-bark transition-colors">→</button>
+            className="h-9 w-9 bg-dark border border-white/10 text-cream font-bold hover:border-sky transition-colors">→</button>
           {!isCurrentMonth && (
             <button onClick={() => setMonth(addMonths(new Date(), 0))}
-              className="h-9 px-3 border border-bark text-bark text-[9px] font-black uppercase tracking-[0.3em] hover:bg-bark hover:text-white transition-colors">
+              className="h-9 px-3 border border-denim text-denim text-[9px] font-black uppercase tracking-[0.3em] hover:bg-denim hover:text-white transition-colors">
               Ce mois
             </button>
           )}
@@ -168,9 +168,9 @@ export default function AdminStats() {
       )}
 
       {loading ? (
-        <div className="bg-white border border-line p-16 flex justify-center">
+        <div className="bg-dark border border-white/10 p-16 flex justify-center">
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
-            <ScissorsIcon className="w-7 h-7 text-bark" />
+            <ScissorsIcon className="w-7 h-7 text-sky" />
           </motion.div>
         </div>
       ) : (
@@ -182,10 +182,10 @@ export default function AdminStats() {
             <Kpi label="Rendez-vous" value={stats.count}
               sub={<DeltaBadge value={delta(stats.count, stats.prevCount)} />} />
             <Kpi label="Panier moyen" value={euro(stats.avg)}
-              sub={<span className="text-[10px] font-bold text-inkSoft/70">par RDV avec tarif</span>} />
+              sub={<span className="text-[10px] font-bold text-cream/50">par RDV avec tarif</span>} />
             <Kpi label={isCurrentMonth ? 'Encaissé / à venir' : 'Réalisé'}
               value={euro(stats.doneRev)}
-              sub={<span className="text-[10px] font-bold text-inkSoft/70">
+              sub={<span className="text-[10px] font-bold text-cream/50">
                 {stats.upcomingRev > 0 ? `+ ${euro(stats.upcomingRev)} à venir` : 'tous RDV passés'}
               </span>} />
           </div>
@@ -200,10 +200,10 @@ export default function AdminStats() {
             <div className="lg:col-span-3">
               <Card title="Prestations du mois">
                 {stats.services.length === 0 ? (
-                  <p className="text-sm text-inkSoft italic">Aucun rendez-vous ce mois-ci.</p>
+                  <p className="text-sm text-cream/60 italic">Aucun rendez-vous ce mois-ci.</p>
                 ) : (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-[1fr_auto_auto] gap-x-4 text-[8px] uppercase tracking-[0.35em] font-bold text-inkSoft/70">
+                    <div className="grid grid-cols-[1fr_auto_auto] gap-x-4 text-[8px] uppercase tracking-[0.35em] font-bold text-cream/50">
                       <span>Prestation</span><span className="w-14 text-right">Part</span><span className="w-20 text-right">CA</span>
                     </div>
                     {stats.services.map(s => {
@@ -211,16 +211,16 @@ export default function AdminStats() {
                       return (
                         <div key={s.id}>
                           <div className="grid grid-cols-[1fr_auto_auto] gap-x-4 items-baseline">
-                            <p className="text-sm font-bold text-ink truncate">
-                              {s.title} <span className="text-xs font-semibold text-inkSoft">· {s.count} RDV</span>
+                            <p className="text-sm font-bold text-cream truncate">
+                              {s.title} <span className="text-xs font-semibold text-cream/60">· {s.count} RDV</span>
                             </p>
-                            <span className="w-14 text-right text-sm font-black text-ink tabular-nums">{pct} %</span>
-                            <span className="w-20 text-right text-sm font-bold text-inkSoft tabular-nums">
+                            <span className="w-14 text-right text-sm font-black text-cream tabular-nums">{pct} %</span>
+                            <span className="w-20 text-right text-sm font-bold text-cream/60 tabular-nums">
                               {s.revenue ? euro(s.revenue) : 'devis'}
                             </span>
                           </div>
-                          <div className="mt-1.5 h-2 bg-sand overflow-hidden">
-                            <motion.div className="h-full bg-bark" initial={{ width: 0 }} animate={{ width: `${pct}%` }}
+                          <div className="mt-1.5 h-2 bg-darkMid overflow-hidden">
+                            <motion.div className="h-full bg-denim" initial={{ width: 0 }} animate={{ width: `${pct}%` }}
                               transition={{ duration: 0.6, ease: 'easeOut' }} />
                           </div>
                         </div>
@@ -241,22 +241,22 @@ export default function AdminStats() {
                     return (
                       <button key={m.key} onClick={() => setMonth(m.date)} title={`${monthLabel(m.date)} : ${euro(m.revenue)} · ${m.count} RDV`}
                         className="flex-1 h-full flex flex-col justify-end items-center gap-1 group">
-                        <span className={`text-[10px] font-black tabular-nums ${sel ? 'text-ink' : 'text-inkSoft'}`}>
+                        <span className={`text-[10px] font-black tabular-nums ${sel ? 'text-cream' : 'text-cream/60'}`}>
                           {m.revenue ? `${Math.round(m.revenue)}€` : ''}
                         </span>
-                        <motion.div className={`w-full ${sel ? 'bg-bark' : 'bg-[#CBBBA9] group-hover:bg-[#B5A28E]'} transition-colors`}
+                        <motion.div className={`w-full ${sel ? 'bg-denim' : 'bg-white/20 group-hover:bg-white/30'} transition-colors`}
                           initial={{ height: 0 }} animate={{ height: `${h}%` }} transition={{ duration: 0.6, ease: 'easeOut' }} />
                       </button>
                     );
                   })}
                 </div>
-                <div className="flex gap-2 mt-2 border-t border-line pt-2">
+                <div className="flex gap-2 mt-2 border-t border-white/10 pt-2">
                   {stats.months.map(m => (
                     <div key={m.key} className="flex-1 text-center">
-                      <p className={`text-[9px] uppercase font-black ${m.key === monthKey(month) ? 'text-ink' : 'text-inkSoft/70'}`}>
+                      <p className={`text-[9px] uppercase font-black ${m.key === monthKey(month) ? 'text-cream' : 'text-cream/50'}`}>
                         {monthLabel(m.date, { month: 'short' }).replace('.', '')}
                       </p>
-                      <p className="text-[9px] font-bold text-inkSoft/70 tabular-nums">{m.count} RDV</p>
+                      <p className="text-[9px] font-bold text-cream/50 tabular-nums">{m.count} RDV</p>
                     </div>
                   ))}
                 </div>
@@ -266,18 +266,18 @@ export default function AdminStats() {
 
           {/* Historique */}
           <Card title="Historique des réservations"
-            right={<span className="text-[10px] font-bold text-inkSoft">{history.length} RDV</span>}>
+            right={<span className="text-[10px] font-bold text-cream/60">{history.length} RDV</span>}>
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Rechercher un client, téléphone, réf…"
-              className="w-full mb-4 bg-sand border border-line px-4 py-2.5 text-sm text-ink font-medium outline-none focus:border-bark placeholder:text-inkSoft/50" />
+              className="w-full mb-4 bg-darkMid border border-white/10 px-4 py-2.5 text-sm text-cream font-medium outline-none focus:border-sky placeholder:text-cream/40" />
             {history.length === 0 ? (
-              <p className="text-sm text-inkSoft italic">Aucune réservation{search ? ' pour cette recherche' : ' ce mois-ci'}.</p>
+              <p className="text-sm text-cream/60 italic">Aucune réservation{search ? ' pour cette recherche' : ' ce mois-ci'}.</p>
             ) : (
               <>
                 <div className="overflow-x-auto -mx-5 sm:-mx-6">
                   <table className="w-full min-w-[640px] text-sm">
                     <thead>
-                      <tr className="text-left text-[8px] uppercase tracking-[0.35em] text-inkSoft/70">
+                      <tr className="text-left text-[8px] uppercase tracking-[0.35em] text-cream/50">
                         <th className="font-bold px-5 sm:px-6 pb-2">Date</th>
                         <th className="font-bold pb-2">Client</th>
                         <th className="font-bold pb-2">Prestation</th>
@@ -285,26 +285,26 @@ export default function AdminStats() {
                         <th className="font-bold pb-2 px-5 sm:px-6 text-right">Statut</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-line">
+                    <tbody className="divide-y divide-white/10">
                       {history.slice(0, shown).map(a => {
                         const past = a.date < todayKey;
                         return (
-                          <tr key={a.id} className="hover:bg-paper">
+                          <tr key={a.id} className="hover:bg-darkMid">
                             <td className="px-5 sm:px-6 py-3 whitespace-nowrap">
-                              <span className="font-bold text-ink capitalize">
+                              <span className="font-bold text-cream capitalize">
                                 {new Date(a.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: '2-digit', month: 'short' })}
                               </span>
-                              <span className="text-inkSoft font-semibold"> · {a.time}</span>
+                              <span className="text-cream/60 font-semibold"> · {a.time}</span>
                             </td>
                             <td className="py-3">
-                              <p className="font-bold text-ink">{a.client_name}</p>
-                              <p className="text-xs text-inkSoft">{a.client_phone}</p>
+                              <p className="font-bold text-cream">{a.client_name}</p>
+                              <p className="text-xs text-cream/60">{a.client_phone}</p>
                             </td>
-                            <td className="py-3 text-inkSoft font-medium">{a.service_title}</td>
-                            <td className="py-3 text-right font-black text-ink tabular-nums whitespace-nowrap">{a.service_price_label}</td>
+                            <td className="py-3 text-cream/60 font-medium">{a.service_title}</td>
+                            <td className="py-3 text-right font-black text-cream tabular-nums whitespace-nowrap">{a.service_price_label}</td>
                             <td className="px-5 sm:px-6 py-3 text-right">
                               <span className={`text-[8px] font-black uppercase tracking-[0.25em] px-2 py-1 ${
-                                past ? 'bg-sand text-inkSoft' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                past ? 'bg-darkMid text-cream/60' : 'bg-emerald-500/15 text-emerald-300 border border-emerald-400/40'
                               }`}>
                                 {past ? 'Passé' : a.date === todayKey ? 'Auj.' : 'À venir'}
                               </span>
@@ -317,7 +317,7 @@ export default function AdminStats() {
                 </div>
                 {history.length > shown && (
                   <button onClick={() => setShown(n => n + HISTORY_PAGE)}
-                    className="mt-4 w-full border border-line py-3 text-[9px] font-black uppercase tracking-[0.35em] text-ink hover:border-bark transition-colors">
+                    className="mt-4 w-full border border-white/10 py-3 text-[9px] font-black uppercase tracking-[0.35em] text-cream hover:border-sky transition-colors">
                     Voir plus ({history.length - shown})
                   </button>
                 )}

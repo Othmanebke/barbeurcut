@@ -23,6 +23,7 @@ export default {
         ink:       '#2E1F14',   // texte principal
         inkSoft:   '#6A5A4E',   // texte secondaire
         bark:      '#5C4031',   // accent marron (boutons)
+        sky:       '#A9C1D6',   // bleu clair — accent lisible sur marron
       },
       borderRadius: {
         none:    '0',
